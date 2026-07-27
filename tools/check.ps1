@@ -1,7 +1,8 @@
 ## Validates every .gd script and the project's scenes. Run from the repo root:
 ##   pwsh -File tools/check.ps1
-## Set $env:GODOT to the engine binary, or put it on PATH. Use a `_console` build
-## on Windows; the plain .exe detaches from the terminal and prints nothing.
+## The engine is taken from $env:GODOT, or found on PATH. Use a `_console` build
+## on Windows; the plain .exe detaches from the terminal and prints nothing, which
+## would make the output scanning below silently useless.
 ##
 ## Why this exists: `--headless --path . --quit` alone is not a validation step.
 ## It only parses scripts reachable from the main scene, and it exits 0 even when
@@ -10,26 +11,31 @@
 $ErrorActionPreference = "Stop"
 
 function Resolve-Godot {
-	$candidates = if ($env:GODOT) { @($env:GODOT) } else { @("godot_console", "godot", "godot4") }
-
-	foreach ($candidate in $candidates) {
-		if (Test-Path -LiteralPath $candidate -PathType Leaf) {
-			return (Resolve-Path -LiteralPath $candidate).Path
+	if ($env:GODOT) {
+		if (Test-Path -LiteralPath $env:GODOT -PathType Leaf) {
+			return (Resolve-Path -LiteralPath $env:GODOT).Path
 		}
-		$command = Get-Command $candidate -CommandType Application -ErrorAction SilentlyContinue |
+		$command = Get-Command $env:GODOT -CommandType Application -ErrorAction SilentlyContinue |
+			Select-Object -First 1
+		if ($command) {
+			return $command.Source
+		}
+		$Host.UI.WriteErrorLine("`$env:GODOT is set to '$env:GODOT', which is not an executable.")
+		exit 2
+	}
+
+	# Console builds only: the plain Windows .exe writes no output, so it would
+	# pass every check below vacuously.
+	foreach ($name in @("godot_console", "godot4", "godot")) {
+		$command = Get-Command $name -CommandType Application -ErrorAction SilentlyContinue |
 			Select-Object -First 1
 		if ($command) {
 			return $command.Source
 		}
 	}
 
-	$hint = if ($env:GODOT) {
-		"`$env:GODOT is set to '$env:GODOT', which is not an executable."
-	}
-	else {
-		"No Godot binary found on PATH."
-	}
-	$Host.UI.WriteErrorLine("$hint Set `$env:GODOT to your engine path, e.g.")
+	$Host.UI.WriteErrorLine("No Godot binary found on PATH. Either add the engine's folder")
+	$Host.UI.WriteErrorLine("to PATH as `godot_console`/`godot`, or point `$env:GODOT at it:")
 	$Host.UI.WriteErrorLine("  `$env:GODOT = 'C:\path\to\Godot_v4.7-stable_win64_console.exe'")
 	exit 2
 }

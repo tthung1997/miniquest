@@ -12,16 +12,31 @@ A 2D game built with **Godot 4.7** and **GDScript**.
 2. Open Godot, click **Import**, and select `project.godot` in this folder.
 3. Press **F5** to run.
 
-Command-line tooling finds the engine via the `GODOT` environment variable,
-falling back to a `godot_console`, `godot` or `godot4` binary on your `PATH`. If
-the engine is neither, point at it once:
+Command-line tooling finds the engine as `godot_console`, `godot` or `godot4` on
+your `PATH`, or via the `GODOT` environment variable if you would rather point at
+it directly:
 
 ```powershell
 $env:GODOT = "C:\path\to\Godot_v4.7-stable_win64_console.exe"
 ```
 
-Use a `_console` build — the plain `.exe` detaches from the terminal on Windows
-and you will see no output.
+Use a **console** build — the plain `.exe` detaches from the terminal on Windows,
+so you see no output and `check.ps1` cannot tell a clean run from a broken one.
+
+Godot's Windows downloads are versioned (`Godot_v4.7.1-stable_win64_console.exe`),
+which no `PATH` lookup will match. Note that the console executable is only a
+launcher: it locates the real engine by stripping `_console` from its own
+filename, so it needs a matching pair of names. Hardlinks cost no disk space and
+need no administrator rights:
+
+```powershell
+New-Item -ItemType HardLink -Path 'C:\Godot\godot.exe' `
+         -Target 'C:\Godot\Godot_v4.7.1-stable_win64.exe'
+New-Item -ItemType HardLink -Path 'C:\Godot\godot_console.exe' `
+         -Target 'C:\Godot\Godot_v4.7.1-stable_win64_console.exe'
+```
+
+Then add that folder to `PATH`.
 
 ## Layout
 
