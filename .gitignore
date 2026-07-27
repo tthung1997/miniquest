@@ -1,0 +1,42 @@
+# Godot 4+ ------------------------------------------------------------------
+# Import cache, editor state, generated shader cache. Fully reproducible.
+.godot/
+
+# Godot 3 leftovers (harmless to keep ignored)
+.import/
+export.cfg
+
+# Export presets often contain absolute paths, signing keys and store
+# credentials. Keep them local. If your presets are safe and you want them
+# shared, delete this line and commit the file deliberately.
+export_presets.cfg
+
+# Build output
+/build/
+/export/
+/android/
+
+# Auto-generated translation binaries (source of truth is the CSV)
+*.translation
+
+# .NET / C# (only if you later switch to the Godot .NET build) ---------------
+.mono/
+data_*/
+mono_crash.*.json
+*.csproj.user
+[Bb]in/
+[Oo]bj/
+
+# Editors / OS ---------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs / local scratch -------------------------------------------------------
+*.log
+/local/
