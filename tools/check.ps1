@@ -1,6 +1,7 @@
 ## Validates every .gd script and the project's scenes. Run from the repo root:
 ##   pwsh -File tools/check.ps1
-## Set $env:GODOT to override the engine path.
+## Set $env:GODOT to the engine binary, or put it on PATH. Use a `_console` build
+## on Windows; the plain .exe detaches from the terminal and prints nothing.
 ##
 ## Why this exists: `--headless --path . --quit` alone is not a validation step.
 ## It only parses scripts reachable from the main scene, and it exits 0 even when
@@ -8,11 +9,32 @@
 
 $ErrorActionPreference = "Stop"
 
-$godot = if ($env:GODOT) { $env:GODOT } else { "S:\Godot\Godot_v4.7.1-stable_win64_console.exe" }
-if (-not (Test-Path $godot)) {
-	Write-Error "Godot not found at '$godot'. Set `$env:GODOT to your engine path."
+function Resolve-Godot {
+	$candidates = if ($env:GODOT) { @($env:GODOT) } else { @("godot_console", "godot", "godot4") }
+
+	foreach ($candidate in $candidates) {
+		if (Test-Path -LiteralPath $candidate -PathType Leaf) {
+			return (Resolve-Path -LiteralPath $candidate).Path
+		}
+		$command = Get-Command $candidate -CommandType Application -ErrorAction SilentlyContinue |
+			Select-Object -First 1
+		if ($command) {
+			return $command.Source
+		}
+	}
+
+	$hint = if ($env:GODOT) {
+		"`$env:GODOT is set to '$env:GODOT', which is not an executable."
+	}
+	else {
+		"No Godot binary found on PATH."
+	}
+	$Host.UI.WriteErrorLine("$hint Set `$env:GODOT to your engine path, e.g.")
+	$Host.UI.WriteErrorLine("  `$env:GODOT = 'C:\path\to\Godot_v4.7-stable_win64_console.exe'")
 	exit 2
 }
+
+$godot = Resolve-Godot
 
 $root = Split-Path $PSScriptRoot -Parent
 Push-Location $root

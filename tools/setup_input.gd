@@ -1,6 +1,6 @@
 ## One-shot tool: writes the input map into project.godot.
 ## Run with:
-##   Godot_v4.7.1-stable_win64_console.exe --headless --path . --script res://tools/setup_input.gd
+##   & $env:GODOT --headless --path . --script res://tools/setup_input.gd
 ## Hand-writing InputEventKey entries in project.godot is error-prone, so we let
 ## the engine serialise them. Safe to re-run; it overwrites the same actions.
 extends SceneTree

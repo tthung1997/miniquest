@@ -13,11 +13,11 @@ A 2D game built with **Godot 4.7** and **GDScript**.
 3. Press **F5** to run.
 
 Command-line tooling finds the engine via the `GODOT` environment variable,
-falling back to `S:\Godot\Godot_v4.7.1-stable_win64_console.exe`. If yours lives
-elsewhere, set it once:
+falling back to a `godot_console`, `godot` or `godot4` binary on your `PATH`. If
+the engine is neither, point at it once:
 
 ```powershell
-$env:GODOT = "C:\path\to\Godot_v4.7.1-stable_win64_console.exe"
+$env:GODOT = "C:\path\to\Godot_v4.7-stable_win64_console.exe"
 ```
 
 Use a `_console` build — the plain `.exe` detaches from the terminal on Windows
