@@ -36,10 +36,10 @@ pairs with `scripts/ui/main_menu.gd`.
 - **Renderer** is `gl_compatibility`, which keeps web and low-end hardware
   export viable. Switch to Forward+ only if you need its 2D lighting features.
 - **Default texture filter** is Nearest, so pixel art stays crisp.
-- **Input actions**: `move_left/right/up/down`, `jump`, `attack`, `dash`,
-  `pause`, bound to WASD + arrows and a few common keys. All use *physical*
-  keycodes so they work on non-QWERTY layouts. Edit them in Project Settings →
-  Input Map, or by editing and re-running `tools/setup_input.gd`.
+- **Input actions**: `move_left/right/up/down` and `pause`, bound to WASD +
+  arrows and Esc/P. All use *physical* keycodes so they work on non-QWERTY
+  layouts. Add game-specific actions as the design calls for them, in Project
+  Settings → Input Map, or by editing and re-running `tools/setup_input.gd`.
 
 ## Verifying changes
 

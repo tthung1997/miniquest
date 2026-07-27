@@ -11,9 +11,6 @@ func _init() -> void:
 	_add_action("move_right", [KEY_D, KEY_RIGHT])
 	_add_action("move_up", [KEY_W, KEY_UP])
 	_add_action("move_down", [KEY_S, KEY_DOWN])
-	_add_action("jump", [KEY_SPACE, KEY_Z])
-	_add_action("attack", [KEY_J, KEY_X])
-	_add_action("dash", [KEY_K, KEY_C])
 	_add_action("pause", [KEY_ESCAPE, KEY_P])
 
 	var err := ProjectSettings.save()
