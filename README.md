@@ -12,7 +12,16 @@ A 2D game built with **Godot 4.7** and **GDScript**.
 2. Open Godot, click **Import**, and select `project.godot` in this folder.
 3. Press **F5** to run.
 
-On this machine the engine lives at `S:\Godot\Godot_v4.7.1-stable_win64_console.exe`.
+Command-line tooling finds the engine via the `GODOT` environment variable,
+falling back to `S:\Godot\Godot_v4.7.1-stable_win64_console.exe`. If yours lives
+elsewhere, set it once:
+
+```powershell
+$env:GODOT = "C:\path\to\Godot_v4.7.1-stable_win64_console.exe"
+```
+
+Use a `_console` build — the plain `.exe` detaches from the terminal on Windows
+and you will see no output.
 
 ## Layout
 
@@ -23,7 +32,7 @@ scripts/      .gd source files
 assets/       art, audio, fonts (imported by Godot, never hand-edited)
 resources/    .tres data instances
 tools/        one-off CLI/editor scripts, not shipped game code
-.github/      Copilot instructions and skills
+.github/      Copilot instructions
 ```
 
 Keep a script and its scene at mirrored paths, e.g. `scenes/ui/main_menu.tscn`
@@ -44,12 +53,20 @@ pairs with `scripts/ui/main_menu.gd`.
 ## Verifying changes
 
 ```powershell
-& "S:\Godot\Godot_v4.7.1-stable_win64_console.exe" --headless --path . --quit
+pwsh -File tools/check.ps1
 ```
 
-Parses every script and scene and exits. A clean run means no syntax, type or
-scene-loading errors. See `.github/skills/godot-headless-workflow/SKILL.md` for
-importing assets, running tool scripts and exporting builds.
+Parses every `.gd` file individually, then boots the project to exercise scene
+loading. Exits 0 when everything is clean, 1 otherwise.
+
+Do not use `--headless --path . --quit` on its own as a check. It only parses
+scripts reachable from the main scene, so a script nothing instances yet is
+never looked at, and it exits 0 even when it prints a parse error. `check.ps1`
+works around both by running `--check-only` per file and scanning boot output
+for errors.
+
+After adding art, audio or fonts, run the engine with `--headless --path .
+--import` to generate their `.import` sidecars, and commit those.
 
 ## Conventions
 
