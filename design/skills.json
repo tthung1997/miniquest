@@ -1,0 +1,350 @@
+{
+  "version": 1,
+  "status": "PROPOSAL — names, numbers and effects are a first draft for review. Balance numbers are placeholders chosen to be internally consistent, not tuned.",
+
+  "conventions": {
+    "power_formula": "power = base_power + power_per_level * (level - 1) + sum(scaling[stat] * hero_stat)",
+    "cooldown_formula": "cooldown = max(0.2, cooldown - cooldown_reduction_per_level * (level - 1))",
+    "scaling": "A map, not a single stat. DESIGN.md assumed one scaling stat per skill, but hybrid classes need skills that draw on two — this is what makes a Spellblade's kit actually hybrid rather than just a stat-growth label.",
+    "target_modes": {
+      "nearest_enemy": "Fires at whichever enemy is closest.",
+      "around_hero": "Hits everything within range of the hero.",
+      "self": "Buffs, heals or moves the hero."
+    },
+    "supports_auto_cast": "Whether the player is allowed to set this skill to auto-cast. False for reactive skills, where firing on cooldown defeats the point.",
+    "max_level": "Every skill caps at 5 for now. Worth revisiting once skill points have a budget.",
+
+    "balance": {
+      "how_these_numbers_were_derived": "Not eyeballed. Each damage skill was solved backwards from a target effective damage per second, then split into its three sources.",
+      "damage_split": {
+        "stats": 0.50,
+        "skill_levels": 0.35,
+        "flat_base": 0.15,
+        "why": "Stats are the largest single contributor, which is the point of the design. Skill levels are the next largest so skill points feel worth spending — maxing a skill roughly doubles it. Flat base is small so a skill is never build-independent."
+      },
+      "effective_dps_targets": { "tier_0": 35, "tier_1": 60, "tier_2": 85 },
+      "tier_2_uplift": 1.42,
+      "expected_targets_per_cast": {
+        "around_hero": 3.0,
+        "nearest_enemy": 1.0,
+        "piercing_or_multishot": 1.5,
+        "meteor_style_delayed_area": 2.5,
+        "why": "Effective dps is per-cast damage times the enemies a cast is expected to touch mid-run. Without this, single-target skills look far stronger than they are in a swarm."
+      },
+      "reference_hero": "Level 15, all 28 free points spent: a pure build reaches 65 in its primary stat; a hybrid reaches 52 primary and 25 in its second.",
+      "power_is_a_total": "For any skill that hits more than once, power is the total across all hits, not per hit.",
+      "known_gaps": [
+        "Utility skills (target: self) were not solved this way — their power means percent, seconds or healing depending on the skill, so there is no common unit to balance against.",
+        "Enemy health and damage do not exist yet, so these targets are internally consistent but not yet anchored to anything real.",
+        "Cooldown reduction stacks from three sources (skill levels, the accessory slot, Arcane Surge) with only a 0.2s floor stopping it. Untested and a classic place for a build to break the game.",
+        "Single-target skills are structurally weak in a swarm game. The expected_targets numbers compensate on paper, which is why Shadow Strike hits for ~400 — worth sanity-checking once enemies exist."
+      ]
+    }
+  },
+
+  "skills": [
+    {
+      "id": "whirl",
+      "name": "Whirl",
+      "class": "novice",
+      "description": "A clumsy spin that clips anything standing too close. Draws on all three offensive stats equally, so it stays usable whichever class you become.",
+      "target": "around_hero",
+      "scaling": { "strength": 0.28, "dexterity": 0.28, "intelligence": 0.28 },
+      "base_power": 7,
+      "power_per_level": 4,
+      "cooldown": 5.0,
+      "cooldown_reduction_per_level": 0.2,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+    {
+      "id": "second_wind",
+      "name": "Second Wind",
+      "class": "novice",
+      "description": "Catch your breath and recover a chunk of health.",
+      "target": "self",
+      "scaling": { "vitality": 1.0 },
+      "base_power": 12,
+      "power_per_level": 5,
+      "cooldown": 20.0,
+      "cooldown_reduction_per_level": 1.0,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Heals for its power value."
+    },
+
+    {
+      "id": "cleave",
+      "name": "Cleave",
+      "class": "warrior",
+      "description": "A wide horizontal swing through everything in front of you.",
+      "target": "around_hero",
+      "scaling": { "strength": 0.49 },
+      "base_power": 10,
+      "power_per_level": 6,
+      "cooldown": 4.0,
+      "cooldown_reduction_per_level": 0.2,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+    {
+      "id": "bulwark",
+      "name": "Bulwark",
+      "class": "warrior",
+      "description": "Set your feet and take far less damage for a few seconds.",
+      "target": "self",
+      "scaling": { "vitality": 0.6 },
+      "base_power": 20,
+      "power_per_level": 6,
+      "cooldown": 16.0,
+      "cooldown_reduction_per_level": 0.8,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Power is read as percent damage reduction, capped at 70%, lasting 4s."
+    },
+
+    {
+      "id": "firebolt",
+      "name": "Firebolt",
+      "class": "mage",
+      "description": "A fast bolt at the nearest target. Cheap, constant, reliable.",
+      "target": "nearest_enemy",
+      "scaling": { "intelligence": 0.88 },
+      "base_power": 17,
+      "power_per_level": 10,
+      "cooldown": 2.5,
+      "cooldown_reduction_per_level": 0.15,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+    {
+      "id": "frost_nova",
+      "name": "Frost Nova",
+      "class": "mage",
+      "description": "A ring of ice that hurts a little and slows a lot.",
+      "target": "around_hero",
+      "scaling": { "intelligence": 0.66 },
+      "base_power": 13,
+      "power_per_level": 7,
+      "cooldown": 8.0,
+      "cooldown_reduction_per_level": 0.4,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Slows everything hit by 50% for 3s. The Mage's answer to being surrounded."
+    },
+
+    {
+      "id": "piercing_shot",
+      "name": "Piercing Shot",
+      "class": "ranger",
+      "description": "An arrow that punches through everything in a line.",
+      "target": "nearest_enemy",
+      "scaling": { "dexterity": 0.74 },
+      "base_power": 14,
+      "power_per_level": 8,
+      "cooldown": 3.0,
+      "cooldown_reduction_per_level": 0.15,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Pierces all enemies along its path rather than stopping at the first."
+    },
+    {
+      "id": "swift_step",
+      "name": "Swift Step",
+      "class": "ranger",
+      "description": "A burst of speed to get out of a closing circle.",
+      "target": "self",
+      "scaling": { "dexterity": 0.4 },
+      "base_power": 25,
+      "power_per_level": 5,
+      "cooldown": 12.0,
+      "cooldown_reduction_per_level": 0.6,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Power is read as percent move speed, lasting 3s."
+    },
+
+    {
+      "id": "whirlwind",
+      "name": "Whirlwind",
+      "class": "berserker",
+      "description": "Spin continuously, hitting everything around you again and again.",
+      "target": "around_hero",
+      "scaling": { "strength": 1.26 },
+      "base_power": 25,
+      "power_per_level": 14,
+      "cooldown": 7.0,
+      "cooldown_reduction_per_level": 0.3,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Hits four times over 2s. Power is the total across all four, not per hit."
+    },
+    {
+      "id": "blood_frenzy",
+      "name": "Blood Frenzy",
+      "class": "berserker",
+      "description": "The closer to death you are, the faster you swing.",
+      "target": "self",
+      "scaling": { "strength": 0.8 },
+      "base_power": 30,
+      "power_per_level": 8,
+      "cooldown": 18.0,
+      "cooldown_reduction_per_level": 0.9,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Attack speed bonus scaled by missing health, lasting 6s. Rewards staying in the swarm."
+    },
+
+    {
+      "id": "meteor",
+      "name": "Meteor",
+      "class": "archmage",
+      "description": "Call down a rock. It lands late and it lands hard.",
+      "target": "nearest_enemy",
+      "scaling": { "intelligence": 2.09 },
+      "base_power": 41,
+      "power_per_level": 24,
+      "cooldown": 10.0,
+      "cooldown_reduction_per_level": 0.5,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "1s delay before impact, large radius. Enemies can walk out of it."
+    },
+    {
+      "id": "arcane_surge",
+      "name": "Arcane Surge",
+      "class": "archmage",
+      "description": "Everything comes off cooldown faster for a short window.",
+      "target": "self",
+      "scaling": { "intelligence": 0.5 },
+      "base_power": 25,
+      "power_per_level": 6,
+      "cooldown": 25.0,
+      "cooldown_reduction_per_level": 1.0,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Power is read as percent cooldown rate, lasting 6s."
+    },
+
+    {
+      "id": "shadow_strike",
+      "name": "Shadow Strike",
+      "class": "assassin",
+      "description": "Blink to the target and hit it where it cannot see you.",
+      "target": "nearest_enemy",
+      "scaling": { "dexterity": 3.14 },
+      "base_power": 61,
+      "power_per_level": 36,
+      "cooldown": 6.0,
+      "cooldown_reduction_per_level": 0.3,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Teleports the hero behind the target and always crits. Doubles as mobility, which is the real reason to take it."
+    },
+    {
+      "id": "vanish",
+      "name": "Vanish",
+      "class": "assassin",
+      "description": "Drop out of sight. Nothing can target you while you are gone.",
+      "target": "self",
+      "scaling": { "dexterity": 0.3 },
+      "base_power": 15,
+      "power_per_level": 3,
+      "cooldown": 22.0,
+      "cooldown_reduction_per_level": 1.0,
+      "max_level": 5,
+      "supports_auto_cast": false,
+      "effect": "Power is read as tenths of a second of untargetability. Manual only: a panic button that fires itself is not a panic button."
+    },
+
+    {
+      "id": "flame_brand",
+      "name": "Flame Brand",
+      "class": "spellblade",
+      "description": "Set your weapon alight; every swing carries the fire.",
+      "target": "self",
+      "scaling": { "strength": 0.6, "intelligence": 0.6 },
+      "base_power": 12,
+      "power_per_level": 4,
+      "cooldown": 14.0,
+      "cooldown_reduction_per_level": 0.7,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Auto-attacks deal bonus fire damage equal to power for 8s. The skill that makes STR and INT worth having at once."
+    },
+    {
+      "id": "rune_slash",
+      "name": "Rune Slash",
+      "class": "spellblade",
+      "description": "A cut that leaves a burning sigil hanging in the air.",
+      "target": "around_hero",
+      "scaling": { "strength": 0.74, "intelligence": 0.74 },
+      "base_power": 17,
+      "power_per_level": 10,
+      "cooldown": 5.0,
+      "cooldown_reduction_per_level": 0.25,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+
+    {
+      "id": "enchanted_volley",
+      "name": "Enchanted Volley",
+      "class": "arcane_archer",
+      "description": "Three arrows, each splitting into sparks on impact.",
+      "target": "nearest_enemy",
+      "scaling": { "dexterity": 1.36, "intelligence": 1.36 },
+      "base_power": 31,
+      "power_per_level": 18,
+      "cooldown": 4.5,
+      "cooldown_reduction_per_level": 0.2,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+    {
+      "id": "sigil_trap",
+      "name": "Sigil Trap",
+      "class": "arcane_archer",
+      "description": "Leave a rune on the ground behind you. It waits.",
+      "target": "self",
+      "scaling": { "dexterity": 0.5, "intelligence": 0.9 },
+      "base_power": 14,
+      "power_per_level": 5,
+      "cooldown": 9.0,
+      "cooldown_reduction_per_level": 0.4,
+      "max_level": 5,
+      "supports_auto_cast": true,
+      "effect": "Places a rune at the hero's position that detonates when an enemy touches it. Rewards kiting in circles."
+    },
+
+    {
+      "id": "flurry",
+      "name": "Flurry",
+      "class": "duelist",
+      "description": "A rapid sequence of thrusts at whatever is nearest.",
+      "target": "nearest_enemy",
+      "scaling": { "strength": 1.49, "dexterity": 1.49 },
+      "base_power": 34,
+      "power_per_level": 20,
+      "cooldown": 3.5,
+      "cooldown_reduction_per_level": 0.2,
+      "max_level": 5,
+      "supports_auto_cast": true
+    },
+    {
+      "id": "riposte",
+      "name": "Riposte",
+      "class": "duelist",
+      "description": "Turn the next blow you take into one of your own.",
+      "target": "self",
+      "scaling": { "strength": 0.5, "dexterity": 0.7 },
+      "base_power": 20,
+      "power_per_level": 7,
+      "cooldown": 12.0,
+      "cooldown_reduction_per_level": 0.6,
+      "max_level": 5,
+      "supports_auto_cast": false,
+      "effect": "Negates the next hit taken within 4s and reflects power as damage. Manual only: automated on cooldown it would almost always be spent on a hit that was not going to land."
+    }
+  ]
+}

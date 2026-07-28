@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "status": "PROPOSAL — every name, number and skill here is a first draft for review, not an agreed design. See DESIGN.md for the decisions this is built on.",
+
+  "progression": {
+    "starting_stats": { "strength": 5, "dexterity": 5, "intelligence": 5, "vitality": 5 },
+    "free_points_per_level": 2,
+    "notes": [
+      "Class growth is applied on every level gained and accumulates down the tree: a Berserker gains Novice + Warrior + Berserker growth each level.",
+      "health_per_vitality is inherited from the nearest ancestor that sets it, so tier 2 classes only declare it when they change it.",
+      "Automatic growth deliberately outweighs free points, so a badly allocated hero is suboptimal but never broken.",
+      "By level 15 a hero has ~28 free points. A pure advancement needs ~8 of them; a hybrid needs ~13. That gap is what makes hybrids a deliberate commitment rather than a default."
+    ]
+  },
+
+  "classes": [
+    {
+      "id": "novice",
+      "name": "Novice",
+      "tier": 0,
+      "prerequisites": [],
+      "required_level": 1,
+      "stat_requirements": {},
+      "stat_growth": { "strength": 0.5, "dexterity": 0.5, "intelligence": 0.5, "vitality": 0.5 },
+      "scaling_affinity": {},
+      "health_per_vitality": 1.0,
+      "skills": ["whirl", "second_wind"],
+      "description": "Levels 1-4, before the first advancement. Grows evenly and slowly in everything, which is exactly why you want out of it.",
+      "design_note": "Not in DESIGN.md, which said tier 1 has no prerequisite. Adding a tier 0 makes the tree uniform, gives the classless phase an identity, and means a level 1 hero has a skill to bring into a run instead of only auto-attacking."
+    },
+
+    {
+      "id": "warrior",
+      "name": "Warrior",
+      "tier": 1,
+      "prerequisites": ["novice"],
+      "required_level": 5,
+      "stat_requirements": {},
+      "stat_growth": { "strength": 2.5, "vitality": 1.5 },
+      "scaling_affinity": {},
+      "health_per_vitality": 1.2,
+      "skills": ["cleave", "bulwark"],
+      "description": "Stands in the middle of the swarm and stays there. Highest survivability of the three, shortest reach."
+    },
+    {
+      "id": "mage",
+      "name": "Mage",
+      "tier": 1,
+      "prerequisites": ["novice"],
+      "required_level": 5,
+      "stat_requirements": {},
+      "stat_growth": { "intelligence": 2.5, "vitality": 1.5 },
+      "scaling_affinity": {},
+      "health_per_vitality": 0.8,
+      "skills": ["firebolt", "frost_nova"],
+      "description": "Highest raw damage and the best crowd control, on the thinnest health pool. Punished hard for being caught."
+    },
+    {
+      "id": "ranger",
+      "name": "Ranger",
+      "tier": 1,
+      "prerequisites": ["novice"],
+      "required_level": 5,
+      "stat_requirements": {},
+      "stat_growth": { "dexterity": 2.5, "vitality": 1.5 },
+      "scaling_affinity": {},
+      "health_per_vitality": 1.0,
+      "skills": ["piercing_shot", "swift_step"],
+      "description": "Fast attacks, fast feet. Wins by never being where the swarm is, loses when cornered."
+    },
+
+    {
+      "id": "berserker",
+      "name": "Berserker",
+      "tier": 2,
+      "prerequisites": ["warrior"],
+      "required_level": 15,
+      "stat_requirements": { "strength": 45 },
+      "stat_growth": { "strength": 2.0 },
+      "scaling_affinity": { "strength": 0.2 },
+      "skills": ["whirlwind", "blood_frenzy"],
+      "description": "Trades the Warrior's caution for output that climbs as its health falls."
+    },
+    {
+      "id": "archmage",
+      "name": "Archmage",
+      "tier": 2,
+      "prerequisites": ["mage"],
+      "required_level": 15,
+      "stat_requirements": { "intelligence": 45 },
+      "stat_growth": { "intelligence": 2.0 },
+      "scaling_affinity": { "intelligence": 0.2 },
+      "skills": ["meteor", "arcane_surge"],
+      "description": "Slow, enormous spells. The highest ceiling in the game and the least margin for a mistake."
+    },
+    {
+      "id": "assassin",
+      "name": "Assassin",
+      "tier": 2,
+      "prerequisites": ["ranger"],
+      "required_level": 15,
+      "stat_requirements": { "dexterity": 45 },
+      "stat_growth": { "dexterity": 2.0 },
+      "scaling_affinity": { "dexterity": 0.2 },
+      "skills": ["shadow_strike", "vanish"],
+      "description": "Deletes single targets and disengages. Struggles against density."
+    },
+
+    {
+      "id": "spellblade",
+      "name": "Spellblade",
+      "tier": 2,
+      "prerequisites": ["warrior", "mage"],
+      "required_level": 15,
+      "stat_requirements": { "strength": 25, "intelligence": 25 },
+      "stat_growth": { "strength": 1.0, "intelligence": 1.0 },
+      "scaling_affinity": { "strength": 0.1, "intelligence": 0.1 },
+      "skills": ["flame_brand", "rune_slash"],
+      "description": "The sword-swinging mage. Reachable from either side: a Warrior who invested INT, or a Mage who invested STR."
+    },
+    {
+      "id": "arcane_archer",
+      "name": "Arcane Archer",
+      "tier": 2,
+      "prerequisites": ["mage", "ranger"],
+      "required_level": 15,
+      "stat_requirements": { "dexterity": 25, "intelligence": 25 },
+      "stat_growth": { "dexterity": 1.0, "intelligence": 1.0 },
+      "scaling_affinity": { "dexterity": 0.1, "intelligence": 0.1 },
+      "skills": ["enchanted_volley", "sigil_trap"],
+      "description": "Ranged damage that covers ground rather than pointing at one enemy."
+    },
+    {
+      "id": "duelist",
+      "name": "Duelist",
+      "tier": 2,
+      "prerequisites": ["warrior", "ranger"],
+      "required_level": 15,
+      "stat_requirements": { "strength": 25, "dexterity": 25 },
+      "stat_growth": { "strength": 1.0, "dexterity": 1.0 },
+      "scaling_affinity": { "strength": 0.1, "dexterity": 0.1 },
+      "skills": ["flurry", "riposte"],
+      "description": "Melee that keeps moving. Weaker per hit than a Berserker, far harder to pin down."
+    }
+  ],
+
+  "tree_shape": {
+    "notes": [
+      "Three base classes, each with one pure advancement and access to two hybrids. Every pair of base classes shares exactly one hybrid, so the tree is a triangle rather than three isolated columns.",
+      "A hybrid lists two prerequisites, so it is reachable from either parent. DESIGN.md's single-prerequisite phrasing does not cover this — the schema needs a list.",
+      "Tier 3 is deliberately absent until the game exists."
+    ],
+    "reachability_check": {
+      "notes": "All three base classes grow their primary stat at the same rate, so every advancement costs the same from whichever side you approach it. That symmetry is the point: it makes the tree explainable without a spreadsheet.",
+      "stats_at_level_15_before_free_points": {
+        "warrior": { "strength": 37, "dexterity": 12, "intelligence": 12, "vitality": 27 },
+        "mage": { "strength": 12, "dexterity": 12, "intelligence": 37, "vitality": 27 },
+        "ranger": { "strength": 12, "dexterity": 37, "intelligence": 12, "vitality": 27 }
+      },
+      "free_points_available_by_15": 28,
+      "cost_in_free_points": {
+        "any_pure_advancement": 8,
+        "any_hybrid_advancement": 13
+      },
+      "open_question": "Durability identity now rides on health_per_vitality rather than on VIT growth, because differing VIT growth was what broke the cost symmetry. Whether one field is enough to make a Mage feel fragile is untested."
+    }
+  }
+}
