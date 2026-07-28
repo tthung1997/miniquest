@@ -64,25 +64,45 @@ Four stats: **STR, DEX, INT, VIT**.
 
 Each level grants:
 - **Automatic class growth** — the majority of stat gain, applied without input.
-- **A small pool of free points** (~2–3) allocated by the player.
+  Every base class gains 4.0 points per level, distributed differently.
+- **Two free points** allocated by the player.
 
 Automatic growth deliberately dominates. With isolated slots and no respec, a
 badly allocated hero must be *suboptimal*, never *broken*.
 
 ### 5.3 Class tree
 
-- **Tier 1 at ~level 5**, three base classes. Short classless phase — three or
-  four runs, long enough to feel earned, short enough that nobody plays a blank
-  hero for an hour.
+Concrete classes, skills and numbers live in `design/classes.json` and
+`design/skills.json`.
+
+- **Tier 0 "Novice" from level 1.** Levels 1–4 are not classless: Novice is a
+  real class that grows every stat slowly and grants two skills. Without it a
+  level 1 hero has no defined growth and no skill to bring into a run.
+- **Tier 1 at ~level 5**, three base classes. Short enough that nobody plays a
+  Novice for an hour, long enough that the choice feels earned.
 - **Tier 2 at ~level 15**, branching. **Tier 3 later**, once the game is known.
 - Each advancement is permanent and adds stat growth and a skill list on top of
   what came before.
+- **An advancement may have more than one prerequisite.** Hybrids list two, so
+  they are reachable from either parent.
 
-**A class never restricts anything.** It defines stat growth and scaling
-affinities. Weapons and skills declare what they scale off — sword with STR, staff
-with INT, bow with DEX. A mage swinging a sword deals poor damage *because they
-have no STR*, not because a rule forbids it. Hybrids therefore cost nothing to
-express.
+**A class never restricts anything.** It defines stat growth, scaling affinity
+and `health_per_vitality`. Weapons and skills declare which stats they scale
+off — a sword draws on STR, a staff on INT, a bow on DEX. A mage swinging a
+sword deals poor damage *because they have no STR*, not because a rule forbids
+it. Hybrids therefore cost nothing to express.
+
+**Skills scale off a map of stats, not a single one.** A Spellblade's Rune Slash
+draws on STR and INT together. With one stat per skill, half the investment that
+defines a hybrid would do nothing on any given skill, and the class would be a
+label rather than a playstyle.
+
+**Durability is `health_per_vitality`, set per class** — Warrior 1.2, Mage 0.8,
+Ranger 1.0, inherited from the nearest ancestor that sets it. VIT growth is
+deliberately identical across all three base classes, because unequal VIT growth
+was what broke the symmetry of advancement costs. This is the one place a class
+carries a property rather than expressing it through stats, and it is a
+concession, not a pattern to repeat.
 
 **Tier-2 advancements are gated on stat thresholds**, which is what makes free
 point allocation matter:
@@ -93,7 +113,9 @@ point allocation matter:
 | Spellblade | STR 25 + INT 25 | A warrior who invested INT, *or* a mage who invested STR |
 | Archmage | INT 45 | A mage spending points naturally |
 
-Default allocation walks into the pure advancement. Hybrids require ten levels of
+Verified against the growth numbers: by level 15 a hero has 28 free points, every
+pure advancement costs 8 of them and every hybrid costs 13, from either parent.
+Default allocation walks into the pure advancement; a hybrid takes ten levels of
 deliberate off-class investment at a real cost to early power. The tree crosses
 and converges rather than being three isolated columns.
 
@@ -108,14 +130,22 @@ undermine the weight of the tier-2 stat commitment.
 ### 5.5 Skills
 
 - **Class-granted.** Each advancement unlocks its skill list; skill points level
-  them up.
+  them up. Skills accumulate down the lineage, so a hero keeps everything earlier
+  tiers gave them.
 - **A run starts with one equipped skill.** More are acquired mid-run from the
   upgrade offers.
 - **Maximum four active skills** at the end of a run.
 - Skills have cooldowns, and each has a per-skill **auto-cast / manual toggle**.
   Auto fires the moment the cooldown is ready; manual waits for a key press. Set
   per skill, so filler damage can be automated while a heal or panic button is
-  held for timing.
+  held for timing. A few reactive skills refuse auto-cast entirely — a panic
+  button that fires itself is not a panic button.
+- **Damage is split deliberately**: half from stats, a third from skill levels,
+  the rest flat. Stats stay the largest contributor, maxing a skill roughly
+  doubles it, and no skill is ever build-independent.
+- Because skills accumulate, **Novice's skills must stay useful to every class**.
+  Whirl therefore scales off STR, DEX and INT equally, so an Archmage is not
+  offered a dead strength skill for the rest of the hero's life.
 
 ### 5.6 Equipment
 
@@ -289,10 +319,25 @@ Out until later:
 
 ## 11. Still undecided
 
-- Identities and fantasies of the three base classes.
-- The starting skill list per class, and what each does.
+- **Whether a Spellblade reached via Warrior and one reached via Mage should be
+  the same class.** Growth accumulates along the lineage, so today they are not:
+  the Warrior route carries STR and VIT growth, the Mage route INT and VIT. Same
+  name, different character. Possibly a feature, possibly confusing — the
+  alternative is for an advancement to normalise growth rather than add to it.
 - Enemy roster and the shape of the difficulty ramp (spawn rate, hp, damage curves).
-- Exact numbers: stat-to-damage formulas, free points per level, xp curve.
+- The generic in-run upgrade pool — heals, stat boosts, screen clears. Run-to-run
+  variety before tier 2 depends on it, and it does not exist as data yet.
+- Whether `health_per_vitality` alone is enough to make a Mage feel fragile.
+- Cooldown reduction stacks from skill levels, the accessory slot and Arcane
+  Surge against only a 0.2s floor. An obvious place for a build to break the game.
+- Whether single-target skills survive contact with a real swarm. The balance
+  numbers assume an area skill touches three enemies and a single-target skill
+  one; if a swarm is denser, single-target skills are dead.
+- Item list, and the xp curve.
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
 - Exact arena dimensions and hero sprite height.
+
+**None of the balance numbers are anchored.** Enemy health and damage do not
+exist, so `design/skills.json` is internally consistent and validated against
+nothing. It will need revisiting the moment the arena is playable.

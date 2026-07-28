@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "status": "PROPOSAL — names, numbers and effects are a first draft for review. Balance numbers are placeholders chosen to be internally consistent, not tuned.",
+  "status": "Structure agreed and reflected in DESIGN.md section 5.5. Damage numbers are solved for consistency, not validated: no enemy exists to test them against.",
 
   "conventions": {
     "power_formula": "power = base_power + power_per_level * (level - 1) + sum(scaling[stat] * hero_stat)",
     "cooldown_formula": "cooldown = max(0.2, cooldown - cooldown_reduction_per_level * (level - 1))",
-    "scaling": "A map, not a single stat. DESIGN.md assumed one scaling stat per skill, but hybrid classes need skills that draw on two — this is what makes a Spellblade's kit actually hybrid rather than just a stat-growth label.",
+    "scaling": "A map, not a single stat. A hybrid class needs skills that draw on two stats at once, or half the investment that defines the class does nothing on any given skill.",
     "target_modes": {
       "nearest_enemy": "Fires at whichever enemy is closest.",
       "around_hero": "Hits everything within range of the hero.",

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "status": "PROPOSAL — every name, number and skill here is a first draft for review, not an agreed design. See DESIGN.md for the decisions this is built on.",
+  "status": "Structure agreed and reflected in DESIGN.md section 5.3. Numbers are a first draft: verified internally consistent, but not validated against any gameplay.",
 
   "progression": {
     "starting_stats": { "strength": 5, "dexterity": 5, "intelligence": 5, "vitality": 5 },
@@ -26,7 +26,7 @@
       "health_per_vitality": 1.0,
       "skills": ["whirl", "second_wind"],
       "description": "Levels 1-4, before the first advancement. Grows evenly and slowly in everything, which is exactly why you want out of it.",
-      "design_note": "Not in DESIGN.md, which said tier 1 has no prerequisite. Adding a tier 0 makes the tree uniform, gives the classless phase an identity, and means a level 1 hero has a skill to bring into a run instead of only auto-attacking."
+      "design_note": "Levels 1-4 are not classless. Novice gives them defined stat growth and a skill to bring into a run, which a true classless phase leaves undefined."
     },
 
     {
@@ -147,7 +147,7 @@
   "tree_shape": {
     "notes": [
       "Three base classes, each with one pure advancement and access to two hybrids. Every pair of base classes shares exactly one hybrid, so the tree is a triangle rather than three isolated columns.",
-      "A hybrid lists two prerequisites, so it is reachable from either parent. DESIGN.md's single-prerequisite phrasing does not cover this — the schema needs a list.",
+      "A hybrid lists two prerequisites, so it is reachable from either parent. Note that growth accumulates along the lineage, so a Spellblade reached via Warrior is not the same character as one reached via Mage — see DESIGN.md section 11.",
       "Tier 3 is deliberately absent until the game exists."
     ],
     "reachability_check": {
