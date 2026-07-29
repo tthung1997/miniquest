@@ -16,18 +16,18 @@ const BACKDROPS: Array[Color] = [
 	Color(0.27, 0.42, 0.24),
 	Color(1.0, 0.0, 1.0),
 ]
-const ZOOM: int = 6
 const GRID_STEP: int = 8
 const GRID_COLOR: Color = Color(1.0, 1.0, 1.0, 0.16)
 const BORDER_COLOR: Color = Color(1.0, 1.0, 1.0, 0.45)
 const BASELINE_COLOR: Color = Color(1.0, 0.35, 0.35, 0.7)
+const NECK_COLOR: Color = Color(0.35, 0.75, 1.0, 0.7)
 
 @export var sheet: Texture2D:
 	set(value):
 		sheet = value
 		if is_node_ready():
 			_apply_sheet()
-@export var frame_size: Vector2i = Vector2i(32, 32):
+@export var frame_size: Vector2i = Vector2i(64, 64):
 	set(value):
 		frame_size = Vector2i(maxi(value.x, 1), maxi(value.y, 1))
 		if is_node_ready():
@@ -35,10 +35,21 @@ const BASELINE_COLOR: Color = Color(1.0, 0.35, 0.35, 0.7)
 @export_range(1, 64) var frame_count: int = 4
 @export_range(0, 32) var row: int = 0
 @export_range(1.0, 24.0, 0.5) var fps: float = 8.0
+@export_range(1, 12) var zoom: int = 4:
+	set(value):
+		zoom = clampi(value, 1, 12)
+		if is_node_ready():
+			_zoomed.scale = Vector2(zoom, zoom)
+			_zoom_caption.text = "%dx - inspection only" % zoom
+			queue_redraw()
 @export var playing: bool = true
 @export var show_grid: bool = true
-## Logical row the feet are expected to rest on, drawn as a guide. -1 hides it.
-@export var baseline_row: int = 29
+@export_group("Layer anchors")
+## Logical row the feet rest on, drawn in red. -1 hides it. Every layer of a
+## paper-doll character must agree on this row or equipment will float.
+@export var baseline_row: int = 61
+## Logical row the head joins the body, drawn in blue. -1 hides it.
+@export var neck_row: int = 30
 
 var _frame: int = 0
 var _elapsed: float = 0.0
@@ -51,12 +62,14 @@ var _rows: int = 1
 @onready var _zoomed: Sprite2D = $Zoomed
 @onready var _info: Label = $HUD/Root/Info
 @onready var _hint: Label = $HUD/Root/Hint
+@onready var _zoom_caption: Label = $HUD/Root/ZoomCaption
 
 
 func _ready() -> void:
 	_hint.text = "space play/pause    left/right frame    up/down row    b backdrop    g grid"
 	_backdrop_rect.color = BACKDROPS[_backdrop]
-	_zoomed.scale = Vector2(ZOOM, ZOOM)
+	_zoomed.scale = Vector2(zoom, zoom)
+	_zoom_caption.text = "%dx - inspection only" % zoom
 	_apply_sheet()
 
 
@@ -106,26 +119,26 @@ func _draw() -> void:
 	if sheet == null or not show_grid:
 		return
 
-	var extent: Vector2 = Vector2(frame_size) * float(ZOOM)
+	var extent: Vector2 = Vector2(frame_size) * float(zoom)
 	var origin: Vector2 = _zoomed.position - extent * 0.5
 
 	for x in range(GRID_STEP, frame_size.x, GRID_STEP):
-		var at_x: float = origin.x + float(x * ZOOM)
+		var at_x: float = origin.x + float(x * zoom)
 		draw_line(Vector2(at_x, origin.y), Vector2(at_x, origin.y + extent.y), GRID_COLOR, 1.0)
 	for y in range(GRID_STEP, frame_size.y, GRID_STEP):
-		var at_y: float = origin.y + float(y * ZOOM)
+		var at_y: float = origin.y + float(y * zoom)
 		draw_line(Vector2(origin.x, at_y), Vector2(origin.x + extent.x, at_y), GRID_COLOR, 1.0)
 
 	draw_rect(Rect2(origin, extent), BORDER_COLOR, false, 2.0)
+	_draw_anchor(origin, extent, baseline_row, BASELINE_COLOR)
+	_draw_anchor(origin, extent, neck_row, NECK_COLOR)
 
-	if baseline_row >= 0 and baseline_row < frame_size.y:
-		var base_y: float = origin.y + float((baseline_row + 1) * ZOOM)
-		draw_line(
-			Vector2(origin.x, base_y),
-			Vector2(origin.x + extent.x, base_y),
-			BASELINE_COLOR,
-			2.0
-		)
+
+func _draw_anchor(origin: Vector2, extent: Vector2, anchor_row: int, color: Color) -> void:
+	if anchor_row < 0 or anchor_row >= frame_size.y:
+		return
+	var at_y: float = origin.y + float((anchor_row + 1) * zoom)
+	draw_line(Vector2(origin.x, at_y), Vector2(origin.x + extent.x, at_y), color, 2.0)
 
 
 func _apply_sheet() -> void:
