@@ -49,8 +49,11 @@ $failed = @()
 try {
 	# 1. Per-script parse check. --check-only exits 1 on a parse error and, unlike
 	#    --quit, does not care whether the script is reachable from a scene.
+	#    addons/ is skipped: third-party plugin code is not ours to fix, and a
+	#    parse error in someone else's addon should not fail this gate. The
+	#    project boot below still exercises whatever an addon registers.
 	$scripts = Get-ChildItem -Recurse -Filter *.gd -File |
-		Where-Object { $_.FullName -notmatch '\\\.godot\\' }
+		Where-Object { $_.FullName -notmatch '\\(\.godot|addons)\\' }
 
 	foreach ($file in $scripts) {
 		$rel = $file.FullName.Substring($root.Length + 1) -replace '\\', '/'
