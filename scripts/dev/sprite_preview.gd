@@ -48,9 +48,9 @@ const NECK_COLOR: Color = Color(0.35, 0.75, 1.0, 0.7)
 @export_group("Layer anchors")
 ## Logical row the feet rest on, drawn in red. -1 hides it. Every layer of a
 ## paper-doll character must agree on this row or equipment will float.
-@export var baseline_row: int = 61
+@export var baseline_row: int = 56
 ## Logical row the head joins the body, drawn in blue. -1 hides it.
-@export var neck_row: int = 30
+@export var neck_row: int = 34
 
 var _frame: int = 0
 var _elapsed: float = 0.0
