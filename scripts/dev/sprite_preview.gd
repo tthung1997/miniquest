@@ -31,6 +31,7 @@ const NECK_COLOR: Color = Color(0.35, 0.75, 1.0, 0.7)
 	set(value):
 		frame_size = Vector2i(maxi(value.x, 1), maxi(value.y, 1))
 		if is_node_ready():
+			_layout()
 			_apply_sheet()
 @export_range(1, 64) var frame_count: int = 4
 @export_range(0, 32) var row: int = 0
@@ -41,7 +42,7 @@ const NECK_COLOR: Color = Color(0.35, 0.75, 1.0, 0.7)
 		if is_node_ready():
 			_zoomed.scale = Vector2(zoom, zoom)
 			_zoom_caption.text = "%dx - inspection only" % zoom
-			queue_redraw()
+			_layout()
 @export var playing: bool = true
 @export var show_grid: bool = true
 @export_group("Layer anchors")
@@ -62,6 +63,7 @@ var _rows: int = 1
 @onready var _zoomed: Sprite2D = $Zoomed
 @onready var _info: Label = $HUD/Root/Info
 @onready var _hint: Label = $HUD/Root/Hint
+@onready var _native_caption: Label = $HUD/Root/NativeCaption
 @onready var _zoom_caption: Label = $HUD/Root/ZoomCaption
 
 
@@ -70,7 +72,9 @@ func _ready() -> void:
 	_backdrop_rect.color = BACKDROPS[_backdrop]
 	_zoomed.scale = Vector2(zoom, zoom)
 	_zoom_caption.text = "%dx - inspection only" % zoom
+	_layout()
 	_apply_sheet()
+	get_viewport().size_changed.connect(_layout)
 
 
 func _process(delta: float) -> void:
@@ -139,6 +143,25 @@ func _draw_anchor(origin: Vector2, extent: Vector2, anchor_row: int, color: Colo
 		return
 	var at_y: float = origin.y + float((anchor_row + 1) * zoom)
 	draw_line(Vector2(origin.x, at_y), Vector2(origin.x + extent.x, at_y), color, 2.0)
+
+
+func _layout() -> void:
+	var view: Vector2 = get_viewport_rect().size
+	var frame: Vector2 = Vector2(frame_size)
+
+	_backdrop_rect.size = view
+	_native.position = Vector2(view.x * 0.22, view.y * 0.46)
+	_zoomed.position = Vector2(view.x * 0.64, view.y * 0.46)
+
+	_caption_under(_native_caption, _native.position, frame.y * 0.5)
+	_caption_under(_zoom_caption, _zoomed.position, frame.y * float(zoom) * 0.5)
+	_hint.position = Vector2(12.0, view.y - 32.0)
+	queue_redraw()
+
+
+func _caption_under(caption: Label, anchor: Vector2, half_height: float) -> void:
+	caption.size = Vector2(240.0, 24.0)
+	caption.position = Vector2(anchor.x - 120.0, anchor.y + half_height + 14.0)
 
 
 func _apply_sheet() -> void:
