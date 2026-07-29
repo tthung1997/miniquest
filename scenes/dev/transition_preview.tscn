@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://c4nlopy63crxe"]
+
+[ext_resource type="Script" uid="uid://txly0psefmnr" path="res://scripts/dev/transition_preview.gd" id="1_sghwf"]
+[ext_resource type="Texture2D" uid="uid://cmug3enjs3r0v" path="res://assets/sprites/hero/hero_idle.png" id="2_x0rvr"]
+[ext_resource type="Texture2D" uid="uid://cbvc2ngkamgi1" path="res://assets/sprites/hero/hero_walk_4f.png" id="3_hqish"]
+
+[node name="TransitionPreview" type="Node2D" unique_id=740066063]
+script = ExtResource("1_sghwf")
+idle_sheet = ExtResource("2_x0rvr")
+walk_sheet = ExtResource("3_hqish")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1610126130]
+show_behind_parent = true
+
+[node name="Native" type="AnimatedSprite2D" parent="." unique_id=271340556]
+show_behind_parent = true
+
+[node name="Zoomed" type="AnimatedSprite2D" parent="." unique_id=1061320832]
+show_behind_parent = true
+
+[node name="Ghost" type="Sprite2D" parent="." unique_id=1139542089]
+show_behind_parent = true
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=2041176053]
+
+[node name="Root" type="Control" parent="HUD" unique_id=726933710]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Info" type="Label" parent="HUD/Root" unique_id=1299969875]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 412.0
+offset_bottom = 54.0
+
+[node name="Hint" type="Label" parent="HUD/Root" unique_id=1589429222]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 690.0
+offset_right = 13.0
+offset_bottom = 713.0

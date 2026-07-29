@@ -146,6 +146,8 @@ func _draw_anchor(origin: Vector2, extent: Vector2, anchor_row: int, color: Colo
 
 
 func _layout() -> void:
+	# Backdrop is a Control parented to a Node2D, so anchors have no parent rect
+	# to resolve against and leave it zero-sized; its size is set explicitly.
 	var view: Vector2 = get_viewport_rect().size
 	var frame: Vector2 = Vector2(frame_size)
 
