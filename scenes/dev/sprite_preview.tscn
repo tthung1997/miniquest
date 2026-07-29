@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cterdvd6q48r8"]
+
+[ext_resource type="Script" path="res://scripts/dev/sprite_preview.gd" id="1_u3j1e"]
+
+[node name="SpritePreview" type="Node2D" unique_id=253736062]
+script = ExtResource("1_u3j1e")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=2022267728]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.10980392, 0.11764706, 0.14901961, 1)
+
+[node name="Native" type="Sprite2D" parent="." unique_id=1504894838]
+position = Vector2(130, 190)
+
+[node name="Zoomed" type="Sprite2D" parent="." unique_id=87711925]
+position = Vector2(420, 186)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=179127538]
+
+[node name="Root" type="Control" parent="HUD" unique_id=975160108]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
+
+[node name="Info" type="Label" parent="HUD/Root" unique_id=924308143]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 11.0
+offset_bottom = 31.0
+
+[node name="Hint" type="Label" parent="HUD/Root" unique_id=1529903742]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 334.0
+offset_right = 11.0
+offset_bottom = 357.0
+
+[node name="NativeCaption" type="Label" parent="HUD/Root" unique_id=376621614]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 240.0
+offset_right = 250.0
+offset_bottom = 263.0
+text = "1:1 - actual in-game size"
+horizontal_alignment = 1
+
+[node name="ZoomCaption" type="Label" parent="HUD/Root" unique_id=1477461957]
+layout_mode = 0
+offset_left = 300.0
+offset_top = 300.0
+offset_right = 540.0
+offset_bottom = 323.0
+text = "6x - inspection only"
+horizontal_alignment = 1
