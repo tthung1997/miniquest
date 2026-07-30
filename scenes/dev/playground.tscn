@@ -7,6 +7,8 @@
 script = ExtResource("1_cp0t2")
 
 [node name="Hero" parent="." unique_id=839245312 instance=ExtResource("2_7qj6t")]
+speed = 250.0
+vertical_ratio = 1.0
 
 [node name="Camera" type="Camera2D" parent="Hero" unique_id=1826127716]
 limit_left = 0
