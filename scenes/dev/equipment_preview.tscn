@@ -1,0 +1,50 @@
+[gd_scene format=3 uid="uid://blsclsv3yu1ee"]
+
+[ext_resource type="Script" uid="uid://cehofuqk1u67s" path="res://scripts/dev/equipment_preview.gd" id="1_iwvcn"]
+[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/hero_frames.tres" id="2_l2ald"]
+[ext_resource type="SpriteFrames" path="res://resources/hat_frames.tres" id="3_g0sc0"]
+
+[node name="EquipmentPreview" type="Node2D" unique_id=771223977]
+script = ExtResource("1_iwvcn")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=213063383]
+show_behind_parent = true
+
+[node name="Native" type="Node2D" parent="." unique_id=1113639460]
+show_behind_parent = true
+
+[node name="Body" type="AnimatedSprite2D" parent="Native" unique_id=998252432]
+sprite_frames = ExtResource("2_l2ald")
+animation = &"idle"
+
+[node name="Hat" type="AnimatedSprite2D" parent="Native" unique_id=1101413377]
+sprite_frames = ExtResource("3_g0sc0")
+animation = &"idle"
+
+[node name="Zoomed" type="Node2D" parent="." unique_id=450439549]
+show_behind_parent = true
+
+[node name="Body" type="AnimatedSprite2D" parent="Zoomed" unique_id=1671630338]
+sprite_frames = ExtResource("2_l2ald")
+animation = &"idle"
+
+[node name="Hat" type="AnimatedSprite2D" parent="Zoomed" unique_id=1562724797]
+sprite_frames = ExtResource("3_g0sc0")
+animation = &"idle"
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=591543856]
+
+[node name="Root" type="Control" parent="HUD" unique_id=33240298]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Info" type="Label" parent="HUD/Root" unique_id=1257034632]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 532.0
+offset_bottom = 32.0
+
+[node name="Hint" type="Label" parent="HUD/Root" unique_id=1989803536]
+layout_mode = 0
