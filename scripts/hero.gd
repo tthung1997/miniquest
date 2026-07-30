@@ -24,12 +24,49 @@ const WALK_CLIP: StringName = &"walk"
 @export_range(0.3, 1.0, 0.05) var vertical_ratio: float = 0.6
 
 var _facing_right: bool = true
+var _layers: Array[AnimatedSprite2D] = []
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _equipment: Node2D = $Equipment
 
 
 func _ready() -> void:
+	_collect_layers()
 	_sprite.play(IDLE_CLIP)
+
+	# Copy the body's frame on its own change signals rather than polling in
+	# _process: a poll reads whatever the body had when this node last ran,
+	# which lags by a frame whenever tree order puts the hero first.
+	_sprite.frame_changed.connect(_sync_layers)
+	_sprite.animation_changed.connect(_sync_layers)
+	_sync_layers()
+
+
+## Equipment layers are whatever AnimatedSprite2D nodes sit under Equipment, so
+## a slot can be added in the editor without touching this script.
+func _collect_layers() -> void:
+	_layers.clear()
+	for child: Node in _equipment.get_children():
+		if child is AnimatedSprite2D:
+			var layer: AnimatedSprite2D = child as AnimatedSprite2D
+			# Layers must not run their own clock, or they drift against the body.
+			layer.stop()
+			layer.flip_h = not _facing_right
+			_layers.append(layer)
+
+
+func _sync_layers() -> void:
+	for layer: AnimatedSprite2D in _layers:
+		if layer.sprite_frames == null:
+			continue
+		if not layer.sprite_frames.has_animation(_sprite.animation):
+			push_warning(
+				"Hero: equipment layer '%s' has no clip '%s'."
+				% [layer.name, _sprite.animation]
+			)
+			continue
+		layer.animation = _sprite.animation
+		layer.frame = _sprite.frame
 
 
 func _physics_process(delta: float) -> void:
@@ -63,6 +100,8 @@ func _update_facing(direction_x: float) -> void:
 
 	_facing_right = should_face_right
 	_sprite.flip_h = not _facing_right
+	for layer: AnimatedSprite2D in _layers:
+		layer.flip_h = not _facing_right
 	facing_changed.emit(_facing_right)
 
 
