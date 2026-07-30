@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://8gpx8i1pf80i"]
+
+[ext_resource type="Script" uid="uid://y125nri5fxcv" path="res://scripts/dev/playground.gd" id="1_cp0t2"]
+[ext_resource type="PackedScene" uid="uid://dj41ukjd6bc1x" path="res://scenes/hero.tscn" id="2_7qj6t"]
+
+[node name="Playground" type="Node2D" unique_id=779494191]
+script = ExtResource("1_cp0t2")
+
+[node name="Hero" parent="." unique_id=839245312 instance=ExtResource("2_7qj6t")]
+
+[node name="Camera" type="Camera2D" parent="Hero" unique_id=1826127716]
+limit_left = 0
+limit_top = 0
+limit_right = 1120
+limit_bottom = 630
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=354693256]
+
+[node name="Root" type="Control" parent="HUD" unique_id=1893908771]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Readout" type="Label" parent="HUD/Root" unique_id=216641022]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 430.0
+offset_bottom = 54.0
