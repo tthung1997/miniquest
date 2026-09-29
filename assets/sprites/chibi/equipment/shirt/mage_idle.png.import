@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bwk7lstsako85"
-path="res://.godot/imported/wizard_walk.png-e57f34df2c9f482d423c356d9959e44c.ctex"
+uid="uid://bf7633go0wion"
+path="res://.godot/imported/mage_idle.png-40542955615841e9069b252e12fcf13b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/shirt/wizard_walk.png"
-dest_files=["res://.godot/imported/wizard_walk.png-e57f34df2c9f482d423c356d9959e44c.ctex"]
+source_file="res://assets/sprites/chibi/equipment/shirt/mage_idle.png"
+dest_files=["res://.godot/imported/mage_idle.png-40542955615841e9069b252e12fcf13b.ctex"]
 
 [params]
 
