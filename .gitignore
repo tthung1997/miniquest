@@ -6,12 +6,10 @@
 .import/
 export.cfg
 
-# Local editor tooling, installed per-machine rather than shared. Deliberately
-# committed addons should be added back with an exception below. The plugin also
-# writes [autoload] and [editor_plugins] entries into project.godot — keep those
-# out of commits, or a fresh clone boots against a missing autoload.
-addons/godot_ai/
-godot-ai-LICENSE.txt
+# The Godot AI plugin (addons/godot_ai/) is committed, along with the [autoload]
+# and [editor_plugins] entries it writes into project.godot, so every clone and
+# worktree opens with it enabled. Its updater keeps local state and backups here.
+addons/.godot_ai_update/
 
 # Export presets often contain absolute paths, signing keys and store
 # credentials. Keep them local. If your presets are safe and you want them

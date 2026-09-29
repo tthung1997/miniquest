@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cm6650e3qillh" path="res://scripts/hero.gd" id="1_yvbpl"]
 [ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/chibi/body_frames.tres" id="2_06baw"]
-[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/chibi/equipment/hat/wizard_frames.tres" id="3_06baw"]
-[ext_resource type="SpriteFrames" uid="uid://b0xpafea0804p" path="res://resources/chibi/equipment/shirt/green_tee_frames.tres" id="3_mv13s"]
+[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/chibi/equipment/hat/mage_frames.tres" id="3_06baw"]
+[ext_resource type="SpriteFrames" uid="uid://bbqr7oq4a270q" path="res://resources/chibi/equipment/pants/mage_frames.tres" id="3_w7pyx"]
+[ext_resource type="SpriteFrames" uid="uid://b8ghkdj60j4tb" path="res://resources/chibi/equipment/shirt/mage_frames.tres" id="4_y2sko"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv13s"]
 size = Vector2(20, 10)
@@ -23,8 +24,13 @@ shape = SubResource("RectangleShape2D_mv13s")
 
 [node name="Equipment" type="Node2D" parent="." unique_id=1738722083]
 
+[node name="Pants" type="AnimatedSprite2D" parent="Equipment" unique_id=609075149]
+sprite_frames = ExtResource("3_w7pyx")
+animation = &"idle"
+offset = Vector2(0, -24)
+
 [node name="Shirt" type="AnimatedSprite2D" parent="Equipment" unique_id=973891964]
-sprite_frames = ExtResource("3_mv13s")
+sprite_frames = ExtResource("4_y2sko")
 animation = &"idle"
 offset = Vector2(0, -24)
 
