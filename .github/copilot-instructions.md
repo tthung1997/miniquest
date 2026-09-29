@@ -165,14 +165,47 @@ and will not produce a compile error:
 scenes/       .tscn files, mirroring scripts/
   ui/         menus, HUD, overlays
 scripts/      .gd files
-assets/       art, audio, fonts (imported, never hand-edited)
-resources/    .tres data instances
+assets/       art, audio, fonts, loaded by the game
+  sprites/<rig>/   one folder per body rig, with its equipment inside
+resources/    .tres data instances, mirroring assets/sprites/ for frame sets
 tools/        one-off CLI/editor scripts, not shipped game code
 addons/       third-party plugins (added deliberately, not casually)
 ```
 
 Keep a script and its scene at mirrored paths — `scenes/ui/main_menu.tscn` pairs
 with `scripts/ui/main_menu.gd`.
+
+### Sprites
+
+Characters are paper dolls: a base **body** with layers drawn over it on the same
+64×64 frame. A **rig** is one body shape — its frame size, neck and feet rows, and
+clip set — and equipment only fits the rig it was drawn for. So equipment lives
+inside its rig, not beside the characters that wear it:
+
+```
+assets/sprites/chibi/                   the rig; every character on it
+  body_idle.png   body_walk.png
+  equipment/<slot>/<item>_<clip>.png    e.g. equipment/shirt/green_tee_walk.png
+  equipment/<slot>/<item>.ase
+```
+
+Male and female characters share one rig and differ by hair, face and clothes;
+do not add a second body without a reason. A character is not a folder — it is an
+assembly of layers chosen in a scene.
+
+- Name sheets `<name>_<clip>.png`, where the clip is `idle`, `walk`, etc. Do not
+  put a frame count in the name; it is read from the sheet width.
+- `<item>.ase` is the LibreSprite file the item is drawn and touched up in. Godot
+  does not import `.ase`, so it sits beside its PNGs at no runtime cost. After
+  editing, export the layer back to its PNGs and rebuild the frames.
+- `tools/build_sprite_frames.gd` turns every sheet group into a `SpriteFrames`
+  under `resources/<rig>/`, mirroring the sprite path. It fails the run if any
+  layer's frame count differs from the body's, since every layer is driven from
+  the body's frame index.
+
+Nothing else belongs in `assets/`: every PNG there is imported as a texture
+whether or not it is used. Keep raw image-generator output and rejected drafts
+out of the repo, and do not add a sprite until it is processed and in use.
 
 Settings that shape the code: base resolution **640×360** (windowed at 1280×720)
 with `canvas_items` stretch, **Nearest** default texture filter for crisp pixel

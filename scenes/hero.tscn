@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://dj41ukjd6bc1x"]
+
+[ext_resource type="Script" uid="uid://cm6650e3qillh" path="res://scripts/hero.gd" id="1_yvbpl"]
+[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/chibi/body_frames.tres" id="2_06baw"]
+[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/chibi/equipment/hat/wizard_frames.tres" id="3_06baw"]
+[ext_resource type="SpriteFrames" uid="uid://b0xpafea0804p" path="res://resources/chibi/equipment/shirt/green_tee_frames.tres" id="3_mv13s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mv13s"]
+size = Vector2(20, 10)
+
+[node name="Hero" type="CharacterBody2D" unique_id=839245312]
+script = ExtResource("1_yvbpl")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=817602163]
+sprite_frames = ExtResource("2_06baw")
+animation = &"idle"
+autoplay = "idle"
+offset = Vector2(0, -24)
+
+[node name="Collision" type="CollisionShape2D" parent="." unique_id=201326226]
+position = Vector2(0, -5)
+shape = SubResource("RectangleShape2D_mv13s")
+
+[node name="Equipment" type="Node2D" parent="." unique_id=1738722083]
+
+[node name="Shirt" type="AnimatedSprite2D" parent="Equipment" unique_id=973891964]
+sprite_frames = ExtResource("3_mv13s")
+animation = &"idle"
+offset = Vector2(0, -24)
+
+[node name="Hat" type="AnimatedSprite2D" parent="Equipment" unique_id=921613333]
+sprite_frames = ExtResource("3_06baw")
+animation = &"idle"
+offset = Vector2(0, -24)
