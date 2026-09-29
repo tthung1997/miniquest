@@ -100,7 +100,10 @@ anywhere else.
 (`@onready var _sprite: Sprite2D = $Sprite2D`). For anything outside it, take an
 `@export` reference and wire it in the editor.
 
-**There are no autoloads, and adding one needs justification.** Each is global
+**There are no game autoloads, and adding one needs justification.** The only
+entry is `_mcp_game_helper`, owned by the committed Godot AI editor plugin
+(`addons/godot_ai/`); it lets editor tooling inspect a running game and is
+stripped from exported builds. Leave it alone. Each autoload is global
 mutable state, and the node tree plus signals already solve most of what a manager
 singleton would. Add one only for something that must genuinely outlive scene
 changes — save data, audio buses, scene transitions. `static var` covers some
