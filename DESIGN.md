@@ -1,6 +1,7 @@
 # Miniquest — Design Document (v0.1)
 
-Status: agreed in session on 2026-07-27. Nothing implemented yet.
+Status: agreed in session on 2026-07-27. Art direction (sections 5.6 and 9)
+revised on 2026-09-28 to match the hero assets already drawn.
 
 ## 1. Concept
 
@@ -158,6 +159,13 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 | Boots | Move speed |
 | Accessory | Cooldown reduction, crit, pickup radius |
 
+- **Armour is worn as a matching hat, shirt and pants.** One Armour item always
+  carries all three layers, so a class look — the Mage's pointed hat and robes,
+  the Warrior's leather cap and studded jerkin — is a single item. The three are
+  never equipped separately.
+- **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
+  three layers, Boots as a layer over the feet, and the Weapon in the hand.
+  Whether an Accessory is drawn is undecided (section 11).
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
 - **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
@@ -242,55 +250,75 @@ is where the player admires their character, so it's worth the screen space.
 
 ### 9.1 View
 
-**Front-facing sprites on a top-down field** — Vampire Survivors / Brotato style.
-The character never rotates; it flips horizontally when moving left or right,
-while the field is top-down.
+**Side-view sprites on a top-down field** — Vampire Survivors / Brotato style.
+The hero is drawn in profile facing right and flips horizontally when moving
+left. Vertical movement reuses the same walk, keeping whichever way the hero last
+faced. The character never rotates, while the field is top-down.
 
 Chosen over true 4-directional top-down because it quarters the art requirement
-forever, and is far closer to MapleStory's readable charm — true top-down mostly
+forever, and keeps MapleStory's readable profile charm — true top-down mostly
 shows the top of everyone's head.
 
 Cost: less facing clarity. Irrelevant here, since the player never aims.
 
-### 9.2 Character rig — cut-out, not frame-by-frame
+### 9.2 Character rig — frame-by-frame paper doll
 
-**The hero is a cut-out (skeletal) rig**, as MapleStory itself uses. The character
-is assembled from parts — head, torso, upper arm, forearm, legs — each on its own
-transform. Animation moves the *parts*, authored once. An item is drawn once as a
-small set of pieces and anchored to bones.
+**The hero is a paper doll**: a base body drawn frame by frame on a 64×64
+canvas, with every visible piece of equipment as a layer drawn over it on the same
+frame. Each layer is driven from the body's frame index, so the layers never drift
+apart.
 
-This is the single decision that makes hundreds of items tractable. Frame-by-frame
-pixel art would require every item redrawn on every animation frame — roughly a
-10× cost per item, which is what kills gear-heavy projects.
+Frame-by-frame means every layer is redrawn for every body frame — the cost a
+cut-out (skeletal) rig would avoid. It was chosen anyway because the hero already
+exists in this form and reads well, and because the cost is contained:
 
-In Godot: a `Node2D`/`Skeleton2D` hierarchy with `Sprite2D` parts, driven by an
-`AnimationPlayer`. Equipping an item swaps a texture on a bone.
+- **Garments are generated from the body, not hand-drawn per frame.** Shirts,
+  pants and boots are traced from each body frame's own silhouette and shading,
+  recoloured to the item's palette, with trim added by rule. A new garment is
+  mostly a palette and a few trim decisions.
+- **The head does not move between frames**, so a hat is drawn once and reused on
+  every frame.
+- **The weapon is drawn once** and placed at a per-frame hand position, rather
+  than redrawn.
+- **The body's animation set stays small: idle (1 frame) and walk (4 frames).**
+  Hurt, death and attacks are effects and shaders, not new body frames. Every body
+  frame added must be redrawn for every generated garment, so this is the budget
+  to protect.
+
+In Godot: a `CharacterBody2D` with an `AnimatedSprite2D` body and one
+`AnimatedSprite2D` per equipment layer. `tools/build_sprite_frames.gd` builds each
+layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
+`SpriteFrames`.
 
 **Consequences:**
-- Author the rig at arena size (~24–32px tall) and display it in the hub at
-  **integer scale**. Pixel art scaled by whole numbers stays crisp. One art set
-  serves both contexts — no hub/arena style split.
+- The body is ~48px tall on its 64×64 frame. It is shown at 1× in the arena and
+  at **integer scale** in the hub. Pixel art scaled by whole numbers stays crisp;
+  it cannot be scaled down, so the hero's size is fixed.
 - **One body type.** Hair and colour provide variety. Every additional body
   doubles the wardrobe cost permanently.
-- **All classes share one silhouette.** Classes differ by colour, head, hair and
-  effects — never by body shape. This is nearly unfixable later.
+- **All classes share one silhouette.** Classes differ by colour, headgear, hair
+  and effects — never by body shape. This is nearly unfixable later.
 - Every layer must share an identical canvas and registration point. This is a
   discipline problem, not a difficulty one, and it is what actually breaks
   projects.
 - Empty slots need defaults (bare arms, plain tunic).
+- **Scale is matched on the pack side.** The hero is bigger than 16×16 pack art,
+  so enemies and environment are shown at an integer scale — 16×16 art at 2× puts
+  enemies around 32px beside the 48px hero — or come from a pack drawn larger.
 
 ### 9.3 Art sourcing
 
-- **Hero and all equipment: custom.** No free pack ships cut-out character parts.
-  Ninja Adventure's 16×16 characters are flat single sprites with nothing to cut;
-  LPC is frame-by-frame. This was accepted as a deliberate commitment.
+- **Hero and all equipment: custom**, drawn to fit this body. Ninja Adventure's
+  16×16 characters are flat single sprites with no layers; LPC's layered wardrobe
+  is built for a different body and frame layout. This was accepted as a
+  deliberate commitment.
 - **Enemies, environment, VFX, UI, audio: asset pack.** Enemies need no gear, so
   pack art works fine alongside a custom hero.
 - Leading pack candidate: **Ninja Adventure by Pixel-Boy** — CC0 (commercial use
   allowed, attribution appreciated not required), 16×16, 50+ characters, 30+
   monsters, 9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX,
   37 music tracks, plus an official Godot 4 example project. **Not yet confirmed.**
-- Code can proceed immediately with placeholder rig parts. The architecture is
+- Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 
 ### 9.4 Engine settings
@@ -302,7 +330,8 @@ working.
 ## 10. Version 1 scope
 
 In:
-- Cut-out hero rig with placeholder parts, equipment layers wired.
+- Paper-doll hero with its Armour layers (hat, shirt, pants) wired; Boots and
+  Weapon layers still to add.
 - Arena run: movement, auto-attack, auto-target, one enemy type ramping, damage,
   death, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
@@ -336,7 +365,9 @@ Out until later:
 - Item list, and the xp curve.
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
-- Exact arena dimensions and hero sprite height.
+- Exact arena dimensions, and whether pack art is shown at 2× beside the 64×64
+  hero or a pack drawn at a larger size is chosen instead (see 9.2).
+- Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 
 **None of the balance numbers are anchored.** Enemy health and damage do not
 exist, so `design/skills.json` is internally consistent and validated against
