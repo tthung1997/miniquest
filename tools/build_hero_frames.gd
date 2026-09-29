@@ -17,15 +17,16 @@ const SPRITE_DIR: String = "res://assets/sprites/hero"
 const OUTPUT_DIR: String = "res://resources"
 const FRAME_SIZE: Vector2i = Vector2i(64, 64)
 
+## Frame counts come from each sheet's width, so file names do not carry them.
 const CLIPS: Array[Dictionary] = [
 	{"name": &"idle", "suffix": "idle", "fps": 1.0},
-	{"name": &"walk", "suffix": "walk_4f", "fps": 8.0},
+	{"name": &"walk", "suffix": "walk", "fps": 8.0},
 ]
 
-## slug -> the sheets are <slug>_<suffix>.png. "hero" is the base body; the
+## slug -> the sheets are <slug>_<suffix>.png. "body" is the base layer; the
 ## rest are equipment layers drawn over it.
 const LAYERS: Array[Dictionary] = [
-	{"slug": "hero", "required": true},
+	{"slug": "body", "required": true},
 	{"slug": "hat", "required": false},
 	{"slug": "shirt", "required": false},
 ]

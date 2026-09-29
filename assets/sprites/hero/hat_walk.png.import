@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cgomotfaq7fse"
-path="res://.godot/imported/hero_walk_legmirror.png-8f863e8d3141cb05f37cda8615d35967.ctex"
+uid="uid://b2cf8sitvktjp"
+path="res://.godot/imported/hat_walk.png-b777e6f63d11e9c97771fbbcd43da28b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/hero/hero_walk_legmirror.png"
-dest_files=["res://.godot/imported/hero_walk_legmirror.png-8f863e8d3141cb05f37cda8615d35967.ctex"]
+source_file="res://assets/sprites/hero/hat_walk.png"
+dest_files=["res://.godot/imported/hat_walk.png-b777e6f63d11e9c97771fbbcd43da28b.ctex"]
 
 [params]
 

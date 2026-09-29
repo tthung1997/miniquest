@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b60kx3aobpwyj"
-path="res://.godot/imported/Copilot_20260729_202058.png-d6e59ef98deee8f25804a485f2d92346.ctex"
+uid="uid://cbvc2ngkamgi1"
+path="res://.godot/imported/body_walk.png-44c3dc83d59d59c4cce2199575b6dd04.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/hero/Copilot_20260729_202058.png"
-dest_files=["res://.godot/imported/Copilot_20260729_202058.png-d6e59ef98deee8f25804a485f2d92346.ctex"]
+source_file="res://assets/sprites/hero/body_walk.png"
+dest_files=["res://.godot/imported/body_walk.png-44c3dc83d59d59c4cce2199575b6dd04.ctex"]
 
 [params]
 

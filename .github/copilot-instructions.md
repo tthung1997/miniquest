@@ -165,7 +165,8 @@ and will not produce a compile error:
 scenes/       .tscn files, mirroring scripts/
   ui/         menus, HUD, overlays
 scripts/      .gd files
-assets/       art, audio, fonts (imported, never hand-edited)
+assets/       art, audio, fonts, loaded by the game
+  sprites/<entity>/   one folder per character or prop
 resources/    .tres data instances
 tools/        one-off CLI/editor scripts, not shipped game code
 addons/       third-party plugins (added deliberately, not casually)
@@ -173,6 +174,24 @@ addons/       third-party plugins (added deliberately, not casually)
 
 Keep a script and its scene at mirrored paths — `scenes/ui/main_menu.tscn` pairs
 with `scripts/ui/main_menu.gd`.
+
+### Sprites
+
+`assets/sprites/<entity>/` holds only what the game loads, plus the LibreSprite
+file each layer is edited in:
+
+- `<layer>_<clip>.png` — one sheet per paper-doll layer and animation, e.g.
+  `body_walk.png`, `shirt_idle.png`. `body` is the base; hat, shirt and other
+  equipment are layers drawn over it on the same 64×64 frame. Do not put a frame
+  count in the name — `tools/build_hero_frames.gd` reads it from the sheet width.
+- `<layer>.ase` — the LibreSprite working file a layer is drawn and touched up in.
+  Godot does not import `.ase`, so it sits beside its PNGs at no runtime cost.
+  After editing one, export the layer back to its PNGs and re-run
+  `tools/build_hero_frames.gd` to rebuild the `SpriteFrames` in `resources/`.
+
+Nothing else belongs in `assets/`: every PNG there is imported as a texture
+whether or not it is used. Keep raw image-generator output and rejected drafts
+out of the repo, and do not add a sprite until it is processed and in use.
 
 Settings that shape the code: base resolution **640×360** (windowed at 1280×720)
 with `canvas_items` stretch, **Nearest** default texture filter for crisp pixel

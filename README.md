@@ -44,7 +44,7 @@ Then add that folder to `PATH`.
 scenes/       .tscn scene files, mirroring scripts/
   ui/         menus, HUD, overlays
 scripts/      .gd source files
-assets/       art, audio, fonts (imported by Godot, never hand-edited)
+assets/       art, audio, fonts loaded by the game (see below)
 resources/    .tres data instances
 tools/        one-off CLI/editor scripts, not shipped game code
 .github/      Copilot instructions
@@ -52,6 +52,15 @@ tools/        one-off CLI/editor scripts, not shipped game code
 
 Keep a script and its scene at mirrored paths, e.g. `scenes/ui/main_menu.tscn`
 pairs with `scripts/ui/main_menu.gd`.
+
+Sprites live in `assets/sprites/<entity>/` as one sheet per layer and animation
+(`body_walk.png`, `shirt_idle.png`), beside the LibreSprite `.ase` each layer is
+edited in. Only art the game uses goes in `assets/`; raw image-generator output
+stays out of the repo. After changing a sheet, rebuild the frame resources:
+
+```powershell
+& $env:GODOT --headless --path . --script res://tools/build_hero_frames.gd
+```
 
 ## Project settings worth knowing
 
