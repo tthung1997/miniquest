@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cfiyleta0dh68"
-path="res://.godot/imported/green_tee_idle.png-d8a6d73157c1a0d0b235f99daa5fa246.ctex"
+path="res://.godot/imported/novice_idle.png-1785dea195d45b23a6a5ef0c0f55558f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/shirt/green_tee_idle.png"
-dest_files=["res://.godot/imported/green_tee_idle.png-d8a6d73157c1a0d0b235f99daa5fa246.ctex"]
+source_file="res://assets/sprites/chibi/equipment/shirt/novice_idle.png"
+dest_files=["res://.godot/imported/novice_idle.png-1785dea195d45b23a6a5ef0c0f55558f.ctex"]
 
 [params]
 

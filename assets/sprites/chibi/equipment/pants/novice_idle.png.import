@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bgc4lemu7ij3k"
-path="res://.godot/imported/green_tee_walk.png-73be05efdfb9ae91777429a244c76809.ctex"
+uid="uid://b77ljb162pl5w"
+path="res://.godot/imported/novice_idle.png-1088842b9b49bdc73821e3e68d87ec79.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/shirt/green_tee_walk.png"
-dest_files=["res://.godot/imported/green_tee_walk.png-73be05efdfb9ae91777429a244c76809.ctex"]
+source_file="res://assets/sprites/chibi/equipment/pants/novice_idle.png"
+dest_files=["res://.godot/imported/novice_idle.png-1088842b9b49bdc73821e3e68d87ec79.ctex"]
 
 [params]
 

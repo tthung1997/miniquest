@@ -188,7 +188,7 @@ inside its rig, not beside the characters that wear it:
 ```
 assets/sprites/chibi/                   the rig; every character on it
   body_idle.png   body_walk.png
-  equipment/<slot>/<item>_<clip>.png    e.g. equipment/shirt/green_tee_walk.png
+  equipment/<slot>/<item>_<clip>.png    e.g. equipment/shirt/novice_walk.png
   equipment/<slot>/<item>.ase
 ```
 
