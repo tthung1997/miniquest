@@ -166,8 +166,8 @@ scenes/       .tscn files, mirroring scripts/
   ui/         menus, HUD, overlays
 scripts/      .gd files
 assets/       art, audio, fonts, loaded by the game
-  sprites/<entity>/   one folder per character or prop
-resources/    .tres data instances
+  sprites/<rig>/   one folder per body rig, with its equipment inside
+resources/    .tres data instances, mirroring assets/sprites/ for frame sets
 tools/        one-off CLI/editor scripts, not shipped game code
 addons/       third-party plugins (added deliberately, not casually)
 ```
@@ -177,17 +177,31 @@ with `scripts/ui/main_menu.gd`.
 
 ### Sprites
 
-`assets/sprites/<entity>/` holds only what the game loads, plus the LibreSprite
-file each layer is edited in:
+Characters are paper dolls: a base **body** with layers drawn over it on the same
+64×64 frame. A **rig** is one body shape — its frame size, neck and feet rows, and
+clip set — and equipment only fits the rig it was drawn for. So equipment lives
+inside its rig, not beside the characters that wear it:
 
-- `<layer>_<clip>.png` — one sheet per paper-doll layer and animation, e.g.
-  `body_walk.png`, `shirt_idle.png`. `body` is the base; hat, shirt and other
-  equipment are layers drawn over it on the same 64×64 frame. Do not put a frame
-  count in the name — `tools/build_hero_frames.gd` reads it from the sheet width.
-- `<layer>.ase` — the LibreSprite working file a layer is drawn and touched up in.
-  Godot does not import `.ase`, so it sits beside its PNGs at no runtime cost.
-  After editing one, export the layer back to its PNGs and re-run
-  `tools/build_hero_frames.gd` to rebuild the `SpriteFrames` in `resources/`.
+```
+assets/sprites/chibi/                   the rig; every character on it
+  body_idle.png   body_walk.png
+  equipment/<slot>/<item>_<clip>.png    e.g. equipment/shirt/green_tee_walk.png
+  equipment/<slot>/<item>.ase
+```
+
+Male and female characters share one rig and differ by hair, face and clothes;
+do not add a second body without a reason. A character is not a folder — it is an
+assembly of layers chosen in a scene.
+
+- Name sheets `<name>_<clip>.png`, where the clip is `idle`, `walk`, etc. Do not
+  put a frame count in the name; it is read from the sheet width.
+- `<item>.ase` is the LibreSprite file the item is drawn and touched up in. Godot
+  does not import `.ase`, so it sits beside its PNGs at no runtime cost. After
+  editing, export the layer back to its PNGs and rebuild the frames.
+- `tools/build_sprite_frames.gd` turns every sheet group into a `SpriteFrames`
+  under `resources/<rig>/`, mirroring the sprite path. It fails the run if any
+  layer's frame count differs from the body's, since every layer is driven from
+  the body's frame index.
 
 Nothing else belongs in `assets/`: every PNG there is imported as a texture
 whether or not it is used. Keep raw image-generator output and rejected drafts

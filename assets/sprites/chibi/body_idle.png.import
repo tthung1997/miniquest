@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbvc2ngkamgi1"
-path="res://.godot/imported/body_walk.png-44c3dc83d59d59c4cce2199575b6dd04.ctex"
+uid="uid://cmug3enjs3r0v"
+path="res://.godot/imported/body_idle.png-223b6a1b81b7c40a2e7f78784486edd1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/hero/body_walk.png"
-dest_files=["res://.godot/imported/body_walk.png-44c3dc83d59d59c4cce2199575b6dd04.ctex"]
+source_file="res://assets/sprites/chibi/body_idle.png"
+dest_files=["res://.godot/imported/body_idle.png-223b6a1b81b7c40a2e7f78784486edd1.ctex"]
 
 [params]
 

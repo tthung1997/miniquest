@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://blsclsv3yu1ee"]
 
 [ext_resource type="Script" uid="uid://cehofuqk1u67s" path="res://scripts/dev/equipment_preview.gd" id="1_iwvcn"]
-[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/body_frames.tres" id="2_l2ald"]
-[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/hat_frames.tres" id="3_g0sc0"]
+[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/chibi/body_frames.tres" id="2_l2ald"]
+[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/chibi/equipment/hat/wizard_frames.tres" id="3_g0sc0"]
 
 [node name="EquipmentPreview" type="Node2D" unique_id=771223977]
 script = ExtResource("1_iwvcn")

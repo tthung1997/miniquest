@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://didmp4lxv217g"
-path="res://.godot/imported/hat_idle.png-2bb883f9b6a71de85ce055f7fae2d0e9.ctex"
+uid="uid://b2cf8sitvktjp"
+path="res://.godot/imported/wizard_walk.png-34ace377323b821e41db9b2db5282e88.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/hero/hat_idle.png"
-dest_files=["res://.godot/imported/hat_idle.png-2bb883f9b6a71de85ce055f7fae2d0e9.ctex"]
+source_file="res://assets/sprites/chibi/equipment/hat/wizard_walk.png"
+dest_files=["res://.godot/imported/wizard_walk.png-34ace377323b821e41db9b2db5282e88.ctex"]
 
 [params]
 

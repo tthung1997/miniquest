@@ -53,13 +53,15 @@ tools/        one-off CLI/editor scripts, not shipped game code
 Keep a script and its scene at mirrored paths, e.g. `scenes/ui/main_menu.tscn`
 pairs with `scripts/ui/main_menu.gd`.
 
-Sprites live in `assets/sprites/<entity>/` as one sheet per layer and animation
-(`body_walk.png`, `shirt_idle.png`), beside the LibreSprite `.ase` each layer is
-edited in. Only art the game uses goes in `assets/`; raw image-generator output
-stays out of the repo. After changing a sheet, rebuild the frame resources:
+Sprites are organised by **rig**, a body shape that equipment is drawn to fit:
+`assets/sprites/chibi/` holds the body sheets, with each item under
+`equipment/<slot>/` (e.g. `equipment/shirt/green_tee_walk.png`) beside the
+LibreSprite `.ase` it is edited in. Only art the game uses goes in `assets/`; raw
+image-generator output stays out of the repo. After changing a sheet, rebuild the
+frame resources:
 
 ```powershell
-& $env:GODOT --headless --path . --script res://tools/build_hero_frames.gd
+& $env:GODOT --headless --path . --script res://tools/build_sprite_frames.gd
 ```
 
 ## Project settings worth knowing

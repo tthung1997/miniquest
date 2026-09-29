@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dj41ukjd6bc1x"]
 
 [ext_resource type="Script" uid="uid://cm6650e3qillh" path="res://scripts/hero.gd" id="1_yvbpl"]
-[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/body_frames.tres" id="2_06baw"]
-[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/hat_frames.tres" id="3_06baw"]
-[ext_resource type="SpriteFrames" uid="uid://b0xpafea0804p" path="res://resources/shirt_frames.tres" id="3_mv13s"]
+[ext_resource type="SpriteFrames" uid="uid://cshvvspvas5rb" path="res://resources/chibi/body_frames.tres" id="2_06baw"]
+[ext_resource type="SpriteFrames" uid="uid://bm5h17cgjbep6" path="res://resources/chibi/equipment/hat/wizard_frames.tres" id="3_06baw"]
+[ext_resource type="SpriteFrames" uid="uid://b0xpafea0804p" path="res://resources/chibi/equipment/shirt/green_tee_frames.tres" id="3_mv13s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mv13s"]
 size = Vector2(20, 10)
