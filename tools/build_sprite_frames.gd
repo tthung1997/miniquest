@@ -8,7 +8,7 @@ extends SceneTree
 ## and one clip structure, so a paper doll can drive every layer from a single
 ## animation and frame index. Each <name>_<clip>.png group in a rig becomes one
 ## resource: body_<clip>.png at the rig root is the base layer, and groups in
-## subfolders, such as equipment/shirt/novice_walk.png, are drawn over it.
+## subfolders, such as equipment/armour/mage/hat/01_walk.png, are drawn over it.
 ## Output mirrors the source tree under resources/<rig>/.
 ##
 ## Safe to re-run: each resource is rebuilt from scratch and keeps its uid.

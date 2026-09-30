@@ -188,9 +188,18 @@ inside its rig, not beside the characters that wear it:
 ```
 assets/sprites/chibi/                   the rig; every character on it
   body_idle.png   body_walk.png
-  equipment/<slot>/<item>_<clip>.png    e.g. equipment/shirt/novice_walk.png
-  equipment/<slot>/<item>.ase
+  equipment/armour/<class>/<piece>/<nn>_<clip>.png
+                                        e.g. equipment/armour/mage/hat/01_walk.png
+  equipment/armour/<class>/<piece>/<nn>.ase
 ```
+
+Armour art is a pool per **base class** (`novice`, `mage`, `ranger`, `warrior`),
+with one folder per piece (`hat`, `shirt`, `pants`). An Armour item rolls each
+piece separately from its class's pool, and advanced classes use their base
+class's pool. A class with no folder for a piece never rolls one — Novice has no
+`hat/`. Variants are numbered, zero-padded (`01`, `02`, …). The number is the
+piece id stored in save data, so **never renumber or reuse one**; leave a gap
+when a variant is removed. Numbers do not pair across pieces.
 
 Male and female characters share one rig and differ by hair, face and clothes;
 do not add a second body without a reason. A character is not a folder — it is an
@@ -198,7 +207,7 @@ assembly of layers chosen in a scene.
 
 - Name sheets `<name>_<clip>.png`, where the clip is `idle`, `walk`, etc. Do not
   put a frame count in the name; it is read from the sheet width.
-- `<item>.ase` is the LibreSprite file the item is drawn and touched up in. Godot
+- `<nn>.ase` is the LibreSprite file the piece is drawn and touched up in. Godot
   does not import `.ase`, so it sits beside its PNGs at no runtime cost. After
   editing, export the layer back to its PNGs and rebuild the frames.
 - `tools/build_sprite_frames.gd` turns every sheet group into a `SpriteFrames`
