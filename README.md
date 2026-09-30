@@ -54,9 +54,10 @@ Keep a script and its scene at mirrored paths, e.g. `scenes/ui/main_menu.tscn`
 pairs with `scripts/ui/main_menu.gd`.
 
 Sprites are organised by **rig**, a body shape that equipment is drawn to fit:
-`assets/sprites/chibi/` holds the body sheets, with each item under
-`equipment/<slot>/` (e.g. `equipment/shirt/novice_walk.png`) beside the
-LibreSprite `.ase` it is edited in. Only art the game uses goes in `assets/`; raw
+`assets/sprites/chibi/` holds the body sheets. Armour art is a pool per base
+class, one folder per piece, with numbered variants
+(e.g. `equipment/armour/mage/hat/01_walk.png`) beside the LibreSprite `.ase`
+each is edited in. Only art the game uses goes in `assets/`; raw
 image-generator output stays out of the repo. After changing a sheet, rebuild the
 frame resources:
 

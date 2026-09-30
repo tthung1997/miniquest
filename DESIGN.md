@@ -159,10 +159,15 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 | Boots | Move speed |
 | Accessory | Cooldown reduction, crit, pickup radius |
 
-- **Armour is worn as a matching hat, shirt and pants.** One Armour item always
-  carries all three layers, so a class look — the Mage's pointed hat and robes,
-  the Warrior's leather cap and studded jerkin — is a single item. The three are
-  never equipped separately.
+- **Armour is worn as a hat, shirt and pants.** One Armour item always carries
+  all of its layers, and they are never equipped separately. Novice armour has no
+  hat.
+- **Armour looks are rolled per piece.** Each base class has its own pool of hat,
+  shirt and pants art. When an Armour item is acquired, each piece is rolled
+  separately from its class's pool, so two Mages rarely look the same. The roll is
+  cosmetic only: stats still come from the template and rarity. The rolled pieces
+  are stored on the item, by piece id, so adding art to a pool never changes what
+  an existing item looks like. Advanced classes wear their base class's armour.
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the hand.
   Whether an Accessory is drawn is undecided (section 11).
@@ -368,6 +373,7 @@ Out until later:
 - Exact arena dimensions, and whether pack art is shown at 2× beside the 64×64
   hero or a pack drawn at a larger size is chosen instead (see 9.2).
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
+- Whether a player can re-roll an Armour item's look, and at what cost.
 
 **None of the balance numbers are anchored.** Enemy health and damage do not
 exist, so `design/skills.json` is internally consistent and validated against
