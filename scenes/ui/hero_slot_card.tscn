@@ -1,0 +1,79 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hero_slot_card.gd" id="1_card"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="3_well"]
+[ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
+
+[node name="HeroSlotCard" type="PanelContainer"]
+theme = ExtResource("2_theme")
+script = ExtResource("1_card")
+
+[node name="Interior" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Interior"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Portrait" type="NinePatchRect" parent="Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+texture = ExtResource("3_well")
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_right = 3
+patch_margin_bottom = 3
+
+[node name="DollAnchor" type="Node2D" parent="Interior/Content/Portrait"]
+unique_name_in_owner = true
+
+[node name="PaperDoll" parent="Interior/Content/Portrait/DollAnchor" instance=ExtResource("4_doll")]
+unique_name_in_owner = true
+
+[node name="Text" type="VBoxContainer" parent="Interior/Content"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NameLabel" type="Label" parent="Interior/Content/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Name"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="InfoLabel" type="Label" parent="Interior/Content/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+theme_override_font_sizes/font_size = 16
+text = "Info"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Interior/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PlayButton" type="Button" parent="Interior/Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PLAY"
+
+[node name="DeleteButton" type="Button" parent="Interior/Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DELETE"
+
+[node name="CreateButton" type="Button" parent="Interior/Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+ NEW HERO"

@@ -170,7 +170,9 @@ scenes/       .tscn files, mirroring scripts/
 scripts/      .gd files
 assets/       art, audio, fonts, loaded by the game
   sprites/<rig>/   one folder per body rig, with its equipment inside
+  packs/<pack>/    third-party art, only the files actually in use, with its licence
 resources/    .tres data instances, mirroring assets/sprites/ for frame sets
+  classes/, ui/    class data and the UI theme
 tools/        one-off CLI/editor scripts, not shipped game code
 addons/       third-party plugins (added deliberately, not casually)
 ```

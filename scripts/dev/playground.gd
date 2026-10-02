@@ -6,12 +6,18 @@ extends Node2D
 ## something to follow and its limits are actually exercised. Not shipped game
 ## code; it exists to check movement, facing and animation switching by hand.
 
+## Raised when the player asks to leave, so whatever opened this scene can
+## decide where to go next. Nothing listens when the scene is run on its own.
+signal back_requested
+
 const ROOM: Rect2i = Rect2i(0, 0, 1120, 630)
 const WALL: int = 16
 const FLOOR_COLOR: Color = Color(0.16, 0.18, 0.22)
 const WALL_COLOR: Color = Color(0.28, 0.31, 0.38)
 const GRID_COLOR: Color = Color(1.0, 1.0, 1.0, 0.05)
 const GRID_STEP: int = 64
+
+var _hero_name: String = ""
 
 @onready var hero: Hero = $Hero
 @onready var _readout: Label = $HUD/Root/Readout
@@ -24,8 +30,20 @@ func _ready() -> void:
 	_refresh()
 
 
+## Dress the hero as `data` and name them in the readout.
+func show_hero(data: HeroData) -> void:
+	_hero_name = data.hero_name
+	hero.apply(data)
+	_refresh()
+
+
 func _process(_delta: float) -> void:
 	_refresh()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
+		back_requested.emit()
 
 
 func _draw() -> void:
@@ -75,8 +93,9 @@ func _on_hero_facing_changed(_facing_right: bool) -> void:
 
 func _refresh() -> void:
 	_readout.text = (
-		"pos %d, %d    speed %d    facing %s\nWASD or arrows to move"
+		"%spos %d, %d    speed %d    facing %s\nWASD or arrows to move    Esc to go back"
 		% [
+			"" if _hero_name.is_empty() else _hero_name + "    ",
 			roundi(hero.position.x),
 			roundi(hero.position.y),
 			roundi(hero.velocity.length()),

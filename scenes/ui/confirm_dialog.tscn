@@ -1,0 +1,67 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/confirm_dialog.gd" id="1_dialog"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+
+[node name="ConfirmDialog" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_dialog")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Plate" type="PanelContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Center/Panel/Plate"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Message" type="Label" parent="Center/Panel/Plate/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Are you sure?"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/Plate/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ConfirmButton" type="Button" parent="Center/Panel/Plate/Content/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "OK"
+
+[node name="CancelButton" type="Button" parent="Center/Panel/Plate/Content/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CANCEL"
