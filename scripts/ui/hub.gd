@@ -1,19 +1,24 @@
 class_name Hub
 extends Control
-## The selected hero's home screen: a portrait, readouts and build-layer actions.
+## The selected hero's home screen: the hero on a stage, flanked by feature slots.
 ##
 ## Displays the supplied hero without loading, saving or changing their data.
-## Feature screens are not built yet; Start Quest and Change Hero report choices
-## to the screen owner. Runs standalone with an unselected portrait.
+## Feature screens are not built yet, so their slots are locked. Start Quest and
+## Change Hero report choices to the screen owner. Runs standalone with an
+## unselected portrait.
 
 signal quest_requested
 signal change_hero_requested
 
-const DOLL_FEET_MARGIN: float = 18.0
-const DOLL_HEIGHT: float = 48.0
-const FRAME_SIZE: float = 64.0
+## Portrait size in unscaled doll pixels: the 64px frame plus a little air, and
+## the 48px body plus headroom and the dais below its feet.
+const PORTRAIT_SIZE: Vector2 = Vector2(72.0, 66.0)
+## Distance from the portrait's bottom edge to the hero's feet, in doll pixels.
+const FEET_MARGIN: float = 13.0
 
-@export_range(1, 4) var doll_scale: int = 3
+## Whole-number scale keeps the pixel art crisp. 4x does not fit 360 lines
+## alongside the nameplate, top bar and Start Quest.
+@export_range(1, 3) var doll_scale: int = 3
 
 var _hero: HeroData = null
 
@@ -30,9 +35,7 @@ var _hero: HeroData = null
 
 func _ready() -> void:
 	_doll_anchor.scale = Vector2.ONE * doll_scale
-	_portrait.custom_minimum_size = Vector2(
-		FRAME_SIZE * doll_scale, DOLL_HEIGHT * doll_scale + DOLL_FEET_MARGIN + 6.0
-	)
+	_portrait.custom_minimum_size = PORTRAIT_SIZE * doll_scale
 	_portrait.resized.connect(_place_doll)
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
@@ -61,8 +64,8 @@ func _refresh() -> void:
 	if _hero == null:
 		_name_label.text = "No hero selected"
 		_info_label.text = "Choose a hero to start"
-		_gold_label.text = "Gold --"
-		_exp_label.text = "EXP --"
+		_gold_label.text = "--"
+		_exp_label.text = "--"
 		_change_hero_button.grab_focus()
 		return
 
@@ -72,15 +75,15 @@ func _refresh() -> void:
 	)
 	_name_label.text = _hero.hero_name
 	_info_label.text = "Lv %d  %s" % [_hero.level, class_text]
-	_gold_label.text = "Gold %d" % _hero.gold
-	_exp_label.text = "EXP %d" % _hero.experience
+	_gold_label.text = str(_hero.gold)
+	_exp_label.text = str(_hero.experience)
 	_doll.wear_armour(_hero.armour)
 	_quest_button.grab_focus()
 
 
 func _place_doll() -> void:
 	_doll_anchor.position = Vector2(
-		roundf(_portrait.size.x * 0.5), roundf(_portrait.size.y - DOLL_FEET_MARGIN)
+		roundf(_portrait.size.x * 0.5), roundf(_portrait.size.y - FEET_MARGIN * doll_scale)
 	)
 
 
