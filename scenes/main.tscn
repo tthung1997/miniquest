@@ -3,8 +3,10 @@
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/ui/character_select.tscn" id="2_select"]
 [ext_resource type="PackedScene" uid="uid://8gpx8i1pf80i" path="res://scenes/dev/playground.tscn" id="3_playground"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hub.tscn" id="4_hub"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
 character_select_scene = ExtResource("2_select")
+hub_scene = ExtResource("4_hub")
 playground_scene = ExtResource("3_playground")
