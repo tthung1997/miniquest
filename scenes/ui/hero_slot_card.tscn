@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hero_slot_card.gd" id="1_card"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/portrait_frame.png" id="3_frame"]
+[ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
+
+[node name="HeroSlotCard" type="PanelContainer"]
+theme = ExtResource("2_theme")
+script = ExtResource("1_card")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Portrait" type="NinePatchRect" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+texture = ExtResource("3_frame")
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="DollAnchor" type="Node2D" parent="Content/Portrait"]
+unique_name_in_owner = true
+
+[node name="PaperDoll" parent="Content/Portrait/DollAnchor" instance=ExtResource("4_doll")]
+unique_name_in_owner = true
+
+[node name="NameLabel" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Name"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="InfoLabel" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Info"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PlayButton" type="Button" parent="Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PLAY"
+
+[node name="DeleteButton" type="Button" parent="Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DELETE"
+
+[node name="CreateButton" type="Button" parent="Content/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+ NEW HERO"
