@@ -324,10 +324,12 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
   tracks, plus an official Godot 4 example project. **Confirmed.** Only the
   files in use are copied into `assets/packs/ninja_adventure/` (currently the
-  Wood UI theme pieces and `NormalFont.ttf`, with the licence). UI follows the
-  pack's own palette: orange frames around a warm brown interior, dark olive
+  Wood UI theme pieces, `NormalFont.ttf` and five hub item icons, with the licence).
+  UI follows the pack's own palette: orange frames around a warm brown interior, dark olive
   wells, light text, on a warm olive-grey background. The rest of the pack
   stays outside the repo until something uses it.
+- The hub's ground shadow and EXP star are custom LibreSprite art, with editable
+  `.ase` sources beside their PNGs under `assets/sprites/effects/` and `assets/sprites/ui/`.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 

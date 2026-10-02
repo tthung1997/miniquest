@@ -1,0 +1,217 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/hub.gd" id="1_hub"]
+[ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="3_well"]
+[ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/sword.png" id="5_sword"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/scroll.png" id="6_scroll"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/book.png" id="7_book"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/exp_icon.png" id="11_exp"]
+
+[sub_resource type="AtlasTexture" id="ClosedChest"]
+atlas = ExtResource("8_chest")
+region = Rect2(0, 0, 16, 16)
+
+[node name="Hub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hub")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.408, 0.392, 0.337, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="Layout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 16
+
+[node name="HeroInfo" type="VBoxContainer" parent="Margin/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="Margin/Layout/Header/HeroInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "No hero selected"
+text_overrun_behavior = 3
+
+[node name="InfoLabel" type="Label" parent="Margin/Layout/Header/HeroInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "Choose a hero to start"
+
+[node name="ChangeHeroButton" type="Button" parent="Margin/Layout/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 32)
+layout_mode = 2
+size_flags_vertical = 4
+focus_neighbor_bottom = NodePath("../../QuestButton")
+focus_next = NodePath("../../QuestButton")
+focus_previous = NodePath("../../QuestButton")
+text = "CHANGE HERO"
+
+[node name="Middle" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+theme_override_constants/separation = 24
+
+[node name="LeftActions" type="VBoxContainer" parent="Margin/Layout/Middle"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 1
+theme_override_constants/separation = 20
+
+[node name="EquipmentButton" type="Button" parent="Margin/Layout/Middle/LeftActions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+tooltip_text = "Coming soon"
+focus_mode = 0
+disabled = true
+text = "EQUIPMENT"
+icon = ExtResource("5_sword")
+
+[node name="StatsButton" type="Button" parent="Margin/Layout/Middle/LeftActions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+tooltip_text = "Coming soon"
+focus_mode = 0
+disabled = true
+text = "STATS"
+icon = ExtResource("7_book")
+
+[node name="Portrait" type="NinePatchRect" parent="Margin/Layout/Middle"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(192, 192)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+texture = ExtResource("3_well")
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_right = 3
+patch_margin_bottom = 3
+
+[node name="DollAnchor" type="Node2D" parent="Margin/Layout/Middle/Portrait"]
+unique_name_in_owner = true
+
+[node name="Shadow" type="Sprite2D" parent="Margin/Layout/Middle/Portrait/DollAnchor"]
+position = Vector2(2, 1)
+texture = ExtResource("10_shadow")
+
+[node name="PaperDoll" parent="Margin/Layout/Middle/Portrait/DollAnchor" instance=ExtResource("4_doll")]
+unique_name_in_owner = true
+
+[node name="RightActions" type="VBoxContainer" parent="Margin/Layout/Middle"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 1
+theme_override_constants/separation = 20
+
+[node name="SkillsButton" type="Button" parent="Margin/Layout/Middle/RightActions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+tooltip_text = "Coming soon"
+focus_mode = 0
+disabled = true
+text = "SKILLS"
+icon = ExtResource("6_scroll")
+
+[node name="GachaButton" type="Button" parent="Margin/Layout/Middle/RightActions"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+tooltip_text = "Coming soon"
+focus_mode = 0
+disabled = true
+text = "GACHA"
+icon = SubResource("ClosedChest")
+
+[node name="Readouts" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Gold" type="HBoxContainer" parent="Margin/Layout/Readouts"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Margin/Layout/Readouts/Gold"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("9_coin")
+
+[node name="GoldLabel" type="Label" parent="Margin/Layout/Readouts/Gold"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Gold --"
+
+[node name="Experience" type="HBoxContainer" parent="Margin/Layout/Readouts"]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 6
+
+[node name="Icon" type="TextureRect" parent="Margin/Layout/Readouts/Experience"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("11_exp")
+
+[node name="ExpLabel" type="Label" parent="Margin/Layout/Readouts/Experience"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "EXP --"
+
+[node name="QuestButton" type="Button" parent="Margin/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(208, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+focus_neighbor_top = NodePath("../Header/ChangeHeroButton")
+focus_next = NodePath("../Header/ChangeHeroButton")
+focus_previous = NodePath("../Header/ChangeHeroButton")
+tooltip_text = "Explore the test playground until the arena is ready"
+disabled = true
+text = "START QUEST"

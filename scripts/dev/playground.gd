@@ -7,7 +7,7 @@ extends Node2D
 ## code; it exists to check movement, facing and animation switching by hand.
 
 ## Raised when the player asks to leave, so whatever opened this scene can
-## decide where to go next. Nothing listens when the scene is run on its own.
+## return to the hub. Nothing listens when the scene is run on its own.
 signal back_requested
 
 const ROOM: Rect2i = Rect2i(0, 0, 1120, 630)
@@ -42,7 +42,8 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_cancel"):
+	if event.is_action_pressed(&"ui_cancel") and not event.is_echo():
+		get_viewport().set_input_as_handled()
 		back_requested.emit()
 
 
