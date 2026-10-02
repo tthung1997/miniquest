@@ -7,25 +7,39 @@
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/button_disabled.png" id="5_disabled"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/focus.png" id="6_focus"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="7_inset"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/field.png" id="9_field"]
 [ext_resource type="FontFile" path="res://assets/packs/ninja_adventure/ui/NormalFont.ttf" id="8_font"]
 
 [sub_resource type="FontVariation" id="Font"]
 base_font = ExtResource("8_font")
 spacing_space = 2
 
-[sub_resource type="StyleBoxTexture" id="Panel"]
+[sub_resource type="StyleBoxTexture" id="Frame"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
 texture = ExtResource("1_panel")
 texture_margin_left = 6.0
 texture_margin_top = 6.0
 texture_margin_right = 5.0
 texture_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxTexture" id="Plate"]
-content_margin_left = 6.0
-content_margin_top = 5.0
-content_margin_right = 6.0
-content_margin_bottom = 5.0
+[sub_resource type="StyleBoxFlat" id="Interior"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.439, 0.278, 0.176, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxTexture" id="Well"]
+content_margin_left = 5.0
+content_margin_top = 3.0
+content_margin_right = 5.0
+content_margin_bottom = 3.0
 texture = ExtResource("7_inset")
 texture_margin_left = 3.0
 texture_margin_top = 3.0
@@ -84,37 +98,28 @@ texture_margin_right = 3.0
 texture_margin_bottom = 3.0
 draw_center = false
 
-[sub_resource type="StyleBoxTexture" id="Inset"]
-content_margin_left = 5.0
-content_margin_top = 3.0
-content_margin_right = 5.0
-content_margin_bottom = 3.0
-texture = ExtResource("9_field")
-texture_margin_left = 3.0
-texture_margin_top = 3.0
-texture_margin_right = 3.0
-texture_margin_bottom = 3.0
-
 [resource]
 default_font = SubResource("Font")
 default_font_size = 8
-Button/colors/font_color = Color(0.235, 0.118, 0.078, 1)
-Button/colors/font_disabled_color = Color(0.5, 0.35, 0.28, 1)
-Button/colors/font_focus_color = Color(0.235, 0.118, 0.078, 1)
-Button/colors/font_hover_color = Color(0.1, 0.05, 0.03, 1)
-Button/colors/font_pressed_color = Color(0.1, 0.05, 0.03, 1)
+AccentLabel/base_type = &"Label"
+AccentLabel/colors/font_color = Color(1, 0.678, 0.333, 1)
+Button/colors/font_color = Color(0.949, 0.949, 0.949, 1)
+Button/colors/font_disabled_color = Color(0.651, 0.651, 0.651, 1)
+Button/colors/font_focus_color = Color(0.949, 0.949, 0.949, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
 Button/styles/disabled = SubResource("ButtonDisabled")
 Button/styles/focus = SubResource("Focus")
 Button/styles/hover = SubResource("ButtonHover")
 Button/styles/normal = SubResource("ButtonNormal")
 Button/styles/pressed = SubResource("ButtonPressed")
-Label/colors/font_color = Color(1, 0.957, 0.863, 1)
-LineEdit/colors/caret_color = Color(0.96, 0.9, 0.78, 1)
-LineEdit/colors/font_color = Color(0.96, 0.9, 0.78, 1)
-LineEdit/colors/font_placeholder_color = Color(0.6, 0.55, 0.45, 1)
-LineEdit/styles/focus = SubResource("Inset")
-LineEdit/styles/normal = SubResource("Inset")
-Panel/styles/panel = SubResource("Panel")
-PanelContainer/styles/panel = SubResource("Panel")
-InsetPanel/base_type = &"PanelContainer"
-InsetPanel/styles/panel = SubResource("Plate")
+InteriorPanel/base_type = &"PanelContainer"
+InteriorPanel/styles/panel = SubResource("Interior")
+Label/colors/font_color = Color(0.949, 0.949, 0.949, 1)
+LineEdit/colors/caret_color = Color(0.949, 0.949, 0.949, 1)
+LineEdit/colors/font_color = Color(0.949, 0.949, 0.949, 1)
+LineEdit/colors/font_placeholder_color = Color(0.651, 0.651, 0.651, 1)
+LineEdit/styles/focus = SubResource("Well")
+LineEdit/styles/normal = SubResource("Well")
+Panel/styles/panel = SubResource("Frame")
+PanelContainer/styles/panel = SubResource("Frame")
