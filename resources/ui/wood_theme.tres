@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/button_disabled.png" id="5_disabled"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/focus.png" id="6_focus"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="7_inset"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/field.png" id="9_field"]
 [ext_resource type="FontFile" path="res://assets/packs/ninja_adventure/ui/NormalFont.ttf" id="8_font"]
 
 [sub_resource type="FontVariation" id="Font"]
@@ -19,6 +20,17 @@ texture_margin_left = 6.0
 texture_margin_top = 6.0
 texture_margin_right = 5.0
 texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="Plate"]
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 6.0
+content_margin_bottom = 5.0
+texture = ExtResource("7_inset")
+texture_margin_left = 3.0
+texture_margin_top = 3.0
+texture_margin_right = 3.0
+texture_margin_bottom = 3.0
 
 [sub_resource type="StyleBoxTexture" id="ButtonNormal"]
 content_margin_left = 6.0
@@ -77,7 +89,7 @@ content_margin_left = 5.0
 content_margin_top = 3.0
 content_margin_right = 5.0
 content_margin_bottom = 3.0
-texture = ExtResource("7_inset")
+texture = ExtResource("9_field")
 texture_margin_left = 3.0
 texture_margin_top = 3.0
 texture_margin_right = 3.0
@@ -97,8 +109,6 @@ Button/styles/hover = SubResource("ButtonHover")
 Button/styles/normal = SubResource("ButtonNormal")
 Button/styles/pressed = SubResource("ButtonPressed")
 Label/colors/font_color = Color(1, 0.957, 0.863, 1)
-Label/colors/font_outline_color = Color(0.235, 0.118, 0.078, 1)
-Label/constants/outline_size = 1
 LineEdit/colors/caret_color = Color(0.96, 0.9, 0.78, 1)
 LineEdit/colors/font_color = Color(0.96, 0.9, 0.78, 1)
 LineEdit/colors/font_placeholder_color = Color(0.6, 0.55, 0.45, 1)
@@ -106,3 +116,5 @@ LineEdit/styles/focus = SubResource("Inset")
 LineEdit/styles/normal = SubResource("Inset")
 Panel/styles/panel = SubResource("Panel")
 PanelContainer/styles/panel = SubResource("Panel")
+InsetPanel/base_type = &"PanelContainer"
+InsetPanel/styles/panel = SubResource("Plate")
