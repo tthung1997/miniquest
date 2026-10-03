@@ -24,6 +24,9 @@ signal item_dropped(cell: ItemCell, item: EquipmentItem)
 @export var slot: EquipmentItem.Slot = EquipmentItem.Slot.ARMOUR
 ## Silhouette shown while the cell is empty.
 @export var placeholder: Texture2D
+## Opacity of an empty inventory cell's socket, so filled cells stand out.
+## Equipment slots stay solid; their silhouettes already read as empty.
+@export_range(0.0, 1.0, 0.05) var empty_opacity: float = 0.5
 
 var item: EquipmentItem = null:
 	set(value):
@@ -111,6 +114,9 @@ func can_accept(source: ItemCell) -> bool:
 
 func _refresh() -> void:
 	_icon.item = item
+	# self_modulate fades only this button's socket, not the icon child.
+	var faded: bool = item == null and not is_equipment_slot and not _drop_hint
+	self_modulate.a = empty_opacity if faded else 1.0
 	disabled = locked
 	focus_mode = Control.FOCUS_NONE if locked else Control.FOCUS_ALL
 	tooltip_text = _tooltip()
@@ -142,6 +148,7 @@ func _set_drop_hint(show_hint: bool) -> void:
 	if show_hint == _drop_hint:
 		return
 	_drop_hint = show_hint
+	_refresh()
 	queue_redraw()
 
 

@@ -12,7 +12,7 @@ const STARTING_CLASS: StringName = &"novice"
 const STARTING_STAT: int = 5
 const NAME_MAX_LENGTH: int = 12
 ## Inventory cells per hero, shown all at once in the hub.
-const INVENTORY_SIZE: int = 24
+const INVENTORY_SIZE: int = 25
 
 ## Zero (the default) means the file predates versioning. Left at a non-default
 ## on purpose: Godot omits default-valued fields when saving, which would drop

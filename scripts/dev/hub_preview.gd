@@ -4,13 +4,13 @@ extends Node
 ## so equipping can be tried before item drops exist.
 ##
 ## The hero is never saved: hero_changed is left unconnected. Raise
-## `spare_armours` to 24 to try a full inventory.
+## `spare_armours` to 25 to try a full inventory.
 ##
 ## Run this scene on its own with F6. Not shipped game code.
 
 const POOLS: Array[StringName] = [&"novice", &"mage", &"ranger", &"warrior"]
 
-@export_range(0, 24) var spare_armours: int = 8
+@export_range(0, 25) var spare_armours: int = 8
 @export var hero_name: String = "Tester"
 
 @onready var _hub: Hub = $Hub

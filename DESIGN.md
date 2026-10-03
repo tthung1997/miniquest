@@ -177,7 +177,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
-- **Each hero carries up to 24 items** in an inventory, all shown at once in the
+- **Each hero carries up to 25 items** in an inventory, all shown at once in the
   hub. Unworn items live there.
 - **An item's icon is stacked from its pieces.** Every Armour piece variant has
   a 16×16 icon, drawn on a shared canvas with a fixed zone per piece (hat on
@@ -251,13 +251,15 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 ## 8. Hub
 
-**The hero stands on the left, framed by their four equipment slots; their
-inventory fills the right.** Stats, Skills and Gacha sit under the inventory,
-and Start Quest runs along the bottom.
+**The hero stands on the left in a warm glow, between their four equipment
+slots, with their name and level above and Start Quest below; their inventory
+fills the right.** Stats, Skills and Gacha sit in the top bar.
 
 The hero is rendered with full visible equipment at integer scale (3× or 4×). This
 is where the player admires their character, so it's worth the screen space.
 
+- Equipment slots and inventory cells share one tile size, so the two panels
+  read as one system. Empty inventory cells are faded so items stand out.
 - Items move between the inventory and the slots by **drag-and-drop**, a
   **right-click menu** (Equip / Unequip), or by activating a cell with Enter,
   Space or a double-click. Arrow keys move between cells.

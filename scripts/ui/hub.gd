@@ -1,7 +1,7 @@
 class_name Hub
 extends Control
-## The selected hero's home screen: the hero and their four equipment slots on
-## the left, their inventory on the right.
+## The selected hero's home screen: the hero standing in a warm glow between
+## their four equipment slots on the left, their inventory on the right.
 ##
 ## Items move between the inventory and the slots by drag-and-drop, by a
 ## right-click menu, or by activating a cell with Enter, Space or a
@@ -17,12 +17,11 @@ signal hero_changed
 
 enum MenuAction { EQUIP, UNEQUIP }
 
-## Portrait size in unscaled doll pixels: the 64px frame plus a little air,
-## and room for the full frame height, since a hat can reach its top row, with
-## the dais below the feet.
-const PORTRAIT_SIZE: Vector2 = Vector2(72.0, 68.0)
-## Distance from the portrait's bottom edge to the hero's feet, in doll pixels.
-## Puts the frame's top row on the portrait's top edge and leaves the dais clear
+## Stage height in unscaled doll pixels: the full 64px frame, since a hat can
+## reach its top row, plus the dais below the feet.
+const STAGE_HEIGHT: float = 68.0
+## Distance from the stage's bottom edge to the hero's feet, in doll pixels.
+## Puts the frame's top row on the stage's top edge and leaves the dais clear
 ## of the bottom one.
 const FEET_MARGIN: float = 11.0
 
@@ -37,7 +36,7 @@ var _equipment_cells: Array[ItemCell] = []
 var _inventory_cells: Array[ItemCell] = []
 var _menu_cell: ItemCell = null
 
-@onready var _portrait: NinePatchRect = %Portrait
+@onready var _stage: Control = %Stage
 @onready var _doll_anchor: Node2D = %DollAnchor
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _name_label: Label = %NameLabel
@@ -57,8 +56,8 @@ var _menu_cell: ItemCell = null
 
 func _ready() -> void:
 	_doll_anchor.scale = Vector2.ONE * doll_scale
-	_portrait.custom_minimum_size = PORTRAIT_SIZE * doll_scale
-	_portrait.resized.connect(_place_doll)
+	_stage.custom_minimum_size.y = STAGE_HEIGHT * doll_scale
+	_stage.resized.connect(_place_doll)
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
 	_item_menu.id_pressed.connect(_on_menu_id_pressed)
@@ -159,7 +158,7 @@ func _focus_default() -> void:
 
 func _place_doll() -> void:
 	_doll_anchor.position = Vector2(
-		roundf(_portrait.size.x * 0.5), roundf(_portrait.size.y - FEET_MARGIN * doll_scale)
+		roundf(_stage.size.x * 0.5), roundf(_stage.size.y - FEET_MARGIN * doll_scale)
 	)
 
 
