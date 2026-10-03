@@ -4,7 +4,7 @@
 [ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="3_well"]
 [ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/sword.png" id="5_sword"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_cell.tscn" id="5_cell"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/scroll.png" id="6_scroll"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/book.png" id="7_book"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
@@ -13,6 +13,10 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/exp_icon.png" id="11_exp"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/hero_dais.png" id="12_dais"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/arrow_left.png" id="13_arrow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/slot_weapon.png" id="14_weapon"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/slot_armour.png" id="15_armour"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/slot_boots.png" id="16_boots"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/slot_accessory.png" id="17_accessory"]
 
 [sub_resource type="AtlasTexture" id="ClosedChest"]
 atlas = ExtResource("8_chest")
@@ -27,6 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_theme")
 script = ExtResource("1_hub")
+item_cell_scene = ExtResource("5_cell")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -46,10 +51,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 5
 
 [node name="Center" type="CenterContainer" parent="Margin"]
 layout_mode = 2
@@ -69,9 +74,6 @@ theme_override_constants/separation = 6
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
-focus_neighbor_bottom = NodePath("../../QuestButton")
-focus_next = NodePath("../../QuestButton")
-focus_previous = NodePath("../../QuestButton")
 tooltip_text = "Back to hero selection"
 theme_type_variation = &"QuietButton"
 text = "HEROES"
@@ -130,108 +132,53 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "--"
 
-[node name="StageRow" type="HBoxContainer" parent="Margin/Center/Column"]
+[node name="Body" type="HBoxContainer" parent="Margin/Center/Column"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 8
 
-[node name="LeftSlots" type="VBoxContainer" parent="Margin/Center/Column/StageRow"]
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-theme_override_constants/separation = 14
-
-[node name="Equipment" type="VBoxContainer" parent="Margin/Center/Column/StageRow/LeftSlots"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 4
-
-[node name="Tile" type="Button" parent="Margin/Center/Column/StageRow/LeftSlots/Equipment"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
-size_flags_horizontal = 4
-tooltip_text = "Equipment - coming soon"
-focus_mode = 0
-theme_type_variation = &"HubTile"
-disabled = true
-
-[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/StageRow/LeftSlots/Equipment/Tile"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Icon" type="TextureRect" parent="Margin/Center/Column/StageRow/LeftSlots/Equipment/Tile/IconCenter"]
-modulate = Color(1, 1, 1, 0.55)
-custom_minimum_size = Vector2(12, 34)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("5_sword")
-expand_mode = 1
-
-[node name="Label" type="Label" parent="Margin/Center/Column/StageRow/LeftSlots/Equipment"]
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-text = "EQUIPMENT"
-horizontal_alignment = 1
-
-[node name="Stats" type="VBoxContainer" parent="Margin/Center/Column/StageRow/LeftSlots"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 4
-
-[node name="Tile" type="Button" parent="Margin/Center/Column/StageRow/LeftSlots/Stats"]
-custom_minimum_size = Vector2(44, 44)
-layout_mode = 2
-size_flags_horizontal = 4
-tooltip_text = "Stats - coming soon"
-focus_mode = 0
-theme_type_variation = &"HubTile"
-disabled = true
-
-[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/StageRow/LeftSlots/Stats/Tile"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="Icon" type="TextureRect" parent="Margin/Center/Column/StageRow/LeftSlots/Stats/Tile/IconCenter"]
-modulate = Color(1, 1, 1, 0.55)
-custom_minimum_size = Vector2(32, 32)
-layout_mode = 2
-mouse_filter = 2
-texture = ExtResource("7_book")
-expand_mode = 1
-
-[node name="Label" type="Label" parent="Margin/Center/Column/StageRow/LeftSlots/Stats"]
-layout_mode = 2
-theme_type_variation = &"MutedLabel"
-text = "STATS"
-horizontal_alignment = 1
-
-[node name="Stage" type="PanelContainer" parent="Margin/Center/Column/StageRow"]
+[node name="Stage" type="PanelContainer" parent="Margin/Center/Column/Body"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Interior" type="PanelContainer" parent="Margin/Center/Column/StageRow/Stage"]
+[node name="Interior" type="PanelContainer" parent="Margin/Center/Column/Body/Stage"]
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"InteriorPanel"
 
-[node name="Content" type="VBoxContainer" parent="Margin/Center/Column/StageRow/Stage/Interior"]
+[node name="Content" type="VBoxContainer" parent="Margin/Center/Column/Body/Stage/Interior"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="Portrait" type="NinePatchRect" parent="Margin/Center/Column/StageRow/Stage/Interior/Content"]
+[node name="Display" type="HBoxContainer" parent="Margin/Center/Column/Body/Stage/Interior/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="LeftSlots" type="VBoxContainer" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="WeaponSlot" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/LeftSlots" instance=ExtResource("5_cell")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(216, 198)
+layout_mode = 2
+is_equipment_slot = true
+slot = 0
+placeholder = ExtResource("14_weapon")
+
+[node name="ArmourSlot" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/LeftSlots" instance=ExtResource("5_cell")]
+unique_name_in_owner = true
+layout_mode = 2
+is_equipment_slot = true
+slot = 1
+placeholder = ExtResource("15_armour")
+
+[node name="Portrait" type="NinePatchRect" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(216, 204)
 layout_mode = 2
 mouse_filter = 2
 texture = ExtResource("3_well")
@@ -240,26 +187,46 @@ patch_margin_top = 3
 patch_margin_right = 3
 patch_margin_bottom = 3
 
-[node name="DollAnchor" type="Node2D" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Portrait"]
+[node name="DollAnchor" type="Node2D" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/Portrait"]
 unique_name_in_owner = true
 
-[node name="Dais" type="Sprite2D" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Portrait/DollAnchor"]
+[node name="Dais" type="Sprite2D" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/Portrait/DollAnchor"]
 position = Vector2(2, 3)
 texture = ExtResource("12_dais")
 
-[node name="Shadow" type="Sprite2D" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Portrait/DollAnchor"]
+[node name="Shadow" type="Sprite2D" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/Portrait/DollAnchor"]
 position = Vector2(2, 1)
 texture = ExtResource("10_shadow")
 
-[node name="PaperDoll" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Portrait/DollAnchor" instance=ExtResource("4_doll")]
+[node name="PaperDoll" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/Portrait/DollAnchor" instance=ExtResource("4_doll")]
 unique_name_in_owner = true
 
-[node name="Nameplate" type="VBoxContainer" parent="Margin/Center/Column/StageRow/Stage/Interior/Content"]
+[node name="RightSlots" type="VBoxContainer" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="BootsSlot" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/RightSlots" instance=ExtResource("5_cell")]
+unique_name_in_owner = true
+layout_mode = 2
+is_equipment_slot = true
+slot = 2
+placeholder = ExtResource("16_boots")
+
+[node name="AccessorySlot" parent="Margin/Center/Column/Body/Stage/Interior/Content/Display/RightSlots" instance=ExtResource("5_cell")]
+unique_name_in_owner = true
+layout_mode = 2
+is_equipment_slot = true
+slot = 3
+placeholder = ExtResource("17_accessory")
+
+[node name="Nameplate" type="VBoxContainer" parent="Margin/Center/Column/Body/Stage/Interior/Content"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="NameLabel" type="Label" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Nameplate"]
+[node name="NameLabel" type="Label" parent="Margin/Center/Column/Body/Stage/Interior/Content/Nameplate"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
@@ -267,7 +234,7 @@ text = "No hero selected"
 horizontal_alignment = 1
 text_overrun_behavior = 3
 
-[node name="InfoLabel" type="Label" parent="Margin/Center/Column/StageRow/Stage/Interior/Content/Nameplate"]
+[node name="InfoLabel" type="Label" parent="Margin/Center/Column/Body/Stage/Interior/Content/Nameplate"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"AccentLabel"
@@ -275,19 +242,103 @@ theme_override_font_sizes/font_size = 16
 text = "Choose a hero to start"
 horizontal_alignment = 1
 
-[node name="RightSlots" type="VBoxContainer" parent="Margin/Center/Column/StageRow"]
+[node name="Side" type="VBoxContainer" parent="Margin/Center/Column/Body"]
 layout_mode = 2
-size_flags_vertical = 4
 mouse_filter = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 6
 
-[node name="Skills" type="VBoxContainer" parent="Margin/Center/Column/StageRow/RightSlots"]
+[node name="Inventory" type="PanelContainer" parent="Margin/Center/Column/Body/Side"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Interior" type="PanelContainer" parent="Margin/Center/Column/Body/Side/Inventory"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Center/Column/Body/Side/Inventory/Interior"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
+alignment = 1
 
-[node name="Tile" type="Button" parent="Margin/Center/Column/StageRow/RightSlots/Skills"]
-custom_minimum_size = Vector2(44, 44)
+[node name="Header" type="HBoxContainer" parent="Margin/Center/Column/Body/Side/Inventory/Interior/Content"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Margin/Center/Column/Body/Side/Inventory/Interior/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MutedLabel"
+text = "INVENTORY"
+
+[node name="CountLabel" type="Label" parent="Margin/Center/Column/Body/Side/Inventory/Interior/Content/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Items carried"
+mouse_filter = 1
+theme_type_variation = &"MutedLabel"
+text = "0/24"
+
+[node name="InventoryGrid" type="GridContainer" parent="Margin/Center/Column/Body/Side/Inventory/Interior/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 6
+
+[node name="Features" type="HBoxContainer" parent="Margin/Center/Column/Body/Side"]
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Stats" type="VBoxContainer" parent="Margin/Center/Column/Body/Side/Features"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Tile" type="Button" parent="Margin/Center/Column/Body/Side/Features/Stats"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Stats - coming soon"
+focus_mode = 0
+theme_type_variation = &"HubTile"
+disabled = true
+
+[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/Body/Side/Features/Stats/Tile"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/Center/Column/Body/Side/Features/Stats/Tile/IconCenter"]
+modulate = Color(1, 1, 1, 0.55)
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_book")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="Margin/Center/Column/Body/Side/Features/Stats"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "STATS"
+horizontal_alignment = 1
+
+[node name="Skills" type="VBoxContainer" parent="Margin/Center/Column/Body/Side/Features"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Tile" type="Button" parent="Margin/Center/Column/Body/Side/Features/Skills"]
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 tooltip_text = "Skills - coming soon"
@@ -295,7 +346,7 @@ focus_mode = 0
 theme_type_variation = &"HubTile"
 disabled = true
 
-[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/StageRow/RightSlots/Skills/Tile"]
+[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/Body/Side/Features/Skills/Tile"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -304,7 +355,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Margin/Center/Column/StageRow/RightSlots/Skills/Tile/IconCenter"]
+[node name="Icon" type="TextureRect" parent="Margin/Center/Column/Body/Side/Features/Skills/Tile/IconCenter"]
 modulate = Color(1, 1, 1, 0.55)
 custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
@@ -312,19 +363,19 @@ mouse_filter = 2
 texture = ExtResource("6_scroll")
 expand_mode = 1
 
-[node name="Label" type="Label" parent="Margin/Center/Column/StageRow/RightSlots/Skills"]
+[node name="Label" type="Label" parent="Margin/Center/Column/Body/Side/Features/Skills"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "SKILLS"
 horizontal_alignment = 1
 
-[node name="Gacha" type="VBoxContainer" parent="Margin/Center/Column/StageRow/RightSlots"]
+[node name="Gacha" type="VBoxContainer" parent="Margin/Center/Column/Body/Side/Features"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 
-[node name="Tile" type="Button" parent="Margin/Center/Column/StageRow/RightSlots/Gacha"]
-custom_minimum_size = Vector2(44, 44)
+[node name="Tile" type="Button" parent="Margin/Center/Column/Body/Side/Features/Gacha"]
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 size_flags_horizontal = 4
 tooltip_text = "Gacha - coming soon"
@@ -332,7 +383,7 @@ focus_mode = 0
 theme_type_variation = &"HubTile"
 disabled = true
 
-[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/StageRow/RightSlots/Gacha/Tile"]
+[node name="IconCenter" type="CenterContainer" parent="Margin/Center/Column/Body/Side/Features/Gacha/Tile"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -341,7 +392,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="Margin/Center/Column/StageRow/RightSlots/Gacha/Tile/IconCenter"]
+[node name="Icon" type="TextureRect" parent="Margin/Center/Column/Body/Side/Features/Gacha/Tile/IconCenter"]
 modulate = Color(1, 1, 1, 0.55)
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
@@ -349,7 +400,7 @@ mouse_filter = 2
 texture = SubResource("ClosedChest")
 expand_mode = 1
 
-[node name="Label" type="Label" parent="Margin/Center/Column/StageRow/RightSlots/Gacha"]
+[node name="Label" type="Label" parent="Margin/Center/Column/Body/Side/Features/Gacha"]
 layout_mode = 2
 theme_type_variation = &"MutedLabel"
 text = "GACHA"
@@ -359,10 +410,10 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-focus_neighbor_top = NodePath("../TopBar/ChangeHeroButton")
-focus_next = NodePath("../TopBar/ChangeHeroButton")
-focus_previous = NodePath("../TopBar/ChangeHeroButton")
 tooltip_text = "Explore the test playground until the arena is ready"
 theme_override_font_sizes/font_size = 16
 disabled = true
 text = "START QUEST"
+
+[node name="ItemMenu" type="PopupMenu" parent="."]
+unique_name_in_owner = true

@@ -9,7 +9,8 @@ extends SceneTree
 ## animation and frame index. Each <name>_<clip>.png group in a rig becomes one
 ## resource: body_<clip>.png at the rig root is the base layer, and groups in
 ## subfolders, such as equipment/armour/mage/hat/01_walk.png, are drawn over it.
-## Output mirrors the source tree under resources/<rig>/.
+## Output mirrors the source tree under resources/<rig>/. A piece's
+## <name>_icon.png is its inventory icon, not a clip, and is left alone.
 ##
 ## Safe to re-run: each resource is rebuilt from scratch and keeps its uid.
 ## Re-run after adding or changing a sheet, rather than hand-editing a .tres
@@ -20,6 +21,8 @@ const OUTPUT_ROOT: String = "res://resources"
 const RIGS: PackedStringArray = ["chibi"]
 const BASE_LAYER: String = "body"
 const FRAME_SIZE: Vector2i = Vector2i(64, 64)
+## Suffix of an equipment piece's icon, which shares the sheets' folder.
+const ICON_SUFFIX: String = "icon"
 
 ## Frame counts come from each sheet's width, so file names do not carry them.
 const CLIPS: Array[Dictionary] = [
@@ -84,6 +87,8 @@ func _collect_sheets(path: String, relative: String, groups: Dictionary) -> void
 		var stem: String = file.get_basename()
 		var cut: int = stem.rfind("_")
 		var clip: String = stem.substr(cut + 1) if cut > 0 else ""
+		if clip == ICON_SUFFIX:
+			continue
 		if not _is_clip(clip):
 			push_warning(
 				"build_sprite_frames: %s is not named <name>_<clip>.png; skipped"

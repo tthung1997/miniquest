@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/item_cell.gd" id="1_cell"]
+[ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://scripts/ui/item_icon.gd" id="3_icon"]
+
+[node name="ItemCell" type="Button"]
+custom_minimum_size = Vector2(38, 38)
+theme = ExtResource("2_theme")
+theme_type_variation = &"ItemCell"
+button_mask = 0
+script = ExtResource("1_cell")
+
+[node name="Icon" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_icon")

@@ -1,5 +1,5 @@
 class_name ArmourItem
-extends Resource
+extends EquipmentItem
 ## One Armour item: the art pool it was rolled from and the piece worn on each
 ## layer.
 ##
@@ -8,13 +8,21 @@ extends Resource
 ## is what keeps an existing item looking the same after art is added to a
 ## pool. A piece id is the zero-padded number in the art's file name, so ids
 ## are never renumbered or reused; 0 means the item has no such piece.
+##
+## The inventory icon stacks each piece's own 16x16 icon, drawn beside its
+## sheets as <nn>_icon.png, so two items differ wherever any piece does.
 
 enum Piece { HAT, SHIRT, PANTS }
 
 const FRAMES_ROOT: String = "res://resources/chibi/equipment/armour"
+const ICONS_ROOT: String = "res://assets/sprites/chibi/equipment/armour"
 ## Folder names under a pool, indexed by Piece.
 const PIECE_FOLDERS: PackedStringArray = ["hat", "shirt", "pants"]
 const FRAMES_SUFFIX: String = "_frames.tres"
+const ICON_SUFFIX: String = "_icon.png"
+## Icon layers bottom to top: the hat brim overlaps the shirt, which overlaps
+## the pants' waist.
+const ICON_ORDER: Array[Piece] = [Piece.PANTS, Piece.SHIRT, Piece.HAT]
 const NO_PIECE: int = 0
 
 ## Base class whose art this item was rolled from, such as &"mage".
@@ -22,6 +30,9 @@ const NO_PIECE: int = 0
 @export_range(0, 99) var hat_id: int = NO_PIECE
 @export_range(0, 99) var shirt_id: int = NO_PIECE
 @export_range(0, 99) var pants_id: int = NO_PIECE
+
+var _icon_layers: Array[Texture2D] = []
+var _icon_loaded: bool = false
 
 
 ## Roll each piece independently from `pool_id`'s art. A piece with no art in
@@ -56,6 +67,37 @@ static func available_ids(pool_id: StringName, piece: Piece) -> PackedInt32Array
 			ids.append(stem.to_int())
 	ids.sort()
 	return ids
+
+
+func get_slot() -> EquipmentItem.Slot:
+	return EquipmentItem.Slot.ARMOUR
+
+
+func get_display_name() -> String:
+	return "%s Armour" % String(pool).capitalize()
+
+
+## A piece whose icon is missing is left out with a warning, so the item still
+## shows its other pieces rather than nothing.
+func get_icon_layers() -> Array[Texture2D]:
+	if _icon_loaded:
+		return _icon_layers
+	_icon_loaded = true
+	_icon_layers.clear()
+	for piece: Piece in ICON_ORDER:
+		var id: int = piece_id(piece)
+		if id == NO_PIECE:
+			continue
+		var path: String = "%s/%02d%s" % [_icon_folder(pool, piece), id, ICON_SUFFIX]
+		if not ResourceLoader.exists(path):
+			push_warning("ArmourItem: missing icon %s." % path)
+			continue
+		var icon: Resource = load(path)
+		if icon is not Texture2D:
+			push_warning("ArmourItem: %s is not a texture." % path)
+			continue
+		_icon_layers.append(icon)
+	return _icon_layers
 
 
 func piece_id(piece: Piece) -> int:
@@ -94,3 +136,7 @@ static func _roll_piece(pool_id: StringName, piece: Piece, rng: RandomNumberGene
 
 static func _piece_folder(pool_id: StringName, piece: Piece) -> String:
 	return FRAMES_ROOT.path_join(String(pool_id)).path_join(PIECE_FOLDERS[piece])
+
+
+static func _icon_folder(pool_id: StringName, piece: Piece) -> String:
+	return ICONS_ROOT.path_join(String(pool_id)).path_join(PIECE_FOLDERS[piece])

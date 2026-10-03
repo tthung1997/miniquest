@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7oqps00h26n6"
-path="res://.godot/imported/sword.png-b1899c785c1b94b1185e4d5ae7adc64a.ctex"
+uid="uid://cle8e0kmgf1jr"
+path="res://.godot/imported/01_icon.png-3d9087160c10ac8a8e6881cee96b6452.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/packs/ninja_adventure/items/sword.png"
-dest_files=["res://.godot/imported/sword.png-b1899c785c1b94b1185e4d5ae7adc64a.ctex"]
+source_file="res://assets/sprites/chibi/equipment/armour/warrior/pants/01_icon.png"
+dest_files=["res://.godot/imported/01_icon.png-3d9087160c10ac8a8e6881cee96b6452.ctex"]
 
 [params]
 

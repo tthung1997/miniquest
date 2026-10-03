@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/hub_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hub.tscn" id="2_hub"]
+
+[node name="HubPreview" type="Node"]
+script = ExtResource("1_preview")
+
+[node name="Hub" parent="." instance=ExtResource("2_hub")]

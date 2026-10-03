@@ -193,6 +193,7 @@ assets/sprites/chibi/                   the rig; every character on it
   equipment/armour/<class>/<piece>/<nn>_<clip>.png
                                         e.g. equipment/armour/mage/hat/01_walk.png
   equipment/armour/<class>/<piece>/<nn>.ase
+  equipment/armour/<class>/<piece>/<nn>_icon.png   (+ <nn>_icon.ase)
 ```
 
 Armour art is a pool per **base class** (`novice`, `mage`, `ranger`, `warrior`),
@@ -212,6 +213,11 @@ assembly of layers chosen in a scene.
 - `<nn>.ase` is the LibreSprite file the piece is drawn and touched up in. Godot
   does not import `.ase`, so it sits beside its PNGs at no runtime cost. After
   editing, export the layer back to its PNGs and rebuild the frames.
+- `<nn>_icon.png` is the piece's 16×16 inventory icon, with `<nn>_icon.ase`
+  beside it. Every piece draws on the same 16×16 canvas in a fixed zone — hat
+  rows 0–5, shirt rows 5–11, pants rows 11–15 — on a transparent background, so
+  an item's icon is just its pieces' icons stacked pants → shirt → hat. A
+  missing icon is a warning and leaves that piece out of the item's icon.
 - `tools/build_sprite_frames.gd` turns every sheet group into a `SpriteFrames`
   under `resources/<rig>/`, mirroring the sprite path. It fails the run if any
   layer's frame count differs from the body's, since every layer is driven from
