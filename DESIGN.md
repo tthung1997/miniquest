@@ -177,6 +177,12 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
+- **Each hero carries up to 25 items** in an inventory, all shown at once in the
+  hub. Unworn items live there.
+- **An item's icon is stacked from its pieces.** Every Armour piece variant has
+  a 16×16 icon, drawn on a shared canvas with a fixed zone per piece (hat on
+  top, shirt, pants below), and the item's icon is its pieces' icons layered.
+  Two items differ wherever any piece does.
 
 ### 5.7 Acquisition
 
@@ -245,11 +251,22 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 ## 8. Hub
 
-**The hero stands in the centre, surrounded by buttons** — Equipment, Skills,
-Gacha, Stats, Start Quest.
+**The hero stands on the left in a warm glow, between their four equipment
+slots, with their name and level above and Start Quest below; their inventory
+fills the right.** Stats, Skills and Gacha sit in the top bar.
 
 The hero is rendered with full visible equipment at integer scale (3× or 4×). This
 is where the player admires their character, so it's worth the screen space.
+
+- Equipment slots and inventory cells share one tile size, so the two panels
+  read as one system. Empty inventory cells are faded so items stand out.
+- Items move between the inventory and the slots by **drag-and-drop**, a
+  **right-click menu** (Equip / Unequip), or by activating a cell with Enter,
+  Space or a double-click. Arrow keys move between cells.
+- Equipping swaps: whatever was worn takes the new item's place in the
+  inventory, so a swap never needs a free cell. Taking an item off needs one,
+  and is refused when the inventory is full.
+- A slot whose items do not exist yet is shown but locked.
 
 ## 9. Art and rendering
 
@@ -324,14 +341,15 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
   tracks, plus an official Godot 4 example project. **Confirmed.** Only the
   files in use are copied into `assets/packs/ninja_adventure/` (currently the
-  Wood UI theme pieces, the back arrow, `NormalFont.ttf` and five hub item icons,
+  Wood UI theme pieces, the back arrow, `NormalFont.ttf` and four hub item icons,
   with the licence).
   UI follows the pack's own palette: orange frames around a warm brown interior, dark olive
   wells, light text, on a warm olive-grey background. The rest of the pack
   stays outside the repo until something uses it.
-- The hub's dais, ground shadow and EXP star are custom LibreSprite art, with
-  editable `.ase` sources beside their PNGs under `assets/sprites/props/`,
-  `assets/sprites/effects/` and `assets/sprites/ui/`.
+- The hub's dais, ground shadow, EXP star and empty equipment slot silhouettes
+  are custom LibreSprite art, with editable `.ase` sources beside their PNGs
+  under `assets/sprites/props/`, `assets/sprites/effects/` and
+  `assets/sprites/ui/`. Armour piece icons sit beside their sheets the same way.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 

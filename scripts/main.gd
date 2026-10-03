@@ -50,6 +50,7 @@ func _show_hub() -> void:
 		hub.free()
 		return
 	hub.show_hero(_hero)
+	hub.hero_changed.connect(_save_hero)
 	hub.quest_requested.connect(_show_playground)
 	hub.change_hero_requested.connect(_show_character_select)
 	_swap_to(hub)
@@ -64,6 +65,14 @@ func _show_playground() -> void:
 	playground.back_requested.connect(_show_hub)
 	_swap_to(playground)
 	playground.show_hero(_hero)
+
+
+## HeroSaves reports its own failures; the hero stays usable in memory either way.
+func _save_hero() -> void:
+	if _slot < 0 or _hero == null:
+		push_error("Main: no active save slot to save the hero to.")
+		return
+	HeroSaves.save_hero(_slot, _hero)
 
 
 func _swap_to(next: Node) -> void:

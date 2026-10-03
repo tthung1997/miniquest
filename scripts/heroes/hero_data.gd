@@ -11,6 +11,8 @@ const STARTING_CLASS: StringName = &"novice"
 ## Every stat's value at level 1 (design/classes.json, starting_stats).
 const STARTING_STAT: int = 5
 const NAME_MAX_LENGTH: int = 12
+## Inventory cells per hero, shown all at once in the hub.
+const INVENTORY_SIZE: int = 25
 
 ## Zero (the default) means the file predates versioning. Left at a non-default
 ## on purpose: Godot omits default-valued fields when saving, which would drop
@@ -31,6 +33,9 @@ const NAME_MAX_LENGTH: int = 12
 
 @export_group("Equipment")
 @export var armour: ArmourItem
+## Items carried but not worn, at most INVENTORY_SIZE. Kept packed: an item
+## leaving the inventory closes its gap, and a new one goes on the end.
+@export var inventory: Array[EquipmentItem] = []
 
 
 ## A new level 1 Novice called `raw_name`, wearing freshly rolled Novice
@@ -61,5 +66,95 @@ static func clean_name(raw_name: String) -> String:
 	return " ".join(words).left(NAME_MAX_LENGTH).strip_edges()
 
 
+## Whether a hero can wear anything in `slot` yet. Only Armour items exist so
+## far; the other slots open as their items are designed.
+static func supports_slot(slot: EquipmentItem.Slot) -> bool:
+	return slot == EquipmentItem.Slot.ARMOUR
+
+
+static func _describe(item: EquipmentItem) -> String:
+	return "an empty item" if item == null else item.get_display_name()
+
+
 func class_data() -> ClassData:
 	return ClassData.find(class_id)
+
+
+## The item worn in `slot`, or null when it is empty.
+func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
+	match slot:
+		EquipmentItem.Slot.ARMOUR:
+			return armour
+	return null
+
+
+func is_inventory_full() -> bool:
+	return inventory.size() >= INVENTORY_SIZE
+
+
+## Put `item` on the end of the inventory. Fails with an error when the
+## inventory is full or already holds it.
+func add_to_inventory(item: EquipmentItem) -> bool:
+	if item == null:
+		push_error("HeroData: cannot carry an empty item.")
+		return false
+	if inventory.has(item):
+		push_error("HeroData: %s is already carried." % item.get_display_name())
+		return false
+	if is_inventory_full():
+		push_error("HeroData: no room to carry %s." % item.get_display_name())
+		return false
+	inventory.append(item)
+	emit_changed()
+	return true
+
+
+func can_equip(item: EquipmentItem) -> bool:
+	return item != null and inventory.has(item) and supports_slot(item.get_slot())
+
+
+## Wear `item` from the inventory. Whatever was in its slot takes the item's
+## place in the inventory, so a swap never needs a free cell.
+func equip(item: EquipmentItem) -> bool:
+	if not can_equip(item):
+		push_error("HeroData: cannot equip %s." % _describe(item))
+		return false
+	var index: int = inventory.find(item)
+	var previous: EquipmentItem = equipped(item.get_slot())
+	if not _set_equipped(item.get_slot(), item):
+		return false
+	if previous == null:
+		inventory.remove_at(index)
+	else:
+		inventory[index] = previous
+	emit_changed()
+	return true
+
+
+## Unequipping needs a free inventory cell; nothing is ever dropped.
+func can_unequip(slot: EquipmentItem.Slot) -> bool:
+	return equipped(slot) != null and not is_inventory_full()
+
+
+func unequip(slot: EquipmentItem.Slot) -> bool:
+	if not can_unequip(slot):
+		push_error("HeroData: cannot unequip the %s slot." % EquipmentItem.slot_name(slot))
+		return false
+	var item: EquipmentItem = equipped(slot)
+	if not _set_equipped(slot, null):
+		return false
+	inventory.append(item)
+	emit_changed()
+	return true
+
+
+func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
+	match slot:
+		EquipmentItem.Slot.ARMOUR:
+			if item != null and item is not ArmourItem:
+				push_error("HeroData: %s does not fit the Armour slot." % _describe(item))
+				return false
+			armour = item
+			return true
+	push_error("HeroData: the %s slot is not supported yet." % EquipmentItem.slot_name(slot))
+	return false
