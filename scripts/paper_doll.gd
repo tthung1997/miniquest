@@ -5,8 +5,10 @@ extends Node2D
 ## The art is drawn in side view facing right; facing left flips every layer.
 ## Only the body plays its animation. Each equipment layer copies the body's
 ## clip and frame index, so no layer can drift out of step with the pose
-## beneath it. Has no input or physics of its own, so it can be shown anywhere
-## a hero needs to be seen, from the arena to a menu portrait.
+## beneath it. Layers under BehindBody are drawn beneath the body: a weapon
+## sits there so the near fist covers its grip. Has no input or physics of its
+## own, so it can be shown anywhere a hero needs to be seen, from the arena to
+## a menu portrait.
 
 const IDLE_CLIP: StringName = &"idle"
 const WALK_CLIP: StringName = &"walk"
@@ -14,9 +16,12 @@ const WALK_CLIP: StringName = &"walk"
 var _facing_right: bool = true
 var _layers: Array[AnimatedSprite2D] = []
 var _armour: ArmourItem = null
+var _weapon: WeaponItem = null
 
 @onready var _body: AnimatedSprite2D = $Body
+@onready var _behind_body: Node2D = $BehindBody
 @onready var _equipment: Node2D = $Equipment
+@onready var _weapon_layer: AnimatedSprite2D = $BehindBody/Weapon
 @onready var _hat: AnimatedSprite2D = $Equipment/Hat
 @onready var _shirt: AnimatedSprite2D = $Equipment/Shirt
 @onready var _pants: AnimatedSprite2D = $Equipment/Pants
@@ -31,8 +36,8 @@ func _ready() -> void:
 	# which lags by a frame whenever tree order puts the doll first.
 	_body.frame_changed.connect(_sync_layers)
 	_body.animation_changed.connect(_sync_layers)
-	if _armour != null:
-		_apply_armour()
+	_apply_armour()
+	_apply_weapon()
 	_sync_layers()
 
 
@@ -42,6 +47,14 @@ func wear_armour(item: ArmourItem) -> void:
 	_armour = item
 	if is_node_ready():
 		_apply_armour()
+		_sync_layers()
+
+
+## Hold `item`, or empty the hand when null. Safe to call before ready.
+func wield(item: WeaponItem) -> void:
+	_weapon = item
+	if is_node_ready():
+		_apply_weapon()
 		_sync_layers()
 
 
@@ -64,17 +77,18 @@ func is_facing_right() -> bool:
 	return _facing_right
 
 
-## Equipment layers are whatever AnimatedSprite2D nodes sit under Equipment, so
-## a slot can be added in the editor without touching this script.
+## Equipment layers are whatever AnimatedSprite2D nodes sit under BehindBody or
+## Equipment, so a slot can be added in the editor without touching this script.
 func _collect_layers() -> void:
 	_layers.clear()
-	for child: Node in _equipment.get_children():
-		if child is AnimatedSprite2D:
-			var layer: AnimatedSprite2D = child as AnimatedSprite2D
-			# Layers must not run their own clock, or they drift against the body.
-			layer.stop()
-			layer.flip_h = not _facing_right
-			_layers.append(layer)
+	for group: Node2D in [_behind_body, _equipment]:
+		for child: Node in group.get_children():
+			if child is AnimatedSprite2D:
+				var layer: AnimatedSprite2D = child
+				# Layers must not run their own clock, or they drift against the body.
+				layer.stop()
+				layer.flip_h = not _facing_right
+				_layers.append(layer)
 
 
 func _apply_armour() -> void:
@@ -86,6 +100,10 @@ func _apply_armour() -> void:
 	_hat.sprite_frames = _armour.frames_for(ArmourItem.Piece.HAT)
 	_shirt.sprite_frames = _armour.frames_for(ArmourItem.Piece.SHIRT)
 	_pants.sprite_frames = _armour.frames_for(ArmourItem.Piece.PANTS)
+
+
+func _apply_weapon() -> void:
+	_weapon_layer.sprite_frames = _weapon.frames() if _weapon != null else null
 
 
 func _sync_layers() -> void:

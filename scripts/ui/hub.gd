@@ -121,6 +121,7 @@ func _refresh() -> void:
 		_gold_label.text = "--"
 		_exp_label.text = "--"
 		_doll.wear_armour(null)
+		_doll.wield(null)
 		return
 
 	var hero_class: ClassData = _hero.class_data()
@@ -132,6 +133,7 @@ func _refresh() -> void:
 	_gold_label.text = str(_hero.gold)
 	_exp_label.text = str(_hero.experience)
 	_doll.wear_armour(_hero.armour)
+	_doll.wield(_hero.weapon)
 
 
 func _refresh_items() -> void:

@@ -6,6 +6,11 @@
 [node name="PaperDoll" type="Node2D"]
 script = ExtResource("1_doll")
 
+[node name="BehindBody" type="Node2D" parent="."]
+
+[node name="Weapon" type="AnimatedSprite2D" parent="BehindBody"]
+offset = Vector2(0, -24)
+
 [node name="Body" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_body")
 animation = &"idle"

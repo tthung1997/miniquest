@@ -169,8 +169,17 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   are stored on the item, by piece id, so adding art to a pool never changes what
   an existing item looks like. Advanced classes wear their base class's armour.
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
-  three layers, Boots as a layer over the feet, and the Weapon in the hand.
+  three layers, Boots as a layer over the feet, and the Weapon in the near hand,
+  on a layer behind the body so the fist covers the grip.
   Whether an Accessory is drawn is undecided (section 11).
+- **Three base weapons: Sword (STR), Bow (DEX), Wand (INT).** A weapon's
+  strength is purely its stat scaling, with no class bonus: a Warrior hits
+  hardest with a sword only because Warriors grow STR, and a Novice, growing
+  every stat evenly, favours none. Each weapon is a fixed template; its numbers
+  are placeholders until enemies exist.
+- **Every hero starts with all three weapons**, the Sword held and the Bow and
+  Wand carried, so the first runs are a chance to find the one that suits the
+  build. Heroes saved before weapons existed are given the same set on load.
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
 - **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
@@ -301,7 +310,8 @@ exists in this form and reads well, and because the cost is contained:
 - **The head does not move between frames**, so a hat is drawn once and reused on
   every frame.
 - **The weapon is drawn once** and placed at a per-frame hand position, rather
-  than redrawn.
+  than redrawn. Its layer is drawn behind the body, so the near fist covers the
+  grip without a separate hand layer.
 - **The body's animation set stays small: idle (1 frame) and walk (4 frames).**
   Hurt, death and attacks are effects and shaders, not new body frames. Every body
   frame added must be redrawn for every generated garment, so this is the budget
@@ -350,6 +360,12 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   are custom LibreSprite art, with editable `.ase` sources beside their PNGs
   under `assets/sprites/props/`, `assets/sprites/effects/` and
   `assets/sprites/ui/`. Armour piece icons sit beside their sheets the same way.
+- **Weapons start from the pack.** Their 16×16 icons are the pack's own
+  sprites: Sword2, the Bow turned upright, and the MagicWand with two shaft
+  rows removed to fit. The in-hand art is redrawn at the hero's pixel density
+  from the pack weapon at 2×, keeping its palette but using the hero's warm
+  outline. The pack's 16×16-scale art at 2× would have pixels twice the size of
+  the hero's.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 
@@ -362,8 +378,8 @@ working.
 ## 10. Version 1 scope
 
 In:
-- Paper-doll hero with its Armour layers (hat, shirt, pants) wired; Boots and
-  Weapon layers still to add.
+- Paper-doll hero with its Armour layers (hat, shirt, pants) and Weapon layer
+  wired; the Boots layer still to add.
 - Arena run: movement, auto-attack, auto-target, one enemy type ramping, damage,
   death, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
