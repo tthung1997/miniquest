@@ -5,10 +5,10 @@ extends Node2D
 ## The art is drawn in side view facing right; facing left flips every layer.
 ## Only the body plays its animation. Each equipment layer copies the body's
 ## clip and frame index, so no layer can drift out of step with the pose
-## beneath it. Layers under BehindBody are drawn beneath the body: a weapon
-## sits there so the near fist covers its grip. Has no input or physics of its
-## own, so it can be shown anywhere a hero needs to be seen, from the arena to
-## a menu portrait.
+## beneath it. The weapon layer is drawn last, in front of everything; its art
+## redraws the near fist over the grip so the hand holds it. Has no input or
+## physics of its own, so it can be shown anywhere a hero needs to be seen,
+## from the arena to a menu portrait.
 
 const IDLE_CLIP: StringName = &"idle"
 const WALK_CLIP: StringName = &"walk"
@@ -19,12 +19,11 @@ var _armour: ArmourItem = null
 var _weapon: WeaponItem = null
 
 @onready var _body: AnimatedSprite2D = $Body
-@onready var _behind_body: Node2D = $BehindBody
 @onready var _equipment: Node2D = $Equipment
-@onready var _weapon_layer: AnimatedSprite2D = $BehindBody/Weapon
 @onready var _hat: AnimatedSprite2D = $Equipment/Hat
 @onready var _shirt: AnimatedSprite2D = $Equipment/Shirt
 @onready var _pants: AnimatedSprite2D = $Equipment/Pants
+@onready var _weapon_layer: AnimatedSprite2D = $Equipment/Weapon
 
 
 func _ready() -> void:
@@ -77,18 +76,17 @@ func is_facing_right() -> bool:
 	return _facing_right
 
 
-## Equipment layers are whatever AnimatedSprite2D nodes sit under BehindBody or
-## Equipment, so a slot can be added in the editor without touching this script.
+## Equipment layers are whatever AnimatedSprite2D nodes sit under Equipment, so
+## a slot can be added in the editor without touching this script.
 func _collect_layers() -> void:
 	_layers.clear()
-	for group: Node2D in [_behind_body, _equipment]:
-		for child: Node in group.get_children():
-			if child is AnimatedSprite2D:
-				var layer: AnimatedSprite2D = child
-				# Layers must not run their own clock, or they drift against the body.
-				layer.stop()
-				layer.flip_h = not _facing_right
-				_layers.append(layer)
+	for child: Node in _equipment.get_children():
+		if child is AnimatedSprite2D:
+			var layer: AnimatedSprite2D = child
+			# Layers must not run their own clock, or they drift against the body.
+			layer.stop()
+			layer.flip_h = not _facing_right
+			_layers.append(layer)
 
 
 func _apply_armour() -> void:

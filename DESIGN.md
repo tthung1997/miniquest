@@ -170,7 +170,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   an existing item looks like. Advanced classes wear their base class's armour.
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
-  on a layer behind the body so the fist covers the grip.
+  in front of the body: the sword and wand point forward and up, the bow is
+  held level.
   Whether an Accessory is drawn is undecided (section 11).
 - **Three base weapons: Sword (STR), Bow (DEX), Wand (INT).** A weapon's
   strength is purely its stat scaling, with no class bonus: a Warrior hits
@@ -310,8 +311,9 @@ exists in this form and reads well, and because the cost is contained:
 - **The head does not move between frames**, so a hat is drawn once and reused on
   every frame.
 - **The weapon is drawn once** and placed at a per-frame hand position, rather
-  than redrawn. Its layer is drawn behind the body, so the near fist covers the
-  grip without a separate hand layer.
+  than redrawn. It is held in the near hand, pointing the way the hero faces,
+  on the top layer; each frame redraws the body's fist over the grip, so the
+  hand holds it without a separate hand layer and the weapon swings with it.
 - **The body's animation set stays small: idle (1 frame) and walk (4 frames).**
   Hurt, death and attacks are effects and shaders, not new body frames. Every body
   frame added must be redrawn for every generated garment, so this is the budget

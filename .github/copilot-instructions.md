@@ -209,8 +209,9 @@ when a variant is removed. Numbers do not pair across pieces.
 
 Weapons are not rolled. Each one is a `WeaponData` template in
 `resources/weapons/<weapon>.tres`, and its art is named after that id. A weapon
-is drawn once and placed at the near hand on every body frame. Its layer sits
-**behind** the body, so the near fist covers the grip.
+is drawn once, pointing the way the hero faces, and placed at the near hand on
+every body frame. Its layer is drawn **over** everything else, and each frame
+redraws the body's fist pixels over the grip so the hand holds it.
 
 Male and female characters share one rig and differ by hair, face and clothes;
 do not add a second body without a reason. A character is not a folder — it is an

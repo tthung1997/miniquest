@@ -18,7 +18,7 @@ const DIRECTORY: String = "res://resources/weapons"
 @export var display_name: String = ""
 ## 16x16 inventory icon.
 @export var icon: Texture2D
-## The in-hand layer drawn behind the hero's body, built from the weapon's
+## The in-hand layer drawn in front of the hero, built from the weapon's
 ## sheets by tools/build_sprite_frames.gd.
 @export var frames: SpriteFrames
 
