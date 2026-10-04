@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/projectile.gd" id="1_projectile"]
+[ext_resource type="SpriteFrames" path="res://resources/effects/magic_bolt_frames.tres" id="2_frames"]
+[ext_resource type="PackedScene" path="res://scenes/effects/magic_burst.tscn" id="3_burst"]
+
+[node name="MagicBolt" type="Node2D"]
+script = ExtResource("1_projectile")
+speed = 240.0
+end_effect = ExtResource("3_burst")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"default"
+autoplay = "default"

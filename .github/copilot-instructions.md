@@ -195,8 +195,10 @@ assets/sprites/chibi/                   the rig; every character on it
   equipment/armour/<class>/<piece>/<nn>.ase
   equipment/armour/<class>/<piece>/<nn>_icon.png   (+ <nn>_icon.ase)
   equipment/weapon/<weapon>_<clip>.png  e.g. equipment/weapon/sword_walk.png
+  equipment/weapon/<weapon>_attack.png  the weapon's own attack clip
   equipment/weapon/<weapon>.ase
   equipment/weapon/<weapon>_icon.png    (+ <weapon>_icon.ase)
+assets/sprites/effects/<effect>.png     (+ <effect>.ase) e.g. sword_slash, crossbow_bolt
 ```
 
 Armour art is a pool per **base class** (`novice`, `mage`, `ranger`, `warrior`),
@@ -212,6 +214,14 @@ Weapons are not rolled. Each one is a `WeaponData` template in
 is drawn once, pointing the way the hero faces, and placed at the near hand on
 every body frame. Its layer is drawn **over** everything else, and each frame
 redraws the body's fist pixels over the grip so the hand holds it.
+
+A weapon's attack is `<weapon>_attack.png`, frames appended after idle and walk
+in `<weapon>.ase`. It plays once on the weapon layer's own clock while the body
+keeps idling or walking, so its frame count is free. It is drawn at the **idle**
+pose's hand, and `PaperDoll.hand_offsets` shifts it to the hand on each body
+frame. The arm never moves; do not add attack frames to the body or garments.
+What the attack throws is set on its `WeaponData` (`release_frame`,
+`release_point`, `attack_effect`, `projectile`).
 
 Male and female characters share one rig and differ by hair, face and clothes;
 do not add a second body without a reason. A character is not a folder — it is an
@@ -229,8 +239,10 @@ assembly of layers chosen in a scene.
   missing icon is a warning and leaves that piece out of the item's icon.
 - `tools/build_sprite_frames.gd` turns every sheet group into a `SpriteFrames`
   under `resources/<rig>/`, mirroring the sprite path. It fails the run if any
-  layer's frame count differs from the body's, since every layer is driven from
-  the body's frame index.
+  layer's `idle`/`walk` frame count differs from the body's, since those are
+  driven from the body's frame index. It also builds each effect it lists into
+  `resources/effects/<effect>_frames.tres`; effect frames are square, so the
+  sheet's height is the frame size.
 
 Nothing else belongs in `assets/`: every PNG there is imported as a texture
 whether or not it is used. Keep raw image-generator output and rejected drafts

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7j40ugifmbrw"
-path="res://.godot/imported/bow_idle.png-2acf785593422376bfa6877c9f4b1e2a.ctex"
+uid="uid://dls5kdws5kf8q"
+path="res://.godot/imported/magic_bolt.png-2d6f13e85b82b99cfc1e56cdf2e3afd5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/weapon/bow_idle.png"
-dest_files=["res://.godot/imported/bow_idle.png-2acf785593422376bfa6877c9f4b1e2a.ctex"]
+source_file="res://assets/sprites/effects/magic_bolt.png"
+dest_files=["res://.godot/imported/magic_bolt.png-2d6f13e85b82b99cfc1e56cdf2e3afd5.ctex"]
 
 [params]
 

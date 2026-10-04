@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/magic_bolt.png" id="1_7xs5g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rlfqq"]
+atlas = ExtResource("1_7xs5g")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5p6b8"]
+atlas = ExtResource("1_7xs5g")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_31v15"]
+atlas = ExtResource("1_7xs5g")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_422qf"]
+atlas = ExtResource("1_7xs5g")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rlfqq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5p6b8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_31v15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_422qf")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cw6qfopwewv80"
-path="res://.godot/imported/bow_icon.png-97611d6002fd27bd669dd1bea489866b.ctex"
+uid="uid://dbbyufvltxprl"
+path="res://.godot/imported/sword_slash.png-ffec3f4d3afd534f1552f1cd2ef193a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/weapon/bow_icon.png"
-dest_files=["res://.godot/imported/bow_icon.png-97611d6002fd27bd669dd1bea489866b.ctex"]
+source_file="res://assets/sprites/effects/sword_slash.png"
+dest_files=["res://.godot/imported/sword_slash.png-ffec3f4d3afd534f1552f1cd2ef193a8.ctex"]
 
 [params]
 

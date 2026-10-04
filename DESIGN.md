@@ -89,7 +89,7 @@ Concrete classes, skills and numbers live in `design/classes.json` and
 
 **A class never restricts anything.** It defines stat growth, scaling affinity
 and `health_per_vitality`. Weapons and skills declare which stats they scale
-off — a sword draws on STR, a staff on INT, a bow on DEX. A mage swinging a
+off — a sword draws on STR, a staff on INT, a crossbow on DEX. A mage swinging a
 sword deals poor damage *because they have no STR*, not because a rule forbids
 it. Hybrids therefore cost nothing to express.
 
@@ -171,17 +171,28 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
   in front of the body: the sword and wand are held low, pointing forward and
-  down, and the bow is
+  down, and the crossbow is
   held level.
   Whether an Accessory is drawn is undecided (section 11).
-- **Three base weapons: Sword (STR), Bow (DEX), Wand (INT).** A weapon's
+- **Three base weapons: Sword (STR), Crossbow (DEX), Wand (INT).** A weapon's
   strength is purely its stat scaling, with no class bonus: a Warrior hits
   hardest with a sword only because Warriors grow STR, and a Novice, growing
   every stat evenly, favours none. Each weapon is a fixed template; its numbers
   are placeholders until enemies exist.
-- **Every hero starts with all three weapons**, the Sword held and the Bow and
+- **Every hero starts with all three weapons**, the Sword held and the Crossbow and
   Wand carried, so the first runs are a chance to find the one that suits the
   build. Heroes saved before weapons existed are given the same set on load.
+- **The DEX weapon is a crossbow, not a bow.** A bow needs a second hand to
+  draw, which a side-on hero with one visible arm cannot show; a crossbow is
+  held and loosed one-handed. Bows in older saves load as crossbows.
+- **Each weapon hits in its own shape**, so they differ by more than numbers.
+  Damage is not built yet, so these rules wait for it; the visuals already
+  match them.
+  - **Sword:** a broad greatsword whose slash lands one hero-height ahead in a
+    tall arc and hits every enemy in it. That pays for having to close in.
+  - **Crossbow:** a fast bolt that pierces, hitting every enemy in a line.
+  - **Wand:** a slower bolt that homes in on its target and bursts in a small
+    area where it lands, or at the end of its range.
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
 - **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
@@ -211,8 +222,10 @@ upgrade overlay, damage, run-end summary, ramp timer); the reverse is not true.
 ### 6.1 Control
 
 **Move only.** Four-direction movement, already bound as `move_left/right/up/down`.
-Auto-attack fires continuously at the nearest target. Skills fire on cooldown per
-their auto/manual toggle. No aiming, no attack button.
+Auto-attack fires at the nearest enemy whenever one is within the weapon's
+`attack_range`, once per `attack_interval`; with no enemy in range the hero does
+not attack. Skills fire on cooldown per their auto/manual toggle. No aiming, no
+attack button.
 
 ### 6.2 Arena
 
@@ -319,6 +332,18 @@ exists in this form and reads well, and because the cost is contained:
   Hurt, death and attacks are effects and shaders, not new body frames. Every body
   frame added must be redrawn for every generated garment, so this is the budget
   to protect.
+- **Each weapon has its own attack, drawn on the weapon layer alone.** The
+  weapon plays a short attack clip on its own clock while the body keeps idling
+  or walking, so the hero attacks mid-stride: the sword winds up, swings and
+  follows through, the crossbow kicks as it looses, the wand lifts and flicks. The arm
+  does not move — the weapon pivots in the still fist — which was accepted over
+  an attack frame per weapon for the body and every shirt. The clip is drawn
+  once at the idle pose's hand and shifted by the hand's offset on each body
+  frame. What the attack throws is an effect: the sword's slash crescent is
+  drawn on the hero, and the crossbow bolt and magic bolt fly ahead for the
+  weapon's range, carried along by the hero's own speed so a shot fired on the
+  run is never overtaken. The crossbow bolt trails a speed streak; the magic
+  bolt ends in a burst.
 
 In Godot: a `CharacterBody2D` with an `AnimatedSprite2D` body and one
 `AnimatedSprite2D` per equipment layer. `tools/build_sprite_frames.gd` builds each
@@ -363,12 +388,18 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   are custom LibreSprite art, with editable `.ase` sources beside their PNGs
   under `assets/sprites/props/`, `assets/sprites/effects/` and
   `assets/sprites/ui/`. Armour piece icons sit beside their sheets the same way.
-- **Weapons start from the pack.** Their 16×16 icons are the pack's own
-  sprites: Sword2, the Bow turned upright, and the MagicWand with two shaft
+- **Weapon attack effects are custom too**: the sword's slash crescent, the
+  crossbow bolt, the magic bolt and its burst, in the weapons' own palettes, with `.ase` sources
+  in `assets/sprites/effects/`. They are drawn at the hero's pixel density, which
+  pack effects are not.
+- **The wand starts from the pack.** Its 16×16 icon is the pack's own
+  MagicWand with two shaft
   rows removed to fit. The in-hand art is redrawn at the hero's pixel density
   from the pack weapon at 2×, keeping its palette but using the hero's warm
   outline. The pack's 16×16-scale art at 2× would have pixels twice the size of
-  the hero's.
+  the hero's. The greatsword and crossbow are custom throughout, icons
+  included: the greatsword in the palette of the pack's Sword2 it grew from,
+  and the crossbow in that of the pack Bow it replaced, as the pack has none.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 

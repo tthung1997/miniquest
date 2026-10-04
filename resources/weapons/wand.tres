@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/equipment/weapon_data.gd" id="1_data"]
 [ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/wand_icon.png" id="2_icon"]
 [ext_resource type="SpriteFrames" path="res://resources/chibi/equipment/weapon/wand_frames.tres" id="3_frames"]
+[ext_resource type="PackedScene" path="res://scenes/effects/magic_bolt.tscn" id="4_projectile"]
 
 [resource]
 script = ExtResource("1_data")
@@ -17,3 +18,6 @@ scaling = Dictionary[StringName, float]({
 })
 attack_interval = 1.0
 attack_range = 140.0
+release_frame = 1
+release_point = Vector2(7, -11)
+projectile = ExtResource("4_projectile")

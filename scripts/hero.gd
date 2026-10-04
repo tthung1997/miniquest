@@ -9,6 +9,10 @@ extends CharacterBody2D
 ## default. Drawing is the PaperDoll's job; this node only moves it.
 
 signal facing_changed(facing_right: bool)
+## An attack let go of `projectile`, already launched but not yet in the tree.
+## The listener adds it to the world: the hero does not reach up into the
+## level it stands in.
+signal projectile_released(projectile: Projectile)
 
 @export_group("Movement")
 @export_range(10.0, 400.0, 5.0) var speed: float = 70.0
@@ -31,6 +35,7 @@ signal facing_changed(facing_right: bool)
 func _ready() -> void:
 	_doll.wear_armour(armour)
 	_doll.wield(weapon)
+	_doll.attack_released.connect(_on_doll_attack_released)
 
 
 ## Dress this hero as `data`.
@@ -39,6 +44,19 @@ func apply(data: HeroData) -> void:
 	weapon = data.weapon
 	_doll.wear_armour(armour)
 	_doll.wield(weapon)
+
+
+## Hold `item`, or nothing when null.
+func wield(item: WeaponItem) -> void:
+	weapon = item
+	_doll.wield(weapon)
+
+
+## Play the held weapon's attack once and release its projectile, if any.
+## Does not check attack_interval; pacing attacks is the caller's job.
+## Returns false when there is nothing to attack with.
+func attack() -> bool:
+	return _doll.attack()
 
 
 func _physics_process(delta: float) -> void:
@@ -81,3 +99,24 @@ func _update_animation() -> void:
 
 func is_facing_right() -> bool:
 	return _doll.is_facing_right()
+
+
+func _on_doll_attack_released() -> void:
+	var data: WeaponData = weapon.data() if weapon != null else null
+	if data == null or data.projectile == null:
+		return
+	# Nobody to put it in the world, as in a menu: an unparented node would leak.
+	if projectile_released.get_connections().is_empty():
+		return
+
+	var node: Node = data.projectile.instantiate()
+	if node is not Projectile:
+		push_error("Hero: projectile of weapon '%s' is not a Projectile." % data.id)
+		node.free()
+		return
+	var projectile: Projectile = node
+	var direction: Vector2 = Vector2.RIGHT if _doll.is_facing_right() else Vector2.LEFT
+	projectile.launch(
+		_doll.to_global(_doll.get_release_position()), direction, data.attack_range, velocity
+	)
+	projectile_released.emit(projectile)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dnepalaujb5kr"
-path="res://.godot/imported/bow_walk.png-761cf2ac6c273951b036aa4cd17cacd0.ctex"
+uid="uid://coku6ry0q7urb"
+path="res://.godot/imported/crossbow_icon.png-2a5c0230a919a38cbc3f53c7334aaacf.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/chibi/equipment/weapon/bow_walk.png"
-dest_files=["res://.godot/imported/bow_walk.png-761cf2ac6c273951b036aa4cd17cacd0.ctex"]
+source_file="res://assets/sprites/chibi/equipment/weapon/crossbow_icon.png"
+dest_files=["res://.godot/imported/crossbow_icon.png-2a5c0230a919a38cbc3f53c7334aaacf.ctex"]
 
 [params]
 
