@@ -1,0 +1,18 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/crossbow_bolt.png" id="1_7jfhp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qdav7"]
+atlas = ExtResource("1_7jfhp")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qdav7")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 1.0
+}]

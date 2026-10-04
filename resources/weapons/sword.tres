@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scripts/equipment/weapon_data.gd" id="1_data"]
 [ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_icon.png" id="2_icon"]
 [ext_resource type="SpriteFrames" path="res://resources/chibi/equipment/weapon/sword_frames.tres" id="3_frames"]
+[ext_resource type="PackedScene" path="res://scenes/effects/sword_slash.tscn" id="4_effect"]
 
 [resource]
 script = ExtResource("1_data")
@@ -15,4 +16,7 @@ scaling = Dictionary[StringName, float]({
 &"strength": 0.5
 })
 attack_interval = 0.8
-attack_range = 28.0
+attack_range = 48.0
+release_frame = 1
+release_point = Vector2(36, -16)
+attack_effect = ExtResource("4_effect")

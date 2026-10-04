@@ -4,7 +4,9 @@ extends Node2D
 ##
 ## The room is deliberately larger than the 640x360 viewport so the camera has
 ## something to follow and its limits are actually exercised. Not shipped game
-## code; it exists to check movement, facing and animation switching by hand.
+## code; it exists to check movement, facing, animation switching and attack
+## animations by hand. Space attacks, repeating at the weapon's
+## attack_interval while held, and Q cycles the weapon.
 
 ## Raised when the player asks to leave, so whatever opened this scene can
 ## return to the hub. Nothing listens when the scene is run on its own.
@@ -16,8 +18,11 @@ const FLOOR_COLOR: Color = Color(0.16, 0.18, 0.22)
 const WALL_COLOR: Color = Color(0.28, 0.31, 0.38)
 const GRID_COLOR: Color = Color(1.0, 1.0, 1.0, 0.05)
 const GRID_STEP: int = 64
+const WEAPON_IDS: Array[StringName] = [&"sword", &"crossbow", &"wand"]
 
 var _hero_name: String = ""
+var _attack_held: bool = false
+var _attack_cooldown: float = 0.0
 
 @onready var hero: Hero = $Hero
 @onready var _readout: Label = $HUD/Root/Readout
@@ -27,6 +32,7 @@ func _ready() -> void:
 	_build_walls()
 	hero.position = Vector2(ROOM.size) * 0.5
 	hero.facing_changed.connect(_on_hero_facing_changed)
+	hero.projectile_released.connect(_on_hero_projectile_released)
 	_refresh()
 
 
@@ -37,7 +43,10 @@ func show_hero(data: HeroData) -> void:
 	_refresh()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
+	if _attack_held and is_zero_approx(_attack_cooldown):
+		_attack()
 	_refresh()
 
 
@@ -45,6 +54,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel") and not event.is_echo():
 		get_viewport().set_input_as_handled()
 		back_requested.emit()
+		return
+
+	if event is not InputEventKey or event.is_echo():
+		return
+	var key: InputEventKey = event as InputEventKey
+	match key.physical_keycode:
+		KEY_SPACE:
+			_attack_held = key.pressed
+		KEY_Q:
+			if key.pressed:
+				_cycle_weapon()
+		_:
+			return
+	get_viewport().set_input_as_handled()
 
 
 func _draw() -> void:
@@ -88,18 +111,45 @@ func _build_walls() -> void:
 		body.add_child(collider)
 
 
+func _attack() -> void:
+	if not hero.attack():
+		return
+	var data: WeaponData = hero.weapon.data()
+	_attack_cooldown = data.attack_interval if data != null else 0.0
+
+
+## Step to the next weapon in WEAPON_IDS, starting from the sword when the
+## hero holds nothing or something not in the list.
+func _cycle_weapon() -> void:
+	var index: int = -1
+	if hero.weapon != null:
+		index = WEAPON_IDS.find(hero.weapon.weapon_id)
+	var item: WeaponItem = WeaponItem.create(WEAPON_IDS[(index + 1) % WEAPON_IDS.size()])
+	if item == null:
+		return
+	hero.wield(item)
+	_attack_cooldown = 0.0
+	_refresh()
+
+
 func _on_hero_facing_changed(_facing_right: bool) -> void:
 	_refresh()
 
 
+func _on_hero_projectile_released(projectile: Projectile) -> void:
+	add_child(projectile)
+
+
 func _refresh() -> void:
 	_readout.text = (
-		"%spos %d, %d    speed %d    facing %s\nWASD or arrows to move    Esc to go back"
+		"%spos %d, %d    speed %d    facing %s    %s\n"
 		% [
 			"" if _hero_name.is_empty() else _hero_name + "    ",
 			roundi(hero.position.x),
 			roundi(hero.position.y),
 			roundi(hero.velocity.length()),
 			"right" if hero.is_facing_right() else "left",
+			hero.weapon.get_display_name() if hero.weapon != null else "no weapon",
 		]
+		+ "WASD or arrows to move    Space attack    Q weapon    Esc to go back"
 	)

@@ -12,6 +12,14 @@ extends SceneTree
 ## Output mirrors the source tree under resources/<rig>/. A piece's
 ## <name>_icon.png is its inventory icon, not a clip, and is left alone.
 ##
+## A layer may also own clips the body does not have, such as a weapon's
+## <name>_attack.png. These play on the layer's own clock, so their frame
+## counts are free; they are optional and never allowed on the body.
+##
+## Each listed effect, assets/sprites/effects/<name>.png, becomes
+## resources/effects/<name>_frames.tres with one clip, "default". Effect
+## frames are square, so a sheet's height is its frame size.
+##
 ## Safe to re-run: each resource is rebuilt from scratch and keeps its uid.
 ## Re-run after adding or changing a sheet, rather than hand-editing a .tres
 ## that nests an AtlasTexture per frame.
@@ -23,11 +31,26 @@ const BASE_LAYER: String = "body"
 const FRAME_SIZE: Vector2i = Vector2i(64, 64)
 ## Suffix of an equipment piece's icon, which shares the sheets' folder.
 const ICON_SUFFIX: String = "icon"
+const EFFECT_ROOT: String = "res://assets/sprites/effects"
+const EFFECT_OUTPUT: String = "res://resources/effects"
+const EFFECT_CLIP: StringName = &"default"
 
 ## Frame counts come from each sheet's width, so file names do not carry them.
+## Every layer has these, frame for frame with the body.
 const CLIPS: Array[Dictionary] = [
-	{"name": &"idle", "fps": 1.0},
-	{"name": &"walk", "fps": 8.0},
+	{"name": &"idle", "fps": 1.0, "loop": true},
+	{"name": &"walk", "fps": 8.0, "loop": true},
+]
+## Optional clips a layer plays on its own clock, independent of the body.
+const LAYER_CLIPS: Array[Dictionary] = [
+	{"name": &"attack", "fps": 10.0, "loop": false},
+]
+## Effect sheets to build. Other images in the effects folder are left alone.
+const EFFECTS: Array[Dictionary] = [
+	{"name": "sword_slash", "fps": 15.0, "loop": false},
+	{"name": "crossbow_bolt", "fps": 1.0, "loop": true},
+	{"name": "magic_bolt", "fps": 12.0, "loop": true},
+	{"name": "magic_burst", "fps": 14.0, "loop": false},
 ]
 
 
@@ -36,6 +59,9 @@ func _init() -> void:
 		if not _build_rig(rig):
 			quit(1)
 			return
+	if not _build_effects():
+		quit(1)
+		return
 	quit(0)
 
 
@@ -110,26 +136,80 @@ func _build_frames(key: String, sheets: Dictionary) -> SpriteFrames:
 		if not sheets.has(String(clip_name)):
 			push_error("build_sprite_frames: layer '%s' has no %s sheet" % [key, clip_name])
 			return null
-		var path: String = sheets[String(clip_name)]
+		if not _add_clip(frames, clip, sheets[String(clip_name)], FRAME_SIZE):
+			return null
+
+	for clip: Dictionary in LAYER_CLIPS:
+		var clip_name: StringName = clip["name"]
+		if not sheets.has(String(clip_name)):
+			continue
+		if key == BASE_LAYER:
+			push_error(
+				"build_sprite_frames: %s cannot own a %s clip; every layer follows its clips"
+				% [BASE_LAYER, clip_name]
+			)
+			return null
+		if not _add_clip(frames, clip, sheets[String(clip_name)], FRAME_SIZE):
+			return null
+
+	return frames
+
+
+## Slice `path` into `frame_size` frames left to right as clip `clip`.
+func _add_clip(
+	frames: SpriteFrames, clip: Dictionary, path: String, frame_size: Vector2i
+) -> bool:
+	var clip_name: StringName = clip["name"]
+	var sheet: Texture2D = load(path)
+	if sheet == null:
+		push_error("build_sprite_frames: cannot load %s" % path)
+		return false
+	var columns: int = maxi(sheet.get_width() / frame_size.x, 1)
+
+	if not frames.has_animation(clip_name):
+		frames.add_animation(clip_name)
+	frames.set_animation_speed(clip_name, clip["fps"])
+	frames.set_animation_loop(clip_name, clip["loop"])
+
+	for i in columns:
+		var atlas: AtlasTexture = AtlasTexture.new()
+		atlas.atlas = sheet
+		atlas.region = Rect2(
+			float(i * frame_size.x), 0.0, float(frame_size.x), float(frame_size.y)
+		)
+		frames.add_frame(clip_name, atlas)
+	return true
+
+
+func _build_effects() -> bool:
+	for effect: Dictionary in EFFECTS:
+		var effect_name: String = effect["name"]
+		var path: String = EFFECT_ROOT.path_join("%s.png" % effect_name)
+		if not ResourceLoader.exists(path):
+			push_error("build_sprite_frames: effect sheet %s is missing" % path)
+			return false
 		var sheet: Texture2D = load(path)
 		if sheet == null:
 			push_error("build_sprite_frames: cannot load %s" % path)
-			return null
-		var columns: int = maxi(sheet.get_width() / FRAME_SIZE.x, 1)
+			return false
 
-		frames.add_animation(clip_name)
-		frames.set_animation_speed(clip_name, clip["fps"])
-		frames.set_animation_loop(clip_name, true)
-
-		for i in columns:
-			var atlas: AtlasTexture = AtlasTexture.new()
-			atlas.atlas = sheet
-			atlas.region = Rect2(
-				float(i * FRAME_SIZE.x), 0.0, float(FRAME_SIZE.x), float(FRAME_SIZE.y)
+		var side: int = sheet.get_height()
+		if sheet.get_width() % side != 0:
+			push_error(
+				"build_sprite_frames: %s is %dx%d; effect frames must be square"
+				% [path, sheet.get_width(), side]
 			)
-			frames.add_frame(clip_name, atlas)
+			return false
 
-	return frames
+		var frames: SpriteFrames = SpriteFrames.new()
+		var clip: Dictionary = {"name": EFFECT_CLIP, "fps": effect["fps"], "loop": effect["loop"]}
+		if not _add_clip(frames, clip, path, Vector2i(side, side)):
+			return false
+		if not _save(frames, EFFECT_OUTPUT.path_join("%s_frames.tres" % effect_name)):
+			return false
+
+	print("Built %d effect(s)." % EFFECTS.size())
+	return true
 
 
 ## Every layer is driven from the body's frame index, so a layer with a
@@ -205,7 +285,7 @@ func _restore_uid(path: String, uid_text: String) -> bool:
 
 
 func _is_clip(suffix: String) -> bool:
-	for clip: Dictionary in CLIPS:
+	for clip: Dictionary in CLIPS + LAYER_CLIPS:
 		if String(clip["name"]) == suffix:
 			return true
 	return false

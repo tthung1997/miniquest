@@ -33,6 +33,21 @@ const DIRECTORY: String = "res://resources/weapons"
 ## How far away a target can be and still be attacked.
 @export_range(8.0, 400.0, 1.0, "suffix:px") var attack_range: float = 32.0
 
+@export_group("Attack visuals")
+## Frame of the weapon's attack clip on which the effect and the projectile
+## appear.
+@export_range(0, 15) var release_frame: int = 0
+## Where they appear, relative to the hero's feet with the hero facing right
+## and in the body's idle pose. The doll adds the hand's offset on other body
+## frames and mirrors the point when the hero faces left.
+@export var release_point: Vector2 = Vector2.ZERO
+## Drawn on the hero for the moment of the attack, such as the sword's slash.
+## It follows the hero and should free itself when done.
+@export var attack_effect: PackedScene
+## Released into the world to fly ahead for attack_range, such as a crossbow
+## bolt. Its root must be a Projectile.
+@export var projectile: PackedScene
+
 
 ## The weapon with `weapon_id`, or null with an error if there is none.
 static func find(weapon_id: StringName) -> WeaponData:

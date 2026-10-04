@@ -1,0 +1,32 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/sword_slash.png" id="1_cr5fu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kak40"]
+atlas = ExtResource("1_cr5fu")
+region = Rect2(0, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jjmed"]
+atlas = ExtResource("1_cr5fu")
+region = Rect2(56, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wu2s6"]
+atlas = ExtResource("1_cr5fu")
+region = Rect2(112, 0, 56, 56)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kak40")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jjmed")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wu2s6")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 15.0
+}]

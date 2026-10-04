@@ -1,42 +1,44 @@
 [gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_idle.png" id="1_e14vj"]
-[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_walk.png" id="2_pc555"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vf568"]
-atlas = ExtResource("1_e14vj")
-region = Rect2(0, 0, 64, 64)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wutdq"]
-atlas = ExtResource("2_pc555")
-region = Rect2(0, 0, 64, 64)
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_attack.png" id="1_pc555"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_idle.png" id="2_vf568"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/sword_walk.png" id="3_wutdq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5ylft"]
-atlas = ExtResource("2_pc555")
-region = Rect2(64, 0, 64, 64)
+atlas = ExtResource("1_pc555")
+region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iudp8"]
-atlas = ExtResource("2_pc555")
-region = Rect2(128, 0, 64, 64)
+atlas = ExtResource("1_pc555")
+region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hss34"]
-atlas = ExtResource("2_pc555")
+atlas = ExtResource("1_pc555")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2eu7"]
+atlas = ExtResource("2_vf568")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_efjep"]
+atlas = ExtResource("3_wutdq")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_td78j"]
+atlas = ExtResource("3_wutdq")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ifje"]
+atlas = ExtResource("3_wutdq")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ix7r1"]
+atlas = ExtResource("3_wutdq")
 region = Rect2(192, 0, 64, 64)
 
 [resource]
 animations = [{
 "frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vf568")
-}],
-"loop": 1,
-"name": &"idle",
-"speed": 1.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wutdq")
-}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_5ylft")
 }, {
@@ -45,6 +47,31 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_hss34")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2eu7")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_efjep")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_td78j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ifje")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ix7r1")
 }],
 "loop": 1,
 "name": &"walk",

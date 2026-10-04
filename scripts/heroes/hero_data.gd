@@ -7,12 +7,15 @@ extends Resource
 
 ## Bumped whenever a saved field changes meaning, so a loader can migrate.
 ## 2: heroes carry weapons; older heroes are given the starting set by upgrade().
-const FORMAT_VERSION: int = 2
+## 3: the Bow became the Crossbow; upgrade() renames carried bows.
+const FORMAT_VERSION: int = 3
 const STARTING_CLASS: StringName = &"novice"
 ## Every hero starts with every base weapon so they can find the one that suits
 ## their stats: this one held, the rest carried.
 const STARTING_WEAPON: StringName = &"sword"
-const STARTING_SPARE_WEAPONS: Array[StringName] = [&"bow", &"wand"]
+const STARTING_SPARE_WEAPONS: Array[StringName] = [&"crossbow", &"wand"]
+## Weapon ids that were renamed, old to new, applied to saves by upgrade().
+const RENAMED_WEAPONS: Dictionary[StringName, StringName] = {&"bow": &"crossbow"}
 ## Every stat's value at level 1 (design/classes.json, starting_stats).
 const STARTING_STAT: int = 5
 const NAME_MAX_LENGTH: int = 12
@@ -96,6 +99,8 @@ func upgrade() -> bool:
 		return false
 	if format_version < 2:
 		_give_starting_weapons()
+	if format_version < 3:
+		_rename_weapons()
 	format_version = FORMAT_VERSION
 	emit_changed()
 	return true
@@ -187,6 +192,18 @@ func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 			return true
 	push_error("HeroData: the %s slot is not supported yet." % EquipmentItem.slot_name(slot))
 	return false
+
+
+## Point every held or carried weapon with a renamed id at its new id.
+func _rename_weapons() -> void:
+	var items: Array[EquipmentItem] = inventory.duplicate()
+	items.append(weapon)
+	for item: EquipmentItem in items:
+		if item is not WeaponItem:
+			continue
+		var held: WeaponItem = item
+		if RENAMED_WEAPONS.has(held.weapon_id):
+			held.weapon_id = RENAMED_WEAPONS[held.weapon_id]
 
 
 ## Hold the starting weapon if the hand is empty, and carry each spare weapon
