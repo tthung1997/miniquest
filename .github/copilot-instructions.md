@@ -194,6 +194,9 @@ assets/sprites/chibi/                   the rig; every character on it
                                         e.g. equipment/armour/mage/hat/01_walk.png
   equipment/armour/<class>/<piece>/<nn>.ase
   equipment/armour/<class>/<piece>/<nn>_icon.png   (+ <nn>_icon.ase)
+  equipment/weapon/<weapon>_<clip>.png  e.g. equipment/weapon/sword_walk.png
+  equipment/weapon/<weapon>.ase
+  equipment/weapon/<weapon>_icon.png    (+ <weapon>_icon.ase)
 ```
 
 Armour art is a pool per **base class** (`novice`, `mage`, `ranger`, `warrior`),
@@ -203,6 +206,12 @@ class's pool. A class with no folder for a piece never rolls one — Novice has 
 `hat/`. Variants are numbered, zero-padded (`01`, `02`, …). The number is the
 piece id stored in save data, so **never renumber or reuse one**; leave a gap
 when a variant is removed. Numbers do not pair across pieces.
+
+Weapons are not rolled. Each one is a `WeaponData` template in
+`resources/weapons/<weapon>.tres`, and its art is named after that id. A weapon
+is drawn once, pointing the way the hero faces, and placed at the near hand on
+every body frame. Its layer is drawn **over** everything else, and each frame
+redraws the body's fist pixels over the grip so the hand holds it.
 
 Male and female characters share one rig and differ by hair, face and clothes;
 do not add a second body without a reason. A character is not a folder — it is an

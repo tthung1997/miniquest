@@ -22,3 +22,6 @@ offset = Vector2(0, -24)
 
 [node name="Hat" type="AnimatedSprite2D" parent="Equipment"]
 offset = Vector2(0, -24)
+
+[node name="Weapon" type="AnimatedSprite2D" parent="Equipment"]
+offset = Vector2(0, -24)

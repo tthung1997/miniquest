@@ -5,8 +5,10 @@ extends Node2D
 ## The art is drawn in side view facing right; facing left flips every layer.
 ## Only the body plays its animation. Each equipment layer copies the body's
 ## clip and frame index, so no layer can drift out of step with the pose
-## beneath it. Has no input or physics of its own, so it can be shown anywhere
-## a hero needs to be seen, from the arena to a menu portrait.
+## beneath it. The weapon layer is drawn last, in front of everything; its art
+## redraws the near fist over the grip so the hand holds it. Has no input or
+## physics of its own, so it can be shown anywhere a hero needs to be seen,
+## from the arena to a menu portrait.
 
 const IDLE_CLIP: StringName = &"idle"
 const WALK_CLIP: StringName = &"walk"
@@ -14,12 +16,14 @@ const WALK_CLIP: StringName = &"walk"
 var _facing_right: bool = true
 var _layers: Array[AnimatedSprite2D] = []
 var _armour: ArmourItem = null
+var _weapon: WeaponItem = null
 
 @onready var _body: AnimatedSprite2D = $Body
 @onready var _equipment: Node2D = $Equipment
 @onready var _hat: AnimatedSprite2D = $Equipment/Hat
 @onready var _shirt: AnimatedSprite2D = $Equipment/Shirt
 @onready var _pants: AnimatedSprite2D = $Equipment/Pants
+@onready var _weapon_layer: AnimatedSprite2D = $Equipment/Weapon
 
 
 func _ready() -> void:
@@ -31,8 +35,8 @@ func _ready() -> void:
 	# which lags by a frame whenever tree order puts the doll first.
 	_body.frame_changed.connect(_sync_layers)
 	_body.animation_changed.connect(_sync_layers)
-	if _armour != null:
-		_apply_armour()
+	_apply_armour()
+	_apply_weapon()
 	_sync_layers()
 
 
@@ -42,6 +46,14 @@ func wear_armour(item: ArmourItem) -> void:
 	_armour = item
 	if is_node_ready():
 		_apply_armour()
+		_sync_layers()
+
+
+## Hold `item`, or empty the hand when null. Safe to call before ready.
+func wield(item: WeaponItem) -> void:
+	_weapon = item
+	if is_node_ready():
+		_apply_weapon()
 		_sync_layers()
 
 
@@ -70,7 +82,7 @@ func _collect_layers() -> void:
 	_layers.clear()
 	for child: Node in _equipment.get_children():
 		if child is AnimatedSprite2D:
-			var layer: AnimatedSprite2D = child as AnimatedSprite2D
+			var layer: AnimatedSprite2D = child
 			# Layers must not run their own clock, or they drift against the body.
 			layer.stop()
 			layer.flip_h = not _facing_right
@@ -86,6 +98,10 @@ func _apply_armour() -> void:
 	_hat.sprite_frames = _armour.frames_for(ArmourItem.Piece.HAT)
 	_shirt.sprite_frames = _armour.frames_for(ArmourItem.Piece.SHIRT)
 	_pants.sprite_frames = _armour.frames_for(ArmourItem.Piece.PANTS)
+
+
+func _apply_weapon() -> void:
+	_weapon_layer.sprite_frames = _weapon.frames() if _weapon != null else null
 
 
 func _sync_layers() -> void:

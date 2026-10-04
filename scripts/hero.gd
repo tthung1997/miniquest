@@ -21,20 +21,24 @@ signal facing_changed(facing_right: bool)
 @export_range(0.3, 1.0, 0.05) var vertical_ratio: float = 0.6
 
 @export_group("Appearance")
-## What the hero wears until apply() dresses it from a saved hero.
+## What the hero wears and holds until apply() dresses it from a saved hero.
 @export var armour: ArmourItem
+@export var weapon: WeaponItem
 
 @onready var _doll: PaperDoll = $PaperDoll
 
 
 func _ready() -> void:
 	_doll.wear_armour(armour)
+	_doll.wield(weapon)
 
 
 ## Dress this hero as `data`.
 func apply(data: HeroData) -> void:
 	armour = data.armour
+	weapon = data.weapon
 	_doll.wear_armour(armour)
+	_doll.wield(weapon)
 
 
 func _physics_process(delta: float) -> void:

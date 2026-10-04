@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/weapon_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/wand_icon.png" id="2_icon"]
+[ext_resource type="SpriteFrames" path="res://resources/chibi/equipment/weapon/wand_frames.tres" id="3_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"wand"
+display_name = "Wand"
+icon = ExtResource("2_icon")
+frames = ExtResource("3_frames")
+attack_style = 1
+base_damage = 3.0
+scaling = Dictionary[StringName, float]({
+&"intelligence": 0.5
+})
+attack_interval = 1.0
+attack_range = 140.0

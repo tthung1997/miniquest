@@ -22,7 +22,8 @@ static func has_hero(slot: int) -> bool:
 
 
 ## The hero in `slot`, or null if the slot is empty. A slot whose file exists
-## but cannot be read as a hero is an error, not an empty slot.
+## but cannot be read as a hero is an error, not an empty slot. A hero saved by
+## an older version is upgraded and written back, so it upgrades only once.
 static func load_hero(slot: int) -> HeroData:
 	if not has_hero(slot):
 		return null
@@ -35,7 +36,10 @@ static func load_hero(slot: int) -> HeroData:
 	if loaded is not HeroData:
 		push_error("HeroSaves: %s is not a readable hero." % path)
 		return null
-	return loaded as HeroData
+	var hero: HeroData = loaded
+	if hero.upgrade():
+		save_hero(slot, hero)
+	return hero
 
 
 static func save_hero(slot: int, hero: HeroData) -> Error:

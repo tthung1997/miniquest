@@ -44,6 +44,7 @@ func show_hero(hero: HeroData) -> void:
 	_name_label.text = hero.hero_name
 	_info_label.text = "Lv %d  %s" % [hero.level, class_name_text]
 	_doll.wear_armour(hero.armour)
+	_doll.wield(hero.weapon)
 	_show_state(true, true, false)
 
 

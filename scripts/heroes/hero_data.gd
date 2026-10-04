@@ -6,8 +6,13 @@ extends Resource
 ## not. Saved and loaded by HeroSaves.
 
 ## Bumped whenever a saved field changes meaning, so a loader can migrate.
-const FORMAT_VERSION: int = 1
+## 2: heroes carry weapons; older heroes are given the starting set by upgrade().
+const FORMAT_VERSION: int = 2
 const STARTING_CLASS: StringName = &"novice"
+## Every hero starts with every base weapon so they can find the one that suits
+## their stats: this one held, the rest carried.
+const STARTING_WEAPON: StringName = &"sword"
+const STARTING_SPARE_WEAPONS: Array[StringName] = [&"bow", &"wand"]
 ## Every stat's value at level 1 (design/classes.json, starting_stats).
 const STARTING_STAT: int = 5
 const NAME_MAX_LENGTH: int = 12
@@ -32,6 +37,7 @@ const INVENTORY_SIZE: int = 25
 @export var unspent_points: int = 0
 
 @export_group("Equipment")
+@export var weapon: WeaponItem
 @export var armour: ArmourItem
 ## Items carried but not worn, at most INVENTORY_SIZE. Kept packed: an item
 ## leaving the inventory closes its gap, and a new one goes on the end.
@@ -39,7 +45,8 @@ const INVENTORY_SIZE: int = 25
 
 
 ## A new level 1 Novice called `raw_name`, wearing freshly rolled Novice
-## armour. Returns null with an error if the name is empty once cleaned.
+## armour and holding the starting weapon, with the spare weapons carried.
+## Returns null with an error if the name is empty once cleaned.
 static func create(raw_name: String) -> HeroData:
 	var cleaned: String = clean_name(raw_name)
 	if cleaned.is_empty():
@@ -57,6 +64,8 @@ static func create(raw_name: String) -> HeroData:
 	hero.armour = ArmourItem.roll(starting_class.armour_pool)
 	if hero.armour == null:
 		return null
+	if not hero._give_starting_weapons():
+		return null
 	return hero
 
 
@@ -66,10 +75,10 @@ static func clean_name(raw_name: String) -> String:
 	return " ".join(words).left(NAME_MAX_LENGTH).strip_edges()
 
 
-## Whether a hero can wear anything in `slot` yet. Only Armour items exist so
-## far; the other slots open as their items are designed.
+## Whether a hero can wear anything in `slot` yet. The other slots open as
+## their items are designed.
 static func supports_slot(slot: EquipmentItem.Slot) -> bool:
-	return slot == EquipmentItem.Slot.ARMOUR
+	return slot == EquipmentItem.Slot.WEAPON or slot == EquipmentItem.Slot.ARMOUR
 
 
 static func _describe(item: EquipmentItem) -> String:
@@ -80,9 +89,23 @@ func class_data() -> ClassData:
 	return ClassData.find(class_id)
 
 
+## Bring a hero saved by an older version up to FORMAT_VERSION. Returns whether
+## anything changed, so the caller knows to save the upgraded hero.
+func upgrade() -> bool:
+	if format_version >= FORMAT_VERSION:
+		return false
+	if format_version < 2:
+		_give_starting_weapons()
+	format_version = FORMAT_VERSION
+	emit_changed()
+	return true
+
+
 ## The item worn in `slot`, or null when it is empty.
 func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
 	match slot:
+		EquipmentItem.Slot.WEAPON:
+			return weapon
 		EquipmentItem.Slot.ARMOUR:
 			return armour
 	return null
@@ -150,6 +173,12 @@ func unequip(slot: EquipmentItem.Slot) -> bool:
 
 func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 	match slot:
+		EquipmentItem.Slot.WEAPON:
+			if item != null and item is not WeaponItem:
+				push_error("HeroData: %s does not fit the Weapon slot." % _describe(item))
+				return false
+			weapon = item
+			return true
 		EquipmentItem.Slot.ARMOUR:
 			if item != null and item is not ArmourItem:
 				push_error("HeroData: %s does not fit the Armour slot." % _describe(item))
@@ -158,3 +187,35 @@ func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 			return true
 	push_error("HeroData: the %s slot is not supported yet." % EquipmentItem.slot_name(slot))
 	return false
+
+
+## Hold the starting weapon if the hand is empty, and carry each spare weapon
+## the hero does not already have. A spare with no room is skipped with a
+## warning rather than lost silently. Fails if a weapon template is missing.
+func _give_starting_weapons() -> bool:
+	var owned: Array[StringName] = []
+	if weapon != null:
+		owned.append(weapon.weapon_id)
+	for item: EquipmentItem in inventory:
+		if item is WeaponItem:
+			var carried: WeaponItem = item
+			owned.append(carried.weapon_id)
+
+	if weapon == null and not owned.has(STARTING_WEAPON):
+		weapon = WeaponItem.create(STARTING_WEAPON)
+		if weapon == null:
+			return false
+		owned.append(STARTING_WEAPON)
+
+	for weapon_id: StringName in STARTING_SPARE_WEAPONS:
+		if owned.has(weapon_id):
+			continue
+		if is_inventory_full():
+			push_warning("HeroData: no room to carry a starting %s." % weapon_id)
+			continue
+		var spare: WeaponItem = WeaponItem.create(weapon_id)
+		if spare == null:
+			return false
+		inventory.append(spare)
+		owned.append(weapon_id)
+	return true
