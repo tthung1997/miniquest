@@ -170,7 +170,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   an existing item looks like. Advanced classes wear their base class's armour.
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
-  in front of the body: the sword and wand point forward and up, the bow is
+  in front of the body: the sword and wand are held low, pointing forward and
+  down, and the bow is
   held level.
   Whether an Accessory is drawn is undecided (section 11).
 - **Three base weapons: Sword (STR), Bow (DEX), Wand (INT).** A weapon's
