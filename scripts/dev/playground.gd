@@ -2,22 +2,16 @@ class_name Playground
 extends Node2D
 ## Walkable test area for driving the hero around with the keyboard.
 ##
-## The room is deliberately larger than the 640x360 viewport so the camera has
-## something to follow and its limits are actually exercised. Not shipped game
-## code; it exists to check movement, facing, animation switching and attack
-## animations by hand. Space attacks, repeating at the weapon's
+## The hero walks the meadow arena, which is larger than the 640x360 viewport,
+## so the camera follows and its limits are exercised at the tree line. Not
+## shipped game code; it exists to check movement, facing, animation switching
+## and attack animations by hand. Space attacks, repeating at the weapon's
 ## attack_interval while held, and Q cycles the weapon.
 
 ## Raised when the player asks to leave, so whatever opened this scene can
 ## return to the hub. Nothing listens when the scene is run on its own.
 signal back_requested
 
-const ROOM: Rect2i = Rect2i(0, 0, 1120, 630)
-const WALL: int = 16
-const FLOOR_COLOR: Color = Color(0.16, 0.18, 0.22)
-const WALL_COLOR: Color = Color(0.28, 0.31, 0.38)
-const GRID_COLOR: Color = Color(1.0, 1.0, 1.0, 0.05)
-const GRID_STEP: int = 64
 const WEAPON_IDS: Array[StringName] = [&"sword", &"crossbow", &"wand"]
 
 var _hero_name: String = ""
@@ -25,12 +19,21 @@ var _attack_held: bool = false
 var _attack_cooldown: float = 0.0
 
 @onready var hero: Hero = $Hero
+@onready var _arena: ArenaMap = $Meadow
+@onready var _camera: Camera2D = $Hero/Camera
+## Kept above the y-sorted hero and trees, so shots are never hidden.
+@onready var _projectiles: Node2D = $Projectiles
 @onready var _readout: Label = $HUD/Root/Readout
 
 
 func _ready() -> void:
-	_build_walls()
-	hero.position = Vector2(ROOM.size) * 0.5
+	hero.position = _arena.position + _arena.playable_rect.get_center()
+	var limits: Rect2i = Rect2i(_arena.map_rect)
+	limits.position += Vector2i(_arena.position)
+	_camera.limit_left = limits.position.x
+	_camera.limit_top = limits.position.y
+	_camera.limit_right = limits.end.x
+	_camera.limit_bottom = limits.end.y
 	hero.facing_changed.connect(_on_hero_facing_changed)
 	hero.projectile_released.connect(_on_hero_projectile_released)
 	_refresh()
@@ -70,47 +73,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-func _draw() -> void:
-	draw_rect(Rect2(ROOM), FLOOR_COLOR, true)
-
-	for x in range(GRID_STEP, ROOM.size.x, GRID_STEP):
-		draw_line(Vector2(x, 0), Vector2(x, ROOM.size.y), GRID_COLOR, 1.0)
-	for y in range(GRID_STEP, ROOM.size.y, GRID_STEP):
-		draw_line(Vector2(0, y), Vector2(ROOM.size.x, y), GRID_COLOR, 1.0)
-
-	var w: float = float(WALL)
-	var sx: float = float(ROOM.size.x)
-	var sy: float = float(ROOM.size.y)
-	draw_rect(Rect2(0.0, 0.0, sx, w), WALL_COLOR, true)
-	draw_rect(Rect2(0.0, sy - w, sx, w), WALL_COLOR, true)
-	draw_rect(Rect2(0.0, 0.0, w, sy), WALL_COLOR, true)
-	draw_rect(Rect2(sx - w, 0.0, w, sy), WALL_COLOR, true)
-
-
-func _build_walls() -> void:
-	var body: StaticBody2D = StaticBody2D.new()
-	body.name = &"Walls"
-	add_child(body)
-
-	var w: float = float(WALL)
-	var sx: float = float(ROOM.size.x)
-	var sy: float = float(ROOM.size.y)
-	var spans: Array[Rect2] = [
-		Rect2(0.0, 0.0, sx, w),
-		Rect2(0.0, sy - w, sx, w),
-		Rect2(0.0, 0.0, w, sy),
-		Rect2(sx - w, 0.0, w, sy),
-	]
-
-	for span: Rect2 in spans:
-		var shape: RectangleShape2D = RectangleShape2D.new()
-		shape.size = span.size
-		var collider: CollisionShape2D = CollisionShape2D.new()
-		collider.shape = shape
-		collider.position = span.position + span.size * 0.5
-		body.add_child(collider)
-
-
 func _attack() -> void:
 	if not hero.attack():
 		return
@@ -137,7 +99,7 @@ func _on_hero_facing_changed(_facing_right: bool) -> void:
 
 
 func _on_hero_projectile_released(projectile: Projectile) -> void:
-	add_child(projectile)
+	_projectiles.add_child(projectile)
 
 
 func _refresh() -> void:

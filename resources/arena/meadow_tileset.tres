@@ -1,0 +1,65 @@
+[gd_resource type="TileSet" format=3 uid="uid://dnc5ku04xysn6"]
+
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_floor.png" id="1_hhn6c"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_nature.png" id="2_d2taq"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_floor_detail.png" id="3_35yh5"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2a7xd"]
+texture = ExtResource("1_hhn6c")
+0:12/0 = 0
+1:12/0 = 0
+2:12/0 = 0
+3:12/0 = 0
+2:11/0 = 0
+3:11/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+0:8/0 = 0
+1:8/0 = 0
+2:8/0 = 0
+0:9/0 = 0
+1:9/0 = 0
+2:9/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6thbi"]
+texture = ExtResource("2_d2taq")
+0:0/size_in_atlas = Vector2i(2, 2)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 12)
+2:0/size_in_atlas = Vector2i(2, 2)
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, 12)
+16:0/size_in_atlas = Vector2i(2, 2)
+16:0/0 = 0
+16:0/0/texture_origin = Vector2i(0, 12)
+18:0/size_in_atlas = Vector2i(2, 2)
+18:0/0 = 0
+18:0/0/texture_origin = Vector2i(0, 12)
+0:2/size_in_atlas = Vector2i(4, 3)
+0:2/0 = 0
+0:2/0/texture_origin = Vector2i(0, 20)
+4:2/size_in_atlas = Vector2i(4, 3)
+4:2/0 = 0
+4:2/0/texture_origin = Vector2i(0, 20)
+16:2/size_in_atlas = Vector2i(4, 3)
+16:2/0 = 0
+16:2/0/texture_origin = Vector2i(0, 20)
+0:11/0 = 0
+1:11/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wo3o6"]
+texture = ExtResource("3_35yh5")
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_2a7xd")
+sources/1 = SubResource("TileSetAtlasSource_6thbi")
+sources/2 = SubResource("TileSetAtlasSource_wo3o6")

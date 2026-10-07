@@ -2,22 +2,25 @@
 
 [ext_resource type="Script" uid="uid://y125nri5fxcv" path="res://scripts/dev/playground.gd" id="1_cp0t2"]
 [ext_resource type="PackedScene" uid="uid://dj41ukjd6bc1x" path="res://scenes/hero.tscn" id="2_7qj6t"]
+[ext_resource type="PackedScene" path="res://scenes/arena/meadow.tscn" id="3_meadow"]
 
 [node name="Playground" type="Node2D" unique_id=779494191]
+y_sort_enabled = true
 script = ExtResource("1_cp0t2")
+
+[node name="Meadow" parent="." instance=ExtResource("3_meadow")]
 
 [node name="Hero" parent="." unique_id=839245312 instance=ExtResource("2_7qj6t")]
 speed = 250.0
 vertical_ratio = 1.0
 
 [node name="Camera" type="Camera2D" parent="Hero" unique_id=1826127716]
-limit_left = 0
-limit_top = 0
-limit_right = 1120
-limit_bottom = 630
 limit_smoothed = true
 position_smoothing_enabled = true
 position_smoothing_speed = 6.0
+
+[node name="Projectiles" type="Node2D" parent="."]
+z_index = 1
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=354693256]
 
