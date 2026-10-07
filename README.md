@@ -65,6 +65,14 @@ frame resources:
 & $env:GODOT --headless --path . --script res://tools/build_sprite_frames.gd
 ```
 
+The arena map (`scenes/arena/meadow.tscn` and its TileSet) is generated, not
+painted. To change it, edit the constants in `tools/build_arena_map.gd` and
+re-run it:
+
+```powershell
+& $env:GODOT --headless --path . --script res://tools/build_arena_map.gd
+```
+
 ## Project settings worth knowing
 
 - **Base resolution** 640×360, windowed at 1280×720, `canvas_items` stretch with

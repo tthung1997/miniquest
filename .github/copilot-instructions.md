@@ -265,6 +265,9 @@ all bound to *physical* keycodes.
 - **The `[input]` section of `project.godot`.** Hand-writing serialised
   `InputEvent` objects is a trap. Edit and re-run `tools/setup_input.gd`, which is
   safe to run repeatedly, and let the engine serialise it.
+- **The arena map** (`scenes/arena/meadow.tscn`, `resources/arena/meadow_tileset.tres`).
+  `tools/build_arena_map.gd` generates both from its constants and a fixed seed;
+  change the tool and re-run it, or the next run discards the edit.
 - **Anything under `.godot/`.** Generated, ignored, never committed.
 
 ## Writing `.tscn` / `.tres` files by hand

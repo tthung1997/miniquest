@@ -238,6 +238,17 @@ attack button.
 - Still one tiled map — no streaming, no procedural terrain.
 - Off-screen threat indicators to recover the visibility a static screen would give.
 
+The first arena is a **meadow**: a grass field 48×27 tiles of 32px
+(1536×864, about 2.4 screens each way) with scattered dirt patches and
+decorative tufts and flowers that never collide, ringed by a tree line four
+tiles deep. The walls are one plain rectangle per side at the field's edge,
+not per-tree shapes, so kiting along an edge is predictable. Trees are y-sorted
+with the hero: the hero passes in front of the top row and behind the canopies
+of the bottom row, which stands a tile back so only the feet are covered. The
+camera stops at the map's edge. The map is generated, not painted, by
+`tools/build_arena_map.gd` from a fixed seed, so it is the same on every run
+and every clone.
+
 ### 6.3 Run structure
 
 - **Endless.** No boss, no clear state. You always die; the score is how long you
@@ -379,8 +390,9 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
   tracks, plus an official Godot 4 example project. **Confirmed.** Only the
   files in use are copied into `assets/packs/ninja_adventure/` (currently the
-  Wood UI theme pieces, the back arrow, `NormalFont.ttf` and four hub item icons,
-  with the licence).
+  Wood UI theme pieces, the back arrow, `NormalFont.ttf`, four hub item icons,
+  and the floor, nature and floor-detail tilesets for the arena, with the
+  licence).
   UI follows the pack's own palette: orange frames around a warm brown interior, dark olive
   wells, light text, on a warm olive-grey background. The rest of the pack
   stays outside the repo until something uses it.
@@ -447,8 +459,8 @@ Out until later:
 - Item list, and the xp curve.
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
-- Exact arena dimensions, and whether pack art is shown at 2× beside the 64×64
-  hero or a pack drawn at a larger size is chosen instead (see 9.2).
+- Whether enemies use pack art at 2×, as the arena's ground and trees do, or a
+  pack drawn at a larger size (see 9.2).
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost.
 
