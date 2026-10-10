@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/monsters/bamboo.png" id="1_thprt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v0rt2"]
+atlas = ExtResource("1_thprt")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dvi2a"]
+atlas = ExtResource("1_thprt")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5dfs"]
+atlas = ExtResource("1_thprt")
+region = Rect2(48, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhe0l"]
+atlas = ExtResource("1_thprt")
+region = Rect2(48, 48, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v0rt2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dvi2a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d5dfs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhe0l")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 6.0
+}]
