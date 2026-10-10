@@ -1,7 +1,9 @@
 # Miniquest — Design Document (v0.1)
 
 Status: agreed in session on 2026-07-27. Art direction (sections 5.6 and 9)
-revised on 2026-09-28 to match the hero assets already drawn.
+revised on 2026-09-28 to match the hero assets already drawn. Run structure,
+difficulty and rewards (sections 3, 4, 6.3, 6.5, 6.6) revised on 2026-10-10:
+fixed-length runs with a win, a level-shifted ramp, and banked rewards.
 
 ## 1. Concept
 
@@ -15,8 +17,9 @@ hero, class advancement and visible gear.
 ## 2. Pillars
 
 1. **The hero is the save.** Runs are disposable; the hero is permanent.
-2. **Difficulty lives inside the run, never outside it.** No global difficulty
-   tier, no adaptive scaling.
+2. **Difficulty lives inside the run, never outside it.** No difficulty tier to
+   pick. The one thing that shapes a run's difficulty is the hero's level, and it
+   only shifts where the run's ramp begins (section 4).
 3. **Your gear is visible on your character.** Equipment is a visual reward, not
    just a stat line.
 4. **Stats drive everything.** Class restrictions are emergent, never hardcoded.
@@ -26,7 +29,7 @@ hero, class advancement and visible gear.
 ```
 Hub (hero + buttons)
   → pick a quest
-  → arena run (3–5 min for a strong hero, endless, ends in death)
+  → arena run (5 min, ends in a win, a death or a retreat)
   → collect exp / gold / item drops during the run
   → return to hub, spend, equip, advance class
   → repeat
@@ -34,20 +37,37 @@ Hub (hero + buttons)
 
 ## 4. Difficulty model
 
-**Every run starts at the same trivial difficulty and ramps on a timer.** Minute
-one is easy for everybody; minute eight is lethal for everybody.
+**Every run lasts the same time and ramps on a timer, along one curve shared by
+every hero.** The hero's level only decides *where on that curve the run begins*.
 
-A level 1 hero and a level 40 hero begin identically. The difference is purely how
-far along the shared curve they survive. Progress is measured as "I reached 4:30
-last time, 6:10 now."
+A level 1 hero starts at the curve's first second. A higher-level hero starts
+further along it, so it skips the trivial opening instead of idling through it.
+Every run is the same length at every level (5:00, section 6.3), so a strong hero
+still gets the whole run; it just meets denser, tougher enemies from the first
+seconds and meets the lethal end of the curve at the finish line.
+
+```
+ramp start = min(START_CAP, START_PER_LEVEL × (level − 1))
+run covers   ramp start → ramp start + 5:00
+```
+
+Starting values: START_PER_LEVEL 5 s, START_CAP 120 s (reached at level 25). Both
+are placeholders, to be tuned by play.
 
 Consequences relied on elsewhere in this document:
-- Any hero can attempt any quest at any time. Never under-levelled, just shorter-lived.
-- One curve per quest type, forever. No per-level balance tables.
+- Any hero can attempt any quest at any time. A weak hero is shorter-lived, not
+  locked out.
+- One curve per quest type, forever. No per-level balance tables: level only
+  moves the start point.
 - A weak hero still banks something, so a fresh build is never a wasted session.
 
-**Explicitly rejected:** adaptive difficulty that scales to hero level. It
-silently cancels out earned power and makes levelling feel like nothing.
+**The shift must grow slower than hero power.** Levelling gives stats, gear and
+class advancement; the start shift is deliberately small and capped, so a
+levelled hero is still stronger relative to the enemies it meets. If playtests
+show levelling feeling like nothing, shrink START_PER_LEVEL, not the stats.
+
+**Explicitly rejected:** a global difficulty tier, and enemies that scale to hero
+level in proportion to hero power. Both silently cancel out earned power.
 
 ## 5. Hero
 
@@ -57,7 +77,7 @@ silently cancels out earned power and makes levelling feel like nothing.
   gold, gacha. A second hero starts from absolute zero.
 - Isolated slots *are* the respec system — see 5.4.
 - Optional per-hero **hardcore flag** chosen at creation: the hero is lost if a
-  run ends, in exchange for increased gold. Opt-in only, never forced.
+  run ends in death or a retreat, in exchange for increased gold. Opt-in only, never forced.
 
 ### 5.2 Stats
 
@@ -251,12 +271,16 @@ and every clone.
 
 ### 6.3 Run structure
 
-- **Endless.** No boss, no clear state. You always die; the score is how long you
-  lasted.
-- **3–5 minutes** for a well-built hero. Snappy and repeatable.
+- **Fixed length: 5:00 for every hero.** Survive to the finish line and the run is
+  won; a final elite spawns at the end of the curve (enemy to be chosen). Dying
+  ends the run early. Opening the pause menu offers **Retreat**, which ends the
+  run exactly like a death, so there is always a way out and never a reason to
+  stall.
+- **A weak hero is expected to die before the finish.** The score for a lost run
+  is how long it lasted; a won run needs no score.
 - **Two progression tracks:**
   - *In-run levels* — earned during the run, grant upgrade picks, reset at the end.
-  - *Permanent* exp, gold and items — awarded from what you collected.
+  - *Permanent* exp, gold and items — banked when the run ends (section 6.5).
 
 ### 6.4 Upgrade offers
 
@@ -269,13 +293,36 @@ Presented as a choice of options on in-run level up (and from pickups).
 
 ### 6.5 Rewards
 
-**Kills and pickups only** — what you physically collected is what you keep.
-Nothing is awarded for time survived directly.
+**Kills and pickups feed the run's tally; ending the run banks it.** Nothing is
+awarded for time survived directly.
 
-This makes greed a real mechanic: diving toward a drop while swarmed is a genuine
-decision, and pickup radius becomes a meaningful stat.
+| | Won | Died or retreated |
+|---|---|---|
+| **Exp** | Banked | Banked |
+| **Gold and item drops picked up** | Banked | Lost |
+| **Win bonus** | Extra gold and exp, plus one or more extra item drop rolls | None |
 
-Nothing is ever lost on death (except a hardcore hero).
+Every run pays exp, so a fresh build is never a wasted session, but a win is
+clearly worth more. The number of bonus drop rolls scales with the ramp's start
+point (section 4), so a higher-level hero's win drops more. The starting value is
+one roll plus one per 30 s of start shift, to be tuned.
+
+This keeps greed a real mechanic: diving toward a drop while swarmed is a genuine
+decision, because a drop only counts if you live (or win) to bank it. Pickup
+radius becomes a meaningful stat.
+
+Nothing about the hero itself is lost on death (except a hardcore hero).
+
+### 6.6 Experience curve (placeholder)
+
+```
+exp to reach level L+1 = round(50 × L ^ 1.3)
+```
+
+That is 50 exp to leave level 1, about 690 in total to reach level 5 (the first
+class advancement), and about 10,200 to reach level 15 (the second). Aiming for a
+few runs to level 5 and a few dozen to level 15. Nothing here is anchored until
+enemies give exp, so tune it by play.
 
 ## 7. Quest selection
 
@@ -384,7 +431,9 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   is built for a different body and frame layout. This was accepted as a
   deliberate commitment.
 - **Enemies, environment, VFX, UI, audio: asset pack.** Enemies need no gear, so
-  pack art works fine alongside a custom hero.
+  pack art works fine alongside a custom hero. **Enemies use the pack's monsters
+  at 2×**, as the arena's ground and trees do, which puts them around 32px beside
+  the 48px hero. The pack's bosses are the candidates for the final elite.
 - Pack: **Ninja Adventure by Pixel-Boy** — CC0 (commercial use allowed,
   attribution appreciated not required), 16×16, 50+ characters, 30+ monsters,
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
@@ -427,7 +476,7 @@ In:
 - Paper-doll hero with its Armour layers (hat, shirt, pants) and Weapon layer
   wired; the Boots layer still to add.
 - Arena run: movement, auto-attack, auto-target, one enemy type ramping, damage,
-  death, run-end summary.
+  death, retreat, a fixed-length win, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
 - Item and gold drops with pickup.
 - Hub with hero, equipment and start-quest.
@@ -447,7 +496,9 @@ Out until later:
   the Warrior route carries STR and VIT growth, the Mage route INT and VIT. Same
   name, different character. Possibly a feature, possibly confusing — the
   alternative is for an advancement to normalise growth rather than add to it.
-- Enemy roster and the shape of the difficulty ramp (spawn rate, hp, damage curves).
+- Enemy roster and the shape of the difficulty ramp (spawn rate, hp, damage curves),
+  and the START_PER_LEVEL and START_CAP values in section 4. The roster comes from
+  the Ninja Adventure monsters (section 9.3).
 - The generic in-run upgrade pool — heals, stat boosts, screen clears. Run-to-run
   variety before tier 2 depends on it, and it does not exist as data yet.
 - Whether `health_per_vitality` alone is enough to make a Mage feel fragile.
@@ -456,11 +507,13 @@ Out until later:
 - Whether single-target skills survive contact with a real swarm. The balance
   numbers assume an area skill touches three enemies and a single-target skill
   one; if a swarm is denser, single-target skills are dead.
-- Item list, and the xp curve.
+- Item list. (The xp curve has a placeholder in 6.6.)
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
-- Whether enemies use pack art at 2×, as the arena's ground and trees do, or a
-  pack drawn at a larger size (see 9.2).
+- What the final elite at the end of the run is, and whether it is worth a
+  dedicated reward.
+- Whether the win bonus's drop-roll rule (section 6.5) rewards high-level heroes too
+  much, given that they also start further along the ramp.
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost.
 
