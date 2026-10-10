@@ -18,6 +18,11 @@ const STARTING_SPARE_WEAPONS: Array[StringName] = [&"crossbow", &"wand"]
 const RENAMED_WEAPONS: Dictionary[StringName, StringName] = {&"bow": &"crossbow"}
 ## Every stat's value at level 1 (design/classes.json, starting_stats).
 const STARTING_STAT: int = 5
+## The stats a weapon can scale off, named by their HeroData property.
+const STATS: Array[StringName] = [&"strength", &"dexterity", &"intelligence", &"vitality"]
+## Maximum health per point of vitality at a class's health_per_vitality of 1.0.
+## A placeholder, like every combat number until enemies exist.
+const HEALTH_PER_VITALITY_POINT: float = 10.0
 const NAME_MAX_LENGTH: int = 12
 ## Inventory cells per hero, shown all at once in the hub.
 const INVENTORY_SIZE: int = 25
@@ -90,6 +95,24 @@ static func _describe(item: EquipmentItem) -> String:
 
 func class_data() -> ClassData:
 	return ClassData.find(class_id)
+
+
+## The value of `stat_name`, one of STATS. An unknown name is an error and
+## counts as zero, so a typo in a weapon template cannot pass for a real stat.
+func stat_value(stat_name: StringName) -> int:
+	if not STATS.has(stat_name):
+		push_error("HeroData: '%s' is not a stat." % stat_name)
+		return 0
+	return get(stat_name)
+
+
+## Most health the hero can have: vitality, weighted by the class's durability.
+func max_health() -> float:
+	var durability: float = 1.0
+	var current_class: ClassData = class_data()
+	if current_class != null:
+		durability = current_class.health_per_vitality
+	return maxf(vitality * durability * HEALTH_PER_VITALITY_POINT, 1.0)
 
 
 ## Bring a hero saved by an older version up to FORMAT_VERSION. Returns whether
