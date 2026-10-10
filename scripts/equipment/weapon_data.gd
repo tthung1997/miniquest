@@ -59,3 +59,12 @@ static func find(weapon_id: StringName) -> WeaponData:
 	if data == null:
 		push_error("WeaponData: %s is not a WeaponData." % path)
 	return data
+
+
+## Damage of one hit when `wielder` swings this weapon: the base damage plus
+## each scaling factor times the wielder's matching stat.
+func damage_for(wielder: HeroData) -> float:
+	var damage: float = base_damage
+	for stat_name: StringName in scaling:
+		damage += scaling[stat_name] * wielder.stat_value(stat_name)
+	return damage

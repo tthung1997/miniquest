@@ -125,6 +125,9 @@ was what broke the symmetry of advancement costs. This is the one place a class
 carries a property rather than expressing it through stats, and it is a
 concession, not a pattern to repeat.
 
+Maximum health is `vitality × health_per_vitality × 10`, so a level 1 Novice has
+50. The 10 is a placeholder until enemy damage exists.
+
 **Tier-2 advancements are gated on stat thresholds**, which is what makes free
 point allocation matter:
 

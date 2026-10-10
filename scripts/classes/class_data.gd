@@ -4,9 +4,8 @@ extends Resource
 ## per class, named after its id.
 ##
 ## Only the fields something reads today are here. The rest of a class's
-## definition (stat growth, health per vitality, skills, advancement
-## requirements) is in design/classes.json and moves here when levelling and
-## combat need it.
+## definition (stat growth, skills, advancement requirements) is in
+## design/classes.json and moves here when levelling and combat need it.
 
 const DIRECTORY: String = "res://resources/classes"
 
@@ -16,6 +15,9 @@ const DIRECTORY: String = "res://resources/classes"
 ## Base class whose armour art this class wears. Advanced classes wear their
 ## base class's pool, so a Berserker's is &"warrior".
 @export var armour_pool: StringName = &""
+## Durability: how much maximum health each point of vitality is worth, as a
+## multiplier. Warrior 1.2, Mage 0.8, everything else 1.0.
+@export_range(0.1, 3.0, 0.05) var health_per_vitality: float = 1.0
 
 
 ## The class with `class_id`, or null with an error if there is none.

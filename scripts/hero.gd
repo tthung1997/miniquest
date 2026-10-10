@@ -13,6 +13,13 @@ signal facing_changed(facing_right: bool)
 ## The listener adds it to the world: the hero does not reach up into the
 ## level it stands in.
 signal projectile_released(projectile: Projectile)
+## The hero's health reached zero. What that means for the run is up to whoever
+## owns the hero.
+signal died
+
+## Health of a hero that has not been dressed from a saved HeroData, such as one
+## placed in a scene run on its own.
+const DEFAULT_MAX_HEALTH: float = 50.0
 
 @export_group("Movement")
 @export_range(10.0, 400.0, 5.0) var speed: float = 70.0
@@ -29,7 +36,13 @@ signal projectile_released(projectile: Projectile)
 @export var armour: ArmourItem
 @export var weapon: WeaponItem
 
+var health: Health = null
+
 @onready var _doll: PaperDoll = $PaperDoll
+
+
+func _init() -> void:
+	_set_health(DEFAULT_MAX_HEALTH)
 
 
 func _ready() -> void:
@@ -38,12 +51,18 @@ func _ready() -> void:
 	_doll.attack_released.connect(_on_doll_attack_released)
 
 
-## Dress this hero as `data`.
+## Dress this hero as `data`, and give them full health for it.
 func apply(data: HeroData) -> void:
 	armour = data.armour
 	weapon = data.weapon
 	_doll.wear_armour(armour)
 	_doll.wield(weapon)
+	_set_health(data.max_health())
+
+
+## Lose `amount` of health. The died signal follows when none is left.
+func take_damage(amount: float) -> void:
+	health.take_damage(amount)
 
 
 ## Hold `item`, or nothing when null.
@@ -99,6 +118,13 @@ func _update_animation() -> void:
 
 func is_facing_right() -> bool:
 	return _doll.is_facing_right()
+
+
+func _set_health(max_health: float) -> void:
+	if health != null:
+		health.died.disconnect(died.emit)
+	health = Health.new(max_health)
+	health.died.connect(died.emit)
 
 
 func _on_doll_attack_released() -> void:
