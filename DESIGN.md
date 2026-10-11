@@ -52,7 +52,15 @@ run covers   ramp start → ramp start + 5:00
 ```
 
 Starting values: START_PER_LEVEL 5 s, START_CAP 120 s (reached at level 25). Both
-are placeholders, to be tuned by play.
+are placeholders, to be tuned by play. They live in the quest's `QuestData`
+(`resources/quests/meadow_run.tres`) along with the ramp itself, so the ramp is
+one file per quest.
+
+The ramp is a few values that rise linearly from the start of the ramp (0:00) to
+its end (START_CAP + 5:00 = 7:00): the seconds between spawns (1.5 s to 0.3 s),
+the most enemies alive at once (8 to 50), and the multipliers on every enemy's
+health (1× to 4×) and contact damage (1× to 2×). A `RunDirector` runs the
+clock and spawns enemies to match. These are placeholders too.
 
 Consequences relied on elsewhere in this document:
 - Any hero can attempt any quest at any time. A weak hero is shorter-lived, not
@@ -502,8 +510,8 @@ Out until later:
   the Warrior route carries STR and VIT growth, the Mage route INT and VIT. Same
   name, different character. Possibly a feature, possibly confusing — the
   alternative is for an advancement to normalise growth rather than add to it.
-- Enemy roster and the shape of the difficulty ramp (spawn rate, hp, damage curves),
-  and the START_PER_LEVEL and START_CAP values in section 4. The roster comes from
+- Enemy roster and the final shape of the difficulty ramp (it starts linear), and
+  the START_PER_LEVEL and START_CAP values in section 4. The roster comes from
   the Ninja Adventure monsters (section 9.3).
 - The generic in-run upgrade pool — heals, stat boosts, screen clears. Run-to-run
   variety before tier 2 depends on it, and it does not exist as data yet.

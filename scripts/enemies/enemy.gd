@@ -21,6 +21,11 @@ const FADE_TIME: float = 0.25
 
 @export var data: EnemyData
 
+## Multipliers on the template's health and contact damage, set by a spawner
+## before the enemy is added to the tree.
+var health_scale: float = 1.0
+var damage_scale: float = 1.0
+
 ## Who it chases and hurts. Nothing is chased while it is null.
 var target: Hero = null
 var health: Health = null
@@ -37,7 +42,7 @@ func _ready() -> void:
 		push_error("Enemy '%s' has no EnemyData." % name)
 		set_physics_process(false)
 		return
-	health = Health.new(data.max_health)
+	health = Health.new(data.max_health * health_scale)
 	health.died.connect(_on_health_died)
 	_sprite.sprite_frames = data.frames
 	_sprite.play(&"walk")
@@ -83,7 +88,7 @@ func _hit_touching_target() -> void:
 	for body: Node2D in _contact.get_overlapping_bodies():
 		if body is Hero:
 			var hero: Hero = body
-			hero.take_damage(data.contact_damage)
+			hero.take_damage(data.contact_damage * damage_scale)
 			_contact_cooldown = data.contact_interval
 			return
 
