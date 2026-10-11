@@ -25,6 +25,9 @@ signal died
 ## Health of a hero that has not been dressed from a saved HeroData, such as one
 ## placed in a scene run on its own.
 const DEFAULT_MAX_HEALTH: float = 50.0
+## How far behind the hero a melee swing still reaches, so an enemy standing on
+## top of the hero is hit whichever side of their centre it is on.
+const MELEE_REACH_BEHIND: float = 12.0
 
 @export_group("Movement")
 @export_range(10.0, 400.0, 5.0) var speed: float = 70.0
@@ -203,7 +206,7 @@ func _strike(data: WeaponData) -> void:
 	var damage: float = _damage_of(data)
 	var facing: float = 1.0 if _doll.is_facing_right() else -1.0
 	for enemy: Enemy in _sensor.enemies_within(global_position, data.attack_range):
-		if (enemy.global_position.x - global_position.x) * facing >= 0.0:
+		if (enemy.global_position.x - global_position.x) * facing >= -MELEE_REACH_BEHIND:
 			enemy.take_damage(damage)
 
 

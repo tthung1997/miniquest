@@ -5,31 +5,27 @@ extends Node2D
 ## The hero walks the meadow arena, which is larger than the 640x360 viewport,
 ## so the camera follows and its limits are exercised at the tree line. Not
 ## shipped game code; it exists to check movement, facing, animation switching,
-## auto-attack and combat by hand. The hero attacks on its own, enemies keep
-## arriving from beyond the screen, and Q cycles the weapon.
+## auto-attack, combat and the run's ramp by hand. The hero attacks on its own,
+## a RunDirector sends enemies in from beyond the screen along the quest's ramp,
+## and Q cycles the weapon.
 
 ## Raised when the player asks to leave, so whatever opened this scene can
 ## return to the hub. Nothing listens when the scene is run on its own.
 signal back_requested
 
 const WEAPON_IDS: Array[StringName] = [&"sword", &"crossbow", &"wand"]
-## How far from the hero enemies appear: past the screen's half-width of 320.
-const SPAWN_DISTANCE: float = 360.0
-const MAX_ENEMIES: int = 12
-
-@export var enemy_scene: PackedScene
-@export var enemy_data: EnemyData
 
 var _hero_name: String = ""
-var _enemy_count: int = 0
 var _kills: int = 0
+var _survived: bool = false
+var _run_started: bool = false
 
 @onready var hero: Hero = $Hero
 @onready var _arena: ArenaMap = $Meadow
 @onready var _camera: Camera2D = $Hero/Camera
 ## Kept above the y-sorted hero and trees, so shots are never hidden.
 @onready var _projectiles: Node2D = $Projectiles
-@onready var _spawn_timer: Timer = $SpawnTimer
+@onready var _director: RunDirector = $RunDirector
 @onready var _readout: Label = $HUD/Root/Readout
 
 
@@ -45,15 +41,21 @@ func _ready() -> void:
 	_camera.limit_right = limits.end.x
 	_camera.limit_bottom = limits.end.y
 	hero.projectile_released.connect(_on_hero_projectile_released)
-	hero.died.connect(_on_hero_died)
-	_spawn_timer.timeout.connect(_spawn_enemy)
+	hero.died.connect(_director.stop)
+	_director.enemy_killed.connect(_on_enemy_killed)
+	_director.survived.connect(_on_run_survived)
+	# A saved hero is shown right after this scene is added, which starts the
+	# run at their level; this only covers the scene being run on its own.
+	_start_standalone_run.call_deferred()
 	_refresh()
 
 
-## Dress the hero as `data` and name them in the readout.
+## Dress the hero as `data`, name them in the readout, and start the run at
+## their level.
 func show_hero(data: HeroData) -> void:
 	_hero_name = data.hero_name
 	hero.apply(data)
+	_start_run(data.level)
 	_refresh()
 
 
@@ -87,36 +89,22 @@ func _cycle_weapon() -> void:
 	_refresh()
 
 
-## Bring one enemy in from a random direction, just beyond the screen and
-## inside the arena's walls.
-func _spawn_enemy() -> void:
-	if _enemy_count >= MAX_ENEMIES or enemy_scene == null or enemy_data == null:
-		return
-	var node: Node = enemy_scene.instantiate()
-	if node is not Enemy:
-		push_error("Playground: enemy_scene must have an Enemy root.")
-		node.free()
-		return
-
-	var enemy: Enemy = node
-	enemy.data = enemy_data
-	enemy.target = hero
-	var playable: Rect2 = _arena.playable_rect
-	playable.position += _arena.position
-	var spot: Vector2 = hero.position + Vector2.from_angle(randf() * TAU) * SPAWN_DISTANCE
-	enemy.position = spot.clamp(playable.position, playable.end)
-	enemy.died.connect(_on_enemy_died)
-	_enemy_count += 1
-	add_child(enemy)
+func _start_standalone_run() -> void:
+	if not _run_started:
+		_start_run(1)
 
 
-func _on_enemy_died(_enemy: Enemy) -> void:
-	_enemy_count -= 1
+func _start_run(level: int) -> void:
+	_run_started = true
+	_director.start(level)
+
+
+func _on_enemy_killed(_enemy: Enemy) -> void:
 	_kills += 1
 
 
-func _on_hero_died() -> void:
-	_spawn_timer.stop()
+func _on_run_survived() -> void:
+	_survived = true
 
 
 func _on_hero_projectile_released(projectile: Projectile) -> void:
@@ -124,9 +112,11 @@ func _on_hero_projectile_released(projectile: Projectile) -> void:
 
 
 func _refresh() -> void:
-	var status: String = "DEFEATED" if hero.is_dead() else "HP %d/%d" % [
-		ceili(hero.health.current), roundi(hero.health.maximum)
-	]
+	var status: String = "HP %d/%d" % [ceili(hero.health.current), roundi(hero.health.maximum)]
+	if hero.is_dead():
+		status = "DEFEATED"
+	elif _survived:
+		status = "SURVIVED"
 	_readout.text = (
 		"%s%s    kills %d    %s\n"
 		% [
@@ -135,5 +125,17 @@ func _refresh() -> void:
 			_kills,
 			hero.weapon.get_display_name() if hero.weapon != null else "no weapon",
 		]
+		+ "time %s / %s    ramp %s\n"
+		% [
+			_clock(_director.elapsed),
+			_clock(_director.quest.duration),
+			_clock(_director.ramp_time()),
+		]
 		+ "WASD or arrows to move    attacks are automatic    Q weapon    Esc to go back"
 	)
+
+
+## `seconds` as minutes and seconds, such as 4:05.
+func _clock(seconds: float) -> String:
+	var whole: int = floori(seconds)
+	return "%d:%02d" % [floori(whole / 60.0), whole % 60]
