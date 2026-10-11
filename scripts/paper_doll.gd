@@ -32,6 +32,7 @@ const ATTACK_CLIP: StringName = &"attack"
 var _facing_right: bool = true
 var _layers: Array[AnimatedSprite2D] = []
 var _armour: ArmourItem = null
+var _boots: BootsItem = null
 var _weapon: WeaponItem = null
 var _attacking: bool = false
 var _released: bool = false
@@ -42,6 +43,7 @@ var _weapon_base_offset: Vector2 = Vector2.ZERO
 @onready var _hat: AnimatedSprite2D = $Equipment/Hat
 @onready var _shirt: AnimatedSprite2D = $Equipment/Shirt
 @onready var _pants: AnimatedSprite2D = $Equipment/Pants
+@onready var _boots_layer: AnimatedSprite2D = $Equipment/Boots
 @onready var _weapon_layer: AnimatedSprite2D = $Equipment/Weapon
 
 
@@ -58,6 +60,7 @@ func _ready() -> void:
 	_weapon_layer.frame_changed.connect(_on_weapon_frame_changed)
 	_weapon_layer.animation_finished.connect(_end_attack)
 	_apply_armour()
+	_apply_boots()
 	_apply_weapon()
 	_sync_layers()
 
@@ -68,6 +71,15 @@ func wear_armour(item: ArmourItem) -> void:
 	_armour = item
 	if is_node_ready():
 		_apply_armour()
+		_sync_layers()
+
+
+## Show `item` over the feet, or bare feet when null. Safe to call before
+## ready.
+func wear_boots(item: BootsItem) -> void:
+	_boots = item
+	if is_node_ready():
+		_apply_boots()
 		_sync_layers()
 
 
@@ -159,6 +171,10 @@ func _apply_armour() -> void:
 	_hat.sprite_frames = _armour.frames_for(ArmourItem.Piece.HAT)
 	_shirt.sprite_frames = _armour.frames_for(ArmourItem.Piece.SHIRT)
 	_pants.sprite_frames = _armour.frames_for(ArmourItem.Piece.PANTS)
+
+
+func _apply_boots() -> void:
+	_boots_layer.sprite_frames = _boots.frames() if _boots != null else null
 
 
 func _apply_weapon() -> void:

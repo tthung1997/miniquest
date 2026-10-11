@@ -85,3 +85,13 @@ tooltip_text = "Attack range of the held weapon"
 mouse_filter = 1
 text = "RNG --"
 horizontal_alignment = 1
+
+[node name="MoveLabel" type="Label" parent="Readouts"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Move speed, compared with a hero wearing no boots"
+mouse_filter = 1
+text = "MOV --"
+horizontal_alignment = 1

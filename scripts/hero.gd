@@ -33,6 +33,8 @@ const DEFAULT_MAX_HEALTH: float = 50.0
 const MELEE_REACH_BEHIND: float = 12.0
 
 @export_group("Movement")
+## Base speed, before any boots. A hero dressed by apply() moves at this times
+## HeroData.move_speed_multiplier().
 @export_range(10.0, 400.0, 5.0) var speed: float = 70.0
 ## How sharply the hero reaches full speed. Higher is snappier; 0 disables
 ## smoothing and applies input velocity directly.
@@ -52,11 +54,13 @@ const MELEE_REACH_BEHIND: float = 12.0
 @export_group("Appearance")
 ## What the hero wears and holds until apply() dresses it from a saved hero.
 @export var armour: ArmourItem
+@export var boots: BootsItem
 @export var weapon: WeaponItem
 
 var health: Health = null
 
 var _stats: HeroData = null
+var _move_multiplier: float = 1.0
 var _attack_cooldown: float = 0.0
 var _aim_point: Vector2 = Vector2.INF
 var _dead: bool = false
@@ -74,6 +78,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	_doll.wear_armour(armour)
+	_doll.wear_boots(boots)
 	_doll.wield(weapon)
 	_doll.attack_released.connect(_on_doll_attack_released)
 	_update_sensor_range()
@@ -83,12 +88,16 @@ func _ready() -> void:
 
 
 ## Dress this hero as `data`, and give them full health for it. Their stats
-## are what the held weapon's damage is worked out from.
+## are what the held weapon's damage is worked out from, and their boots set
+## how fast they run.
 func apply(data: HeroData) -> void:
 	_stats = data
 	armour = data.armour
+	boots = data.boots
 	weapon = data.weapon
+	_move_multiplier = data.move_speed_multiplier()
 	_doll.wear_armour(armour)
+	_doll.wear_boots(boots)
 	_doll.wield(weapon)
 	_update_sensor_range()
 	_set_health(data.max_health())
@@ -135,7 +144,7 @@ func _physics_process(delta: float) -> void:
 	)
 	input.y *= vertical_ratio
 
-	var target: Vector2 = input * speed
+	var target: Vector2 = input * speed * _move_multiplier
 	if acceleration <= 0.0:
 		velocity = target
 	elif target.is_zero_approx():

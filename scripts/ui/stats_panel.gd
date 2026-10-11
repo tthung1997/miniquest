@@ -31,6 +31,7 @@ var _rows: Dictionary[StringName, StatRow] = {}
 @onready var _damage_label: Label = %DamageLabel
 @onready var _speed_label: Label = %SpeedLabel
 @onready var _range_label: Label = %RangeLabel
+@onready var _move_label: Label = %MoveLabel
 
 
 func _ready() -> void:
@@ -108,9 +109,9 @@ func _remaining_points() -> int:
 	return _hero.unspent_points - pending_total() if _hero != null else 0
 
 
-## The hero's stats with the waiting points added.
+## The hero's stats, gear included, with the waiting points added.
 func _preview_stats() -> Dictionary[StringName, int]:
-	var stats: Dictionary[StringName, int] = _hero.stats()
+	var stats: Dictionary[StringName, int] = _hero.total_stats()
 	for stat_name: StringName in _pending:
 		stats[stat_name] += _pending[stat_name]
 	return stats
@@ -128,6 +129,7 @@ func _refresh() -> void:
 		_show_readout(_damage_label, "DMG", "--", "--")
 		_show_readout(_speed_label, "SPD", "--", "--")
 		_show_readout(_range_label, "RNG", "--", "--")
+		_show_readout(_move_label, "MOV", "--", "--")
 		return
 
 	var remaining: int = _remaining_points()
@@ -137,9 +139,11 @@ func _refresh() -> void:
 	for stat_name: StringName in _rows:
 		var pending: int = _pending.get(stat_name, 0)
 		_rows[stat_name].show_values(current[stat_name], pending, pending > 0, remaining > 0)
-	_refresh_readouts(current, _preview_stats())
+	_refresh_readouts(_hero.total_stats(), _preview_stats())
 
 
+## `current` and `preview` count the stats gear adds; the rows above show only
+## the points the hero has earned.
 func _refresh_readouts(
 	current: Dictionary[StringName, int], preview: Dictionary[StringName, int]
 ) -> void:
@@ -149,6 +153,8 @@ func _refresh_readouts(
 		_format(_hero.max_health()),
 		_format(_hero.max_health_with(preview[&"vitality"]))
 	)
+	var movement: String = "%d%%" % roundi(_hero.move_speed_multiplier() * 100.0)
+	_show_readout(_move_label, "MOV", movement, movement)
 
 	var weapon: WeaponData = null
 	if _hero.weapon != null:
