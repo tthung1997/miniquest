@@ -124,7 +124,7 @@ func _refresh() -> void:
 
 func _tooltip() -> String:
 	if item != null:
-		return item.get_display_name()
+		return item.get_tooltip_text()
 	if not is_equipment_slot:
 		return ""
 	var slot_text: String = EquipmentItem.slot_name(slot)

@@ -51,6 +51,7 @@ const INVENTORY_SIZE: int = 25
 @export_group("Equipment")
 @export var weapon: WeaponItem
 @export var armour: ArmourItem
+@export var boots: BootsItem
 ## Items carried but not worn, at most INVENTORY_SIZE. Kept packed: an item
 ## leaving the inventory closes its gap, and a new one goes on the end.
 @export var inventory: Array[EquipmentItem] = []
@@ -90,7 +91,11 @@ static func clean_name(raw_name: String) -> String:
 ## Whether a hero can wear anything in `slot` yet. The other slots open as
 ## their items are designed.
 static func supports_slot(slot: EquipmentItem.Slot) -> bool:
-	return slot == EquipmentItem.Slot.WEAPON or slot == EquipmentItem.Slot.ARMOUR
+	return (
+		slot == EquipmentItem.Slot.WEAPON
+		or slot == EquipmentItem.Slot.ARMOUR
+		or slot == EquipmentItem.Slot.BOOTS
+	)
 
 
 static func _describe(item: EquipmentItem) -> String:
@@ -110,7 +115,8 @@ func stat_value(stat_name: StringName) -> int:
 	return get(stat_name)
 
 
-## Every stat's current value, keyed by its name in STATS.
+## Every stat's current value, keyed by its name in STATS. Only what the hero
+## has earned and spent: see total_stats() for what they fight with.
 func stats() -> Dictionary[StringName, int]:
 	var values: Dictionary[StringName, int] = {}
 	for stat_name: StringName in STATS:
@@ -118,9 +124,36 @@ func stats() -> Dictionary[StringName, int]:
 	return values
 
 
-## Most health the hero can have: vitality, weighted by the class's durability.
+## stats() plus whatever the worn equipment adds, which is what damage and
+## health are worked out from.
+func total_stats() -> Dictionary[StringName, int]:
+	var values: Dictionary[StringName, int] = stats()
+	for item: EquipmentItem in _worn():
+		var bonuses: Dictionary[StringName, int] = item.get_stat_bonuses()
+		for stat_name: StringName in bonuses:
+			if not values.has(stat_name):
+				push_error(
+					"HeroData: %s adds to '%s', which is not a stat."
+					% [item.get_display_name(), stat_name]
+				)
+				continue
+			values[stat_name] += bonuses[stat_name]
+	return values
+
+
+## How fast the hero moves compared with their base speed: 1.0 with nothing
+## worn, 1.1 with equipment that adds 10%.
+func move_speed_multiplier() -> float:
+	var multiplier: float = 1.0
+	for item: EquipmentItem in _worn():
+		multiplier += item.get_move_speed_bonus()
+	return multiplier
+
+
+## Most health the hero can have: vitality, equipment included, weighted by
+## the class's durability.
 func max_health() -> float:
-	return max_health_with(vitality)
+	return max_health_with(total_stats()[&"vitality"])
 
 
 ## Most health the hero would have with `vitality_points` of vitality.
@@ -243,6 +276,8 @@ func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
 			return weapon
 		EquipmentItem.Slot.ARMOUR:
 			return armour
+		EquipmentItem.Slot.BOOTS:
+			return boots
 	return null
 
 
@@ -320,8 +355,23 @@ func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 				return false
 			armour = item
 			return true
+		EquipmentItem.Slot.BOOTS:
+			if item != null and item is not BootsItem:
+				push_error("HeroData: %s does not fit the Boots slot." % _describe(item))
+				return false
+			boots = item
+			return true
 	push_error("HeroData: the %s slot is not supported yet." % EquipmentItem.slot_name(slot))
 	return false
+
+
+## Every item currently worn.
+func _worn() -> Array[EquipmentItem]:
+	var items: Array[EquipmentItem] = []
+	for item: EquipmentItem in [weapon, armour, boots]:
+		if item != null:
+			items.append(item)
+	return items
 
 
 ## Point every held or carried weapon with a renamed id at its new id.

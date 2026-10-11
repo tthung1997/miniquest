@@ -64,7 +64,7 @@ static func find(weapon_id: StringName) -> WeaponData:
 ## Damage of one hit when `wielder` swings this weapon: the base damage plus
 ## each scaling factor times the wielder's matching stat.
 func damage_for(wielder: HeroData) -> float:
-	return damage_with(wielder.stats())
+	return damage_with(wielder.total_stats())
 
 
 ## Damage of one hit for stat values `stats`, keyed like HeroData.STATS. Lets a

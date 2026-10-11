@@ -57,7 +57,8 @@ Sprites are organised by **rig**, a body shape that equipment is drawn to fit:
 `assets/sprites/chibi/` holds the body sheets. Armour art is a pool per base
 class, one folder per piece, with numbered variants
 (e.g. `equipment/armour/mage/hat/01_walk.png`) beside the LibreSprite `.ase`
-each is edited in. Only art the game uses goes in `assets/`; raw
+each is edited in. Boots are named after their template id instead
+(`equipment/boots/wind_walkers_walk.png`). Only art the game uses goes in `assets/`; raw
 image-generator output stays out of the repo. After changing a sheet, rebuild the
 frame resources:
 

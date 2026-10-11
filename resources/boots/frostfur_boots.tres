@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BootsData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/boots_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/boots/frostfur_boots_icon.png" id="2_icon"]
+[ext_resource type="SpriteFrames" path="res://resources/chibi/equipment/boots/frostfur_boots_frames.tres" id="3_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"frostfur_boots"
+display_name = "Frostfur Boots"
+icon = ExtResource("2_icon")
+frames = ExtResource("3_frames")
+move_speed = 0.1
+stat_bonuses = Dictionary[StringName, int]({
+&"strength": 1,
+&"vitality": 2
+})

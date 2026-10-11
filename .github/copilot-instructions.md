@@ -198,6 +198,9 @@ assets/sprites/chibi/                   the rig; every character on it
   equipment/weapon/<weapon>_attack.png  the weapon's own attack clip
   equipment/weapon/<weapon>.ase
   equipment/weapon/<weapon>_icon.png    (+ <weapon>_icon.ase)
+  equipment/boots/<boots>_<clip>.png    e.g. equipment/boots/wind_walkers_walk.png
+  equipment/boots/<boots>.ase
+  equipment/boots/<boots>_icon.png      (+ <boots>_icon.ase)
 assets/sprites/effects/<effect>.png     (+ <effect>.ase) e.g. sword_slash, crossbow_bolt
 ```
 
@@ -222,6 +225,11 @@ pose's hand, and `PaperDoll.hand_offsets` shifts it to the hand on each body
 frame. The arm never moves; do not add attack frames to the body or garments.
 What the attack throws is set on its `WeaponData` (`release_frame`,
 `release_point`, `attack_effect`, `projectile`).
+
+Boots are not rolled either. Each pair is a `BootsData` template in
+`resources/boots/<boots>.tres`, and its art is named after that id. A pair is
+traced from the body's leg pixels on every frame, drawn as its own layer over
+the pants, and carries a move-speed bonus (its main stat) plus a few stat points.
 
 Male and female characters share one rig and differ by hair, face and clothes;
 do not add a second body without a reason. A character is not a folder — it is an

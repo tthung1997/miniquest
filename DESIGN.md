@@ -189,7 +189,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 | --- | --- |
 | Weapon | Damage, scaling type, attack speed |
 | Armour | Defence, VIT |
-| Boots | Move speed |
+| Boots | Move speed, plus a few stat points |
 | Accessory | Cooldown reduction, crit, pickup radius |
 
 - **Armour is worn as a hat, shirt and pants.** One Armour item always carries
@@ -207,6 +207,18 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   down, and the crossbow is
   held level.
   Whether an Accessory is drawn is undecided (section 11).
+- **Boots are fixed templates, and speed is their main stat.** There are 13
+  pairs, each one `BootsData` in `resources/boots/` with its own art, its own
+  move-speed bonus (6% to 22% of base speed) and a few points of STR, DEX, INT or
+  VIT. The stat mix is what makes a pair a choice: Wind Walkers are the fastest
+  and add almost nothing else, Iron Greaves are the slowest and add the most
+  STR and VIT, and Mystic Boots lean on INT. Other pairs trade between the two.
+  Worn gear's stat points count towards damage and health but are not part of
+  the hero's own stats, so they never show up as spendable or permanent points.
+  All the numbers are placeholders.
+- **Boots are dropped like armour.** 30% of the items a run drops are
+  boots, rolled from all 13 pairs whatever the hero's class (boots are not
+  class art). A hero starts with none.
 - **Three base weapons: Sword (STR), Crossbow (DEX), Wand (INT).** A weapon's
   strength is purely its stat scaling, with no class bonus: a Warrior hits
   hardest with a sword only because Warriors grow STR, and a Novice, growing
@@ -327,7 +339,7 @@ drops more. All of these are starting values, to be tuned.
 
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
 rarely, an item (2%). Items are armour, rolled from the art pool of the hero's
-class; weapons will drop once they have rarity. The hero collects a drop by
+class, or boots (30% of them, section 5.6); weapons will drop once they have rarity. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
 banked, and any item that does not fit the 25-cell inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
@@ -507,6 +519,13 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   are custom LibreSprite art, with editable `.ase` sources beside their PNGs
   under `assets/sprites/props/`, `assets/sprites/effects/` and
   `assets/sprites/ui/`. Armour piece icons sit beside their sheets the same way.
+- **Boots art is custom and traced from the body.** Each of the 13 pairs is
+  drawn over the body's own leg pixels on every frame, so it cannot drift from
+  the walk, then differs by height, toe, cuff, trim and palette. Each pair's
+  `.ase` and 16×16 icon sit beside its sheets under
+  `assets/sprites/chibi/equipment/boots/`. The body's legs are only about six
+  rows tall and the pants cover most of them, so boots are small; the shape and
+  colour carry the difference.
 - **Weapon attack effects are custom too**: the sword's slash crescent, the
   crossbow bolt, the magic bolt and its burst, in the weapons' own palettes, with `.ase` sources
   in `assets/sprites/effects/`. They are drawn at the hero's pixel density, which
@@ -531,8 +550,8 @@ working.
 ## 10. Version 1 scope
 
 In:
-- Paper-doll hero with its Armour layers (hat, shirt, pants) and Weapon layer
-  wired; the Boots layer still to add.
+- Paper-doll hero with its Armour layers (hat, shirt, pants), Boots layer and
+  Weapon layer wired.
 - Arena run: movement, auto-attack, auto-target, one enemy type ramping, damage,
   death, retreat, a fixed-length win, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.

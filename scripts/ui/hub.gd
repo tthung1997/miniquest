@@ -132,6 +132,7 @@ func _refresh() -> void:
 		_gold_label.text = "--"
 		_exp_label.text = "--"
 		_doll.wear_armour(null)
+		_doll.wear_boots(null)
 		_doll.wield(null)
 		return
 
@@ -145,6 +146,7 @@ func _refresh() -> void:
 	var progress: Vector2i = Levelling.progress(_hero.experience)
 	_exp_label.text = "MAX" if progress.y == 0 else "%d/%d" % [progress.x, progress.y]
 	_doll.wear_armour(_hero.armour)
+	_doll.wear_boots(_hero.boots)
 	_doll.wield(_hero.weapon)
 
 

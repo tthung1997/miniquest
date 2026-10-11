@@ -29,3 +29,25 @@ static func slot_name(slot: Slot) -> String:
 ## The item's icon as layers drawn in order, each ICON_SIZE. A single-image
 ## icon is one layer.
 @abstract func get_icon_layers() -> Array[Texture2D]
+
+
+## Points this item adds to its wearer's stats, keyed by HeroData stat name.
+func get_stat_bonuses() -> Dictionary[StringName, int]:
+	return {}
+
+
+## Fraction of the hero's base move speed this item adds: 0.1 is 10% faster.
+func get_move_speed_bonus() -> float:
+	return 0.0
+
+
+## What a cell shows on hover: the name, then whatever the item adds.
+func get_tooltip_text() -> String:
+	var lines: PackedStringArray = [get_display_name()]
+	var speed: float = get_move_speed_bonus()
+	if not is_zero_approx(speed):
+		lines.append("Move speed %+d%%" % roundi(speed * 100.0))
+	var bonuses: Dictionary[StringName, int] = get_stat_bonuses()
+	for stat_name: StringName in bonuses:
+		lines.append("%s %+d" % [String(stat_name).left(3).to_upper(), bonuses[stat_name]])
+	return "\n".join(lines)

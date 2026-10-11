@@ -5,6 +5,9 @@ extends RefCounted
 ## Only rolls: nothing here touches the world. The caller supplies the random
 ## number generator, so a test can seed it.
 
+## Share of rolled items that are boots rather than armour. A placeholder.
+const BOOTS_SHARE: float = 0.3
+
 
 ## Gold left by a kill of `data`, or zero when this one drops none.
 static func gold_for(data: EnemyData, rng: RandomNumberGenerator) -> int:
@@ -18,9 +21,13 @@ static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
 	return rng.randf() < data.item_chance
 
 
-## A new item, rolled from the armour art of `pool`. Null, with an error, when
-## the pool has none.
+## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
+## art of `pool`. Null, with an error, when nothing could be rolled.
 static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> EquipmentItem:
+	if rng.randf() < BOOTS_SHARE:
+		var boots: BootsItem = BootsItem.roll(rng)
+		if boots != null:
+			return boots
 	return ArmourItem.roll(pool, rng)
 
 
