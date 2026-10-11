@@ -15,7 +15,7 @@ extends Resource
 
 @export_group("Run")
 ## How long a run lasts, for every hero. Surviving this long wins it.
-@export_range(30.0, 1800.0, 1.0, "suffix:s") var duration: float = 300.0
+@export_range(30.0, 1800.0, 1.0, "suffix:s") var duration: float = 180.0
 
 @export_group("Level shift")
 ## Seconds of ramp a hero skips for each level above 1.

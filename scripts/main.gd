@@ -8,7 +8,7 @@ extends Node
 
 @export var character_select_scene: PackedScene
 @export var hub_scene: PackedScene
-@export var playground_scene: PackedScene
+@export var arena_run_scene: PackedScene
 
 var _current: Node = null
 var _slot: int = -1
@@ -16,8 +16,8 @@ var _hero: HeroData = null
 
 
 func _ready() -> void:
-	if character_select_scene == null or hub_scene == null or playground_scene == null:
-		push_error("Main: CharacterSelect, Hub and Playground scenes must be wired.")
+	if character_select_scene == null or hub_scene == null or arena_run_scene == null:
+		push_error("Main: CharacterSelect, Hub and ArenaRun scenes must be wired.")
 		return
 	_show_character_select()
 
@@ -51,20 +51,27 @@ func _show_hub() -> void:
 		return
 	hub.show_hero(_hero)
 	hub.hero_changed.connect(_save_hero)
-	hub.quest_requested.connect(_show_playground)
+	hub.quest_requested.connect(_show_arena_run)
 	hub.change_hero_requested.connect(_show_character_select)
 	_swap_to(hub)
 
 
-func _show_playground() -> void:
-	var playground: Node = playground_scene.instantiate()
-	if playground is not Playground:
-		push_error("Main: playground_scene must have a Playground root.")
-		playground.free()
+func _show_arena_run() -> void:
+	var run: Node = arena_run_scene.instantiate()
+	if run is not ArenaRun:
+		push_error("Main: arena_run_scene must have an ArenaRun root.")
+		run.free()
 		return
-	playground.back_requested.connect(_show_hub)
-	_swap_to(playground)
-	playground.show_hero(_hero)
+	run.finished.connect(_on_run_finished)
+	_swap_to(run)
+	run.show_hero(_hero)
+
+
+## Bank what the run earned, save it, and go home.
+func _on_run_finished(result: RunResult) -> void:
+	_hero.bank_run(result)
+	_save_hero()
+	_show_hub()
 
 
 ## HeroSaves reports its own failures; the hero stays usable in memory either way.

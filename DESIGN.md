@@ -29,7 +29,7 @@ hero, class advancement and visible gear.
 ```
 Hub (hero + buttons)
   → pick a quest
-  → arena run (5 min, ends in a win, a death or a retreat)
+  → arena run (3 min, ends in a win, a death or a retreat)
   → collect exp / gold / item drops during the run
   → return to hub, spend, equip, advance class
   → repeat
@@ -42,13 +42,13 @@ every hero.** The hero's level only decides *where on that curve the run begins*
 
 A level 1 hero starts at the curve's first second. A higher-level hero starts
 further along it, so it skips the trivial opening instead of idling through it.
-Every run is the same length at every level (5:00, section 6.3), so a strong hero
+Every run is the same length at every level (3:00, section 6.3), so a strong hero
 still gets the whole run; it just meets denser, tougher enemies from the first
 seconds and meets the lethal end of the curve at the finish line.
 
 ```
 ramp start = min(START_CAP, START_PER_LEVEL × (level − 1))
-run covers   ramp start → ramp start + 5:00
+run covers   ramp start → ramp start + 3:00
 ```
 
 Starting values: START_PER_LEVEL 5 s, START_CAP 120 s (reached at level 25). Both
@@ -57,7 +57,7 @@ are placeholders, to be tuned by play. They live in the quest's `QuestData`
 one file per quest.
 
 The ramp is a few values that rise linearly from the start of the ramp (0:00) to
-its end (START_CAP + 5:00 = 7:00): the seconds between spawns (1.5 s to 0.3 s),
+its end (START_CAP + 3:00 = 5:00): the seconds between spawns (1.5 s to 0.3 s),
 the most enemies alive at once (8 to 50), and the multipliers on every enemy's
 health (1× to 4×) and contact damage (1× to 2×). A `RunDirector` runs the
 clock and spawns enemies to match. These are placeholders too.
@@ -285,11 +285,12 @@ and every clone.
 
 ### 6.3 Run structure
 
-- **Fixed length: 5:00 for every hero.** Survive to the finish line and the run is
+- **Fixed length: 3:00 for every hero.** Survive to the finish line and the run is
   won; a final elite spawns at the end of the curve (enemy to be chosen). Dying
-  ends the run early. Opening the pause menu offers **Retreat**, which ends the
-  run exactly like a death, so there is always a way out and never a reason to
-  stall.
+  ends the run early. Opening the pause menu offers **Retreat**, which asks to
+  confirm and then ends the run exactly like a death, so there is always a way
+  out and never a reason to stall. Whichever way it ends, a results panel shows
+  how it went before the hero returns to the hub.
 - **A weak hero is expected to die before the finish.** The score for a lost run
   is how long it lasted; a won run needs no score.
 - **Two progression tracks:**
@@ -327,16 +328,38 @@ radius becomes a meaningful stat.
 
 Nothing about the hero itself is lost on death (except a hardcore hero).
 
-### 6.6 Experience curve (placeholder)
+### 6.6 Levelling (placeholder numbers)
 
 ```
-exp to reach level L+1 = round(50 × L ^ 1.3)
+exp to leave level L = round(40 × L ^ 1.25)        MAX_LEVEL = 30
 ```
 
-That is 50 exp to leave level 1, about 690 in total to reach level 5 (the first
-class advancement), and about 10,200 to reach level 15 (the second). Aiming for a
-few runs to level 5 and a few dozen to level 15. Nothing here is anchored until
-enemies give exp, so tune it by play.
+| Level | Total exp |
+|---|---|
+| 2 | 40 |
+| 5 (first class advancement) | 519 |
+| 10 | 2,811 |
+| 15 (second class advancement) | 7,286 |
+| 20 | 14,198 |
+| 25 | 23,734 |
+| 30 (max) | 36,048 |
+
+Each level needs a little more than the one before, so the climb is gradual. At
+roughly 100 exp a run, rising as the ramp starts later, that is about 4 runs to
+level 5, about 37 to level 15 and about 117 to the cap. Those run counts are
+guesses until enemies give real exp, so tune the curve by play.
+
+A hero's `experience` is a running total and their level follows from it. **At
+the max level experience stops accumulating**; if the cap is raised later (the
+curve itself does not change) it resumes from where it stopped. Each level
+gained grows the hero's stats by their class's `stat_growth` and gives 2 free
+points. Growth is fractional (Novice gains half a point of each stat a level),
+so the leftover is carried in the hero between level-ups.
+
+**Built so far:** kills give their enemy's `experience` (Bamboo: 2), a finished
+run banks the total, and levelling, stat growth, free points and the cap work.
+Not built: spending free points (the Stats screen is locked), class advancement
+(so a hero always uses Novice growth for now), and lineage growth.
 
 ## 7. Quest selection
 
@@ -521,7 +544,13 @@ Out until later:
 - Whether single-target skills survive contact with a real swarm. The balance
   numbers assume an area skill touches three enemies and a single-target skill
   one; if a swarm is denser, single-target skills are dead.
-- Item list. (The xp curve has a placeholder in 6.6.)
+- Item list. (The xp curve is in 6.6.)
+- **What keeps a hero playing at the max level.** XP stops at level 30, so the
+  endgame has to come from elsewhere: the gear chase (rarity tiers and gacha), build
+  variety (hybrid classes, skills), and fresh heroes in the other slots. None of
+  these exist yet. Difficulty tiers, which many games use here, are ruled out by
+  pillar 2. Whether the cap should rise, and whether a post-cap track is needed,
+  waits on seeing play.
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
 - What the final elite at the end of the run is, and whether it is worth a
