@@ -209,13 +209,16 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   draw, which a side-on hero with one visible arm cannot show; a crossbow is
   held and loosed one-handed. Bows in older saves load as crossbows.
 - **Each weapon hits in its own shape**, so they differ by more than numbers.
-  Damage is not built yet, so these rules wait for it; the visuals already
-  match them.
-  - **Sword:** a broad greatsword whose slash lands one hero-height ahead in a
-    tall arc and hits every enemy in it. That pays for having to close in.
-  - **Crossbow:** a fast bolt that pierces, hitting every enemy in a line.
-  - **Wand:** a slower bolt that homes in on its target and bursts in a small
-    area where it lands, or at the end of its range.
+  The hero turns to the nearest enemy in range first, then:
+  - **Sword:** a broad greatsword whose slash hits every enemy on the facing side
+    within its range. That pays for having to close in. (The slash art is
+    a tall arc; the hit area is a half circle of `attack_range` rather than the
+    arc's exact shape.)
+  - **Crossbow:** a fast bolt, aimed at the target, that pierces, hitting every
+    enemy in a line.
+  - **Wand:** a slower bolt that bursts in a small area where it first hits an
+    enemy, or at the end of its range. **Homing is not built yet**: the bolt
+    flies straight at where the target was.
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
 - **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
@@ -443,8 +446,8 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   tracks, plus an official Godot 4 example project. **Confirmed.** Only the
   files in use are copied into `assets/packs/ninja_adventure/` (currently the
   Wood UI theme pieces, the back arrow, `NormalFont.ttf`, four hub item icons,
-  and the floor, nature and floor-detail tilesets for the arena, with the
-  licence).
+  and the floor, nature and floor-detail tilesets for the arena, and the Bamboo
+  monster sheet, with the licence).
   UI follows the pack's own palette: orange frames around a warm brown interior, dark olive
   wells, light text, on a warm olive-grey background. The rest of the pack
   stays outside the repo until something uses it.
