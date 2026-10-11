@@ -129,6 +129,13 @@ func upgrade() -> bool:
 	return true
 
 
+## Add what a finished run earned. Experience is a running total for now;
+## turning it into levels waits for level-up stat growth.
+func bank_run(result: RunResult) -> void:
+	experience += result.experience
+	emit_changed()
+
+
 ## The item worn in `slot`, or null when it is empty.
 func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
 	match slot:

@@ -19,3 +19,7 @@ extends Resource
 @export_range(0.0, 1000.0, 0.5) var contact_damage: float = 5.0
 ## Seconds between one enemy's hits while it keeps touching the hero.
 @export_range(0.1, 5.0, 0.05, "suffix:s") var contact_interval: float = 1.0
+
+@export_group("Rewards")
+## Experience the hero earns for killing one.
+@export_range(0, 1000) var experience: int = 1

@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/quests/arena_run.gd" id="1_run"]
+[ext_resource type="PackedScene" uid="uid://dj41ukjd6bc1x" path="res://scenes/hero.tscn" id="2_hero"]
+[ext_resource type="PackedScene" path="res://scenes/arena/meadow.tscn" id="3_meadow"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="4_enemy"]
+[ext_resource type="Resource" path="res://resources/enemies/bamboo.tres" id="5_bamboo"]
+[ext_resource type="Script" path="res://scripts/quests/run_director.gd" id="6_director"]
+[ext_resource type="Resource" path="res://resources/quests/meadow_run.tres" id="7_quest"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="8_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="9_confirm"]
+[ext_resource type="PackedScene" path="res://scenes/ui/run_end_panel.tscn" id="10_end"]
+
+[node name="ArenaRun" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_run")
+
+[node name="Meadow" parent="." instance=ExtResource("3_meadow")]
+
+[node name="Hero" parent="." instance=ExtResource("2_hero")]
+
+[node name="Camera" type="Camera2D" parent="Hero"]
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="Projectiles" type="Node2D" parent="."]
+z_index = 1
+
+[node name="RunDirector" type="Node" parent="." node_paths=PackedStringArray("hero", "arena", "enemy_parent")]
+script = ExtResource("6_director")
+quest = ExtResource("7_quest")
+enemy_scene = ExtResource("4_enemy")
+enemy_data = ExtResource("5_bamboo")
+hero = NodePath("../Hero")
+arena = NodePath("../Meadow")
+enemy_parent = NodePath("..")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="Readout" type="Label" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 430.0
+offset_bottom = 54.0
+
+[node name="Overlay" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 2
+
+[node name="PauseMenu" parent="Overlay" instance=ExtResource("8_pause")]
+unique_name_in_owner = true
+
+[node name="RetreatDialog" parent="Overlay" instance=ExtResource("9_confirm")]
+unique_name_in_owner = true
+
+[node name="EndPanel" parent="Overlay" instance=ExtResource("10_end")]
+unique_name_in_owner = true

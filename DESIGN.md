@@ -287,9 +287,10 @@ and every clone.
 
 - **Fixed length: 5:00 for every hero.** Survive to the finish line and the run is
   won; a final elite spawns at the end of the curve (enemy to be chosen). Dying
-  ends the run early. Opening the pause menu offers **Retreat**, which ends the
-  run exactly like a death, so there is always a way out and never a reason to
-  stall.
+  ends the run early. Opening the pause menu offers **Retreat**, which asks to
+  confirm and then ends the run exactly like a death, so there is always a way
+  out and never a reason to stall. Whichever way it ends, a results panel shows
+  how it went before the hero returns to the hub.
 - **A weak hero is expected to die before the finish.** The score for a lost run
   is how long it lasted; a won run needs no score.
 - **Two progression tracks:**
@@ -337,6 +338,11 @@ That is 50 exp to leave level 1, about 690 in total to reach level 5 (the first
 class advancement), and about 10,200 to reach level 15 (the second). Aiming for a
 few runs to level 5 and a few dozen to level 15. Nothing here is anchored until
 enemies give exp, so tune it by play.
+
+**Built so far:** each kill gives its enemy's `experience` (Bamboo: 2), and a
+finished run banks the total into the hero's `experience`, which is a running
+total across all runs. Levelling from it is not built: it needs each level's
+stat growth first (`design/classes.json`), so a hero's level stays at 1 for now.
 
 ## 7. Quest selection
 
