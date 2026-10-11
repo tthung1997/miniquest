@@ -29,7 +29,7 @@ hero, class advancement and visible gear.
 ```
 Hub (hero + buttons)
   → pick a quest
-  → arena run (5 min, ends in a win, a death or a retreat)
+  → arena run (3 min, ends in a win, a death or a retreat)
   → collect exp / gold / item drops during the run
   → return to hub, spend, equip, advance class
   → repeat
@@ -42,13 +42,13 @@ every hero.** The hero's level only decides *where on that curve the run begins*
 
 A level 1 hero starts at the curve's first second. A higher-level hero starts
 further along it, so it skips the trivial opening instead of idling through it.
-Every run is the same length at every level (5:00, section 6.3), so a strong hero
+Every run is the same length at every level (3:00, section 6.3), so a strong hero
 still gets the whole run; it just meets denser, tougher enemies from the first
 seconds and meets the lethal end of the curve at the finish line.
 
 ```
 ramp start = min(START_CAP, START_PER_LEVEL × (level − 1))
-run covers   ramp start → ramp start + 5:00
+run covers   ramp start → ramp start + 3:00
 ```
 
 Starting values: START_PER_LEVEL 5 s, START_CAP 120 s (reached at level 25). Both
@@ -57,7 +57,7 @@ are placeholders, to be tuned by play. They live in the quest's `QuestData`
 one file per quest.
 
 The ramp is a few values that rise linearly from the start of the ramp (0:00) to
-its end (START_CAP + 5:00 = 7:00): the seconds between spawns (1.5 s to 0.3 s),
+its end (START_CAP + 3:00 = 5:00): the seconds between spawns (1.5 s to 0.3 s),
 the most enemies alive at once (8 to 50), and the multipliers on every enemy's
 health (1× to 4×) and contact damage (1× to 2×). A `RunDirector` runs the
 clock and spawns enemies to match. These are placeholders too.
@@ -285,7 +285,7 @@ and every clone.
 
 ### 6.3 Run structure
 
-- **Fixed length: 5:00 for every hero.** Survive to the finish line and the run is
+- **Fixed length: 3:00 for every hero.** Survive to the finish line and the run is
   won; a final elite spawns at the end of the curve (enemy to be chosen). Dying
   ends the run early. Opening the pause menu offers **Retreat**, which asks to
   confirm and then ends the run exactly like a death, so there is always a way
