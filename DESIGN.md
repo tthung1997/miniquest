@@ -328,21 +328,38 @@ radius becomes a meaningful stat.
 
 Nothing about the hero itself is lost on death (except a hardcore hero).
 
-### 6.6 Experience curve (placeholder)
+### 6.6 Levelling (placeholder numbers)
 
 ```
-exp to reach level L+1 = round(50 × L ^ 1.3)
+exp to leave level L = round(40 × L ^ 1.25)        MAX_LEVEL = 30
 ```
 
-That is 50 exp to leave level 1, about 690 in total to reach level 5 (the first
-class advancement), and about 10,200 to reach level 15 (the second). Aiming for a
-few runs to level 5 and a few dozen to level 15. Nothing here is anchored until
-enemies give exp, so tune it by play.
+| Level | Total exp |
+|---|---|
+| 2 | 40 |
+| 5 (first class advancement) | 519 |
+| 10 | 2,811 |
+| 15 (second class advancement) | 7,286 |
+| 20 | 14,198 |
+| 25 | 23,734 |
+| 30 (max) | 36,048 |
 
-**Built so far:** each kill gives its enemy's `experience` (Bamboo: 2), and a
-finished run banks the total into the hero's `experience`, which is a running
-total across all runs. Levelling from it is not built: it needs each level's
-stat growth first (`design/classes.json`), so a hero's level stays at 1 for now.
+Each level needs a little more than the one before, so the climb is gradual. At
+roughly 100 exp a run, rising as the ramp starts later, that is about 4 runs to
+level 5, about 37 to level 15 and about 117 to the cap. Those run counts are
+guesses until enemies give real exp, so tune the curve by play.
+
+A hero's `experience` is a running total and their level follows from it. **At
+the max level experience stops accumulating**; if the cap is raised later (the
+curve itself does not change) it resumes from where it stopped. Each level
+gained grows the hero's stats by their class's `stat_growth` and gives 2 free
+points. Growth is fractional (Novice gains half a point of each stat a level),
+so the leftover is carried in the hero between level-ups.
+
+**Built so far:** kills give their enemy's `experience` (Bamboo: 2), a finished
+run banks the total, and levelling, stat growth, free points and the cap work.
+Not built: spending free points (the Stats screen is locked), class advancement
+(so a hero always uses Novice growth for now), and lineage growth.
 
 ## 7. Quest selection
 
@@ -527,7 +544,13 @@ Out until later:
 - Whether single-target skills survive contact with a real swarm. The balance
   numbers assume an area skill touches three enemies and a single-target skill
   one; if a swarm is denser, single-target skills are dead.
-- Item list. (The xp curve has a placeholder in 6.6.)
+- Item list. (The xp curve is in 6.6.)
+- **What keeps a hero playing at the max level.** XP stops at level 30, so the
+  endgame has to come from elsewhere: the gear chase (rarity tiers and gacha), build
+  variety (hybrid classes, skills), and fresh heroes in the other slots. None of
+  these exist yet. Difficulty tiers, which many games use here, are ruled out by
+  pillar 2. Whether the cap should rise, and whether a post-cap track is needed,
+  waits on seeing play.
 - Gacha pack contents and pricing.
 - Whether gold has sinks other than gacha.
 - What the final elite at the end of the run is, and whether it is worth a

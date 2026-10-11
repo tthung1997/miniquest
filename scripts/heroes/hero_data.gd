@@ -43,6 +43,10 @@ const INVENTORY_SIZE: int = 25
 @export var intelligence: int = STARTING_STAT
 @export var vitality: int = STARTING_STAT
 @export var unspent_points: int = 0
+## Growth too small to add a whole stat point yet, carried between level-ups so
+## a class that grows a stat by half a point a level still adds one every
+## second level.
+@export var growth_remainder: Dictionary[StringName, float] = {}
 
 @export_group("Equipment")
 @export var weapon: WeaponItem
@@ -129,11 +133,50 @@ func upgrade() -> bool:
 	return true
 
 
-## Add what a finished run earned. Experience is a running total for now;
-## turning it into levels waits for level-up stat growth.
+## Add what a finished run earned.
 func bank_run(result: RunResult) -> void:
-	experience += result.experience
+	gain_experience(result.experience)
+
+
+## Add `amount` experience, up to the level cap, and level up as far as it
+## reaches. Each level gained grows the stats by the class's growth and adds
+## free points. Returns how many levels were gained.
+func gain_experience(amount: int) -> int:
+	if amount < 0:
+		push_error("HeroData: experience gained must not be negative, got %d." % amount)
+		return 0
+	experience = mini(experience + amount, Levelling.max_exp())
+	var gained: int = 0
+	for _step: int in maxi(Levelling.level_for(experience) - level, 0):
+		_level_up()
+		gained += 1
 	emit_changed()
+	return gained
+
+
+## The level this hero would be after gaining `amount` experience, changing
+## nothing.
+func level_after(amount: int) -> int:
+	var total: int = mini(experience + maxi(amount, 0), Levelling.max_exp())
+	return maxi(Levelling.level_for(total), level)
+
+
+func _level_up() -> void:
+	level += 1
+	unspent_points += Levelling.FREE_POINTS_PER_LEVEL
+	var growing_class: ClassData = class_data()
+	if growing_class == null:
+		return
+	for stat_name: StringName in growing_class.stat_growth:
+		if not STATS.has(stat_name):
+			push_error("HeroData: class '%s' grows unknown stat '%s'." % [class_id, stat_name])
+			continue
+		var growth: float = growing_class.stat_growth[stat_name]
+		var owed: float = growth_remainder.get(stat_name, 0.0) + growth
+		# A hair of slack so 0.1 added ten times still makes a whole point.
+		var whole: int = floori(owed + 0.0001)
+		set(stat_name, get(stat_name) + whole)
+		growth_remainder[stat_name] = maxf(owed - whole, 0.0)
 
 
 ## The item worn in `slot`, or null when it is empty.

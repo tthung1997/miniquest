@@ -24,6 +24,7 @@ const RETREAT_WARNING: String = (
 
 var _kills: int = 0
 var _experience: int = 0
+var _hero_data: HeroData = null
 var _ending: bool = false
 var _result: RunResult = null
 var _run_started: bool = false
@@ -76,6 +77,7 @@ func _exit_tree() -> void:
 
 ## Dress the hero as `data` and start the run at their level.
 func show_hero(data: HeroData) -> void:
+	_hero_data = data
 	hero.apply(data)
 	_start_run(data.level)
 	_refresh()
@@ -114,6 +116,12 @@ func _end(outcome: RunResult.Outcome) -> void:
 	_result.duration = _director.quest.duration
 	_result.kills = _kills
 	_result.experience = _experience
+	if _hero_data != null:
+		_result.level_before = _hero_data.level
+		_result.level_after = _hero_data.level_after(_experience)
+	else:
+		_result.level_before = 1
+		_result.level_after = 1
 	get_tree().paused = true
 	_end_panel.show_result(_result)
 

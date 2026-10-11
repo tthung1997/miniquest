@@ -15,6 +15,10 @@ var duration: float = 0.0
 var kills: int = 0
 ## Experience from kills. Kept whichever way the run ended.
 var experience: int = 0
+## The hero's level when the run began and the level the experience will take
+## them to, so the results can announce a level-up before it is banked.
+var level_before: int = 1
+var level_after: int = 1
 
 
 func is_win() -> bool:

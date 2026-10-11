@@ -26,7 +26,7 @@ func _ready() -> void:
 
 func show_result(result: RunResult) -> void:
 	_title.text = TITLES[result.outcome]
-	_details.text = (
+	var lines: String = (
 		"Time    %s / %s\nKills    %d\nExperience    +%d"
 		% [
 			RunResult.clock(result.time_survived),
@@ -35,5 +35,8 @@ func show_result(result: RunResult) -> void:
 			result.experience,
 		]
 	)
+	if result.level_after > result.level_before:
+		lines += "\nLEVEL UP!    Lv %d to %d" % [result.level_before, result.level_after]
+	_details.text = lines
 	show()
 	_continue_button.grab_focus()
