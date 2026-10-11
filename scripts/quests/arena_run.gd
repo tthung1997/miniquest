@@ -19,15 +19,24 @@ const DEATH_DELAY: float = 0.75
 ## Weapon given to a hero when this scene is run on its own.
 const STANDALONE_WEAPON: StringName = &"sword"
 const RETREAT_WARNING: String = (
-	"Retreating ends the run like a defeat: only the experience you earned is kept."
+	"Retreating ends the run like a defeat: only the experience you earned is kept. "
+	+ "Gold and items you picked up are lost."
 )
+## How far from where an enemy fell its drops land.
+const DROP_SCATTER: float = 8.0
+
+## Where the dropped gold and items appear.
+@export var pickup_scene: PackedScene
 
 var _kills: int = 0
 var _experience: int = 0
+var _gold: int = 0
+var _items: Array[EquipmentItem] = []
 var _hero_data: HeroData = null
 var _ending: bool = false
 var _result: RunResult = null
 var _run_started: bool = false
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 @onready var hero: Hero = $Hero
 @onready var _arena: ArenaMap = $Meadow
@@ -42,6 +51,7 @@ var _run_started: bool = false
 
 
 func _ready() -> void:
+	_rng.randomize()
 	# Run on its own there is no saved hero to dress from, so start armed.
 	if hero.weapon == null:
 		hero.wield(WeaponItem.create(STANDALONE_WEAPON))
@@ -54,6 +64,7 @@ func _ready() -> void:
 	_camera.limit_bottom = limits.end.y
 
 	hero.projectile_released.connect(_on_hero_projectile_released)
+	hero.pickup_reached.connect(_on_hero_pickup_reached)
 	hero.died.connect(_on_hero_died)
 	_director.enemy_killed.connect(_on_enemy_killed)
 	_director.survived.connect(_on_run_survived)
@@ -105,6 +116,9 @@ func _start_run(level: int) -> void:
 
 
 ## Finish the run as `outcome`, once: whatever ends it first wins.
+## Finish the run as `outcome`, once: whatever ends it first wins. A win banks
+## what was picked up and adds the quest's win bonus; a death or retreat banks
+## only experience and forfeits the rest.
 func _end(outcome: RunResult.Outcome) -> void:
 	if _result != null:
 		return
@@ -116,14 +130,40 @@ func _end(outcome: RunResult.Outcome) -> void:
 	_result.duration = _director.quest.duration
 	_result.kills = _kills
 	_result.experience = _experience
+	if outcome == RunResult.Outcome.WON:
+		_add_win_bonus(_result)
+	else:
+		_result.gold_forfeited = _gold
+		_result.items_forfeited = _items.size()
+
 	if _hero_data != null:
 		_result.level_before = _hero_data.level
-		_result.level_after = _hero_data.level_after(_experience)
-	else:
-		_result.level_before = 1
-		_result.level_after = 1
+		_result.level_after = _hero_data.level_after(_result.experience)
+		var room: int = _hero_data.free_inventory_cells()
+		_result.items_without_room = maxi(_result.items.size() - room, 0)
 	get_tree().paused = true
 	_end_panel.show_result(_result)
+
+
+## Bank the pickups into `result` and add the win bonus on top.
+func _add_win_bonus(result: RunResult) -> void:
+	var quest: QuestData = _director.quest
+	var bonus_items: Array[EquipmentItem] = Drops.win_bonus_items(
+		quest, _director.ramp_start, _armour_pool(), _rng
+	)
+	result.bonus_experience = quest.win_bonus_experience
+	result.bonus_gold = quest.win_bonus_gold
+	result.bonus_items = bonus_items.size()
+	result.experience += result.bonus_experience
+	result.gold = _gold + result.bonus_gold
+	result.items = _items.duplicate()
+	result.items.append_array(bonus_items)
+
+
+## The armour art pool drops are rolled from: the hero's class's.
+func _armour_pool() -> StringName:
+	var hero_class: ClassData = _hero_data.class_data() if _hero_data != null else null
+	return hero_class.armour_pool if hero_class != null else HeroData.STARTING_CLASS
 
 
 func _on_hero_died() -> void:
@@ -144,6 +184,53 @@ func _on_run_survived() -> void:
 func _on_enemy_killed(enemy: Enemy) -> void:
 	_kills += 1
 	_experience += enemy.data.experience
+	_drop_loot(enemy)
+
+
+## Leave whatever `enemy` drops where it fell.
+func _drop_loot(enemy: Enemy) -> void:
+	var gold: int = Drops.gold_for(enemy.data, _rng)
+	if gold > 0:
+		var coins: Pickup = _new_pickup(enemy.global_position)
+		if coins != null:
+			coins.set_gold(gold)
+	if Drops.item_dropped(enemy.data, _rng):
+		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng)
+		var loot: Pickup = _new_pickup(enemy.global_position) if item != null else null
+		if loot != null:
+			loot.set_item(item)
+
+
+## A pickup near `at`, on its way into the world. Adding waits for the end of
+## the frame because the kill that made it can come from inside a physics
+## callback, where adding collision objects is not allowed.
+func _new_pickup(at: Vector2) -> Pickup:
+	if pickup_scene == null:
+		push_error("ArenaRun: pickup_scene must be wired to show drops.")
+		return null
+	var node: Node = pickup_scene.instantiate()
+	if node is not Pickup:
+		push_error("ArenaRun: pickup_scene must have a Pickup root.")
+		node.free()
+		return null
+	var pickup: Pickup = node
+	var scatter: Vector2 = Vector2(
+		_rng.randf_range(-DROP_SCATTER, DROP_SCATTER),
+		_rng.randf_range(-DROP_SCATTER, DROP_SCATTER) * 0.5,
+	)
+	pickup.position = to_local(at + scatter)
+	add_child.call_deferred(pickup)
+	return pickup
+
+
+func _on_hero_pickup_reached(pickup: Pickup) -> void:
+	if pickup.is_collected():
+		return
+	if pickup.kind == Pickup.Kind.GOLD:
+		_gold += pickup.gold
+	elif pickup.item != null:
+		_items.append(pickup.item)
+	pickup.collect()
 
 
 func _on_resume_requested() -> void:
@@ -167,12 +254,14 @@ func _on_hero_projectile_released(projectile: Projectile) -> void:
 
 func _refresh() -> void:
 	_readout.text = (
-		"HP %d/%d    kills %d    exp +%d    time %s / %s\nEsc to pause"
+		"HP %d/%d    kills %d    exp +%d    gold %d    items %d    time %s / %s\nEsc to pause"
 		% [
 			ceili(hero.health.current),
 			roundi(hero.health.maximum),
 			_kills,
 			_experience,
+			_gold,
+			_items.size(),
 			RunResult.clock(_director.elapsed),
 			RunResult.clock(_director.quest.duration),
 		]

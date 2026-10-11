@@ -18,6 +18,9 @@ signal facing_changed(facing_right: bool)
 ## The listener adds it to the world: the hero does not reach up into the
 ## level it stands in.
 signal projectile_released(projectile: Projectile)
+## The hero's pickup radius reached `pickup`. The listener decides what that
+## means and calls its collect().
+signal pickup_reached(pickup: Pickup)
 ## The hero's health reached zero. What that means for the run is up to whoever
 ## owns the hero.
 signal died
@@ -39,6 +42,13 @@ const MELEE_REACH_BEHIND: float = 12.0
 ## the shallow perspective these side-view sprites imply. 1.0 is uniform.
 @export_range(0.3, 1.0, 0.05) var vertical_ratio: float = 0.6
 
+@export_group("Pickup")
+## How close a drop must be for the hero to collect it.
+@export_range(8.0, 200.0, 1.0, "suffix:px") var pickup_radius: float = 28.0:
+	set(value):
+		pickup_radius = value
+		_pickup_circle.radius = value
+
 @export_group("Appearance")
 ## What the hero wears and holds until apply() dresses it from a saved hero.
 @export var armour: ArmourItem
@@ -50,9 +60,12 @@ var _stats: HeroData = null
 var _attack_cooldown: float = 0.0
 var _aim_point: Vector2 = Vector2.INF
 var _dead: bool = false
+var _pickup_circle: CircleShape2D = CircleShape2D.new()
 
 @onready var _doll: PaperDoll = $PaperDoll
 @onready var _sensor: TargetSensor = $TargetSensor
+@onready var _pickup_area: Area2D = $PickupArea
+@onready var _pickup_shape: CollisionShape2D = $PickupArea/Shape
 
 
 func _init() -> void:
@@ -64,6 +77,9 @@ func _ready() -> void:
 	_doll.wield(weapon)
 	_doll.attack_released.connect(_on_doll_attack_released)
 	_update_sensor_range()
+	_pickup_circle.radius = pickup_radius
+	_pickup_shape.shape = _pickup_circle
+	_pickup_area.area_entered.connect(_on_pickup_area_entered)
 
 
 ## Dress this hero as `data`, and give them full health for it. Their stats
@@ -76,6 +92,7 @@ func apply(data: HeroData) -> void:
 	_doll.wield(weapon)
 	_update_sensor_range()
 	_set_health(data.max_health())
+	_pickup_area.set_deferred(&"monitoring", true)
 
 
 ## Lose `amount` of health. The died signal follows when none is left.
@@ -181,7 +198,14 @@ func _set_health(max_health: float) -> void:
 
 func _on_health_died() -> void:
 	_dead = true
+	# A fallen hero collects nothing.
+	_pickup_area.set_deferred(&"monitoring", false)
 	died.emit()
+
+
+func _on_pickup_area_entered(area: Area2D) -> void:
+	if area is Pickup and not _dead:
+		pickup_reached.emit(area)
 
 
 ## What one hit of `data` deals, from the hero's stats. A hero with no saved

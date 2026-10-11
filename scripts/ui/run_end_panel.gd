@@ -26,17 +26,30 @@ func _ready() -> void:
 
 func show_result(result: RunResult) -> void:
 	_title.text = TITLES[result.outcome]
-	var lines: String = (
-		"Time    %s / %s\nKills    %d\nExperience    +%d"
-		% [
-			RunResult.clock(result.time_survived),
-			RunResult.clock(result.duration),
-			result.kills,
-			result.experience,
-		]
-	)
+	var clock: String = "%s / %s" % [
+		RunResult.clock(result.time_survived), RunResult.clock(result.duration)
+	]
+	var lines: PackedStringArray = [
+		"Time    " + clock,
+		"Kills    %d" % result.kills,
+		"Experience    +%d" % result.experience,
+	]
+	if result.is_win():
+		lines.append("Gold    +%d" % result.gold)
+		var items: String = "Items    +%d" % result.items.size()
+		if result.items_without_room > 0:
+			items += " (%d without room)" % result.items_without_room
+		lines.append(items)
+		lines.append(
+			"Win bonus    %d exp, %d gold, %d items"
+			% [result.bonus_experience, result.bonus_gold, result.bonus_items]
+		)
+	elif result.gold_forfeited > 0 or result.items_forfeited > 0:
+		lines.append(
+			"Lost    %d gold, %d items" % [result.gold_forfeited, result.items_forfeited]
+		)
 	if result.level_after > result.level_before:
-		lines += "\nLEVEL UP!    Lv %d to %d" % [result.level_before, result.level_after]
-	_details.text = lines
+		lines.append("LEVEL UP!    Lv %d to %d" % [result.level_before, result.level_after])
+	_details.text = "\n".join(lines)
 	show()
 	_continue_button.grab_focus()

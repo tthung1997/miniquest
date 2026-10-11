@@ -39,6 +39,16 @@ extends Resource
 @export_range(0.1, 50.0, 0.1) var damage_scale_start: float = 1.0
 @export_range(0.1, 50.0, 0.1) var damage_scale_end: float = 2.0
 
+@export_group("Win bonus")
+## What winning adds on top of what the hero collected (DESIGN.md section 6.5).
+@export_range(0, 10000) var win_bonus_experience: int = 60
+@export_range(0, 10000) var win_bonus_gold: int = 40
+## A win rolls for one item, which is always given, plus one more roll for each
+## this many seconds of ramp the hero skipped, each landing with the chance
+## below. So a higher-level hero's win drops more.
+@export_range(5.0, 300.0, 1.0, "suffix:s") var win_bonus_seconds_per_roll: float = 30.0
+@export_range(0.0, 1.0, 0.05) var win_bonus_drop_chance: float = 0.5
+
 
 ## Where on the ramp, in seconds, a hero of `level` begins.
 func start_for(level: int) -> float:
@@ -69,3 +79,9 @@ func health_scale_at(progress: float) -> float:
 
 func damage_scale_at(progress: float) -> float:
 	return lerpf(damage_scale_start, damage_scale_end, progress)
+
+
+## How many item rolls a win earns for a run that began `ramp_start` seconds
+## into the ramp: the guaranteed one, plus one per win_bonus_seconds_per_roll.
+func win_bonus_rolls(ramp_start: float) -> int:
+	return 1 + floori(ramp_start / win_bonus_seconds_per_roll)
