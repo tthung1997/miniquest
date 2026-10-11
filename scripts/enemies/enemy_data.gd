@@ -23,3 +23,11 @@ extends Resource
 @export_group("Rewards")
 ## Experience the hero earns for killing one.
 @export_range(0, 1000) var experience: int = 1
+
+@export_group("Drops")
+## Chance that a kill leaves a gold pickup, worth gold_min to gold_max.
+@export_range(0.0, 1.0, 0.01) var gold_chance: float = 0.35
+@export_range(1, 1000) var gold_min: int = 1
+@export_range(1, 1000) var gold_max: int = 3
+## Chance that a kill leaves an item pickup.
+@export_range(0.0, 1.0, 0.005) var item_chance: float = 0.02

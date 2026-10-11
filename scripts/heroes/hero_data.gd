@@ -133,9 +133,26 @@ func upgrade() -> bool:
 	return true
 
 
-## Add what a finished run earned.
-func bank_run(result: RunResult) -> void:
+## Add what a finished run earned: experience always, and gold and items when
+## the run was won. Items that no longer fit in the inventory are dropped with a
+## warning (the results panel warned about them). Returns how many were dropped.
+func bank_run(result: RunResult) -> int:
 	gain_experience(result.experience)
+	gold += result.gold
+	var dropped: int = 0
+	for item: EquipmentItem in result.items:
+		if is_inventory_full():
+			dropped += 1
+			continue
+		add_to_inventory(item)
+	if dropped > 0:
+		push_warning("HeroData: %d item(s) had no room in the inventory." % dropped)
+	emit_changed()
+	return dropped
+
+
+func free_inventory_cells() -> int:
+	return INVENTORY_SIZE - inventory.size()
 
 
 ## Add `amount` experience, up to the level cap, and level up as far as it

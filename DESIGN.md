@@ -318,9 +318,17 @@ awarded for time survived directly.
 | **Win bonus** | Extra gold and exp, plus one or more extra item drop rolls | None |
 
 Every run pays exp, so a fresh build is never a wasted session, but a win is
-clearly worth more. The number of bonus drop rolls scales with the ramp's start
-point (section 4), so a higher-level hero's win drops more. The starting value is
-one roll plus one per 30 s of start shift, to be tuned.
+clearly worth more. A win adds 60 exp and 40 gold, and rolls for item drops: one
+roll that always lands, plus one more roll for each 30 s of ramp the hero's level
+skipped (section 4), each landing half the time. So a higher-level hero's win
+drops more. All of these are starting values, to be tuned.
+
+**Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
+rarely, an item (2%). Items are armour, rolled from the art pool of the hero's
+class; weapons will drop once they have rarity. The hero collects a drop by
+getting within its pickup radius (28 px). A won run's pickups and bonus are
+banked, and any item that does not fit the 25-cell inventory is lost, which the
+results panel warns of. A death or retreat shows what was forfeited.
 
 This keeps greed a real mechanic: diving toward a drop while swarmed is a genuine
 decision, because a drop only counts if you live (or win) to bank it. Pickup

@@ -33,3 +33,11 @@ collision_mask = 4
 script = ExtResource("4_sensor")
 
 [node name="Shape" type="CollisionShape2D" parent="TargetSensor"]
+
+[node name="PickupArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+monitorable = false
+
+[node name="Shape" type="CollisionShape2D" parent="PickupArea"]
+position = Vector2(0, -6)
