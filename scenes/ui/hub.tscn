@@ -5,7 +5,8 @@
 [ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
 [ext_resource type="PackedScene" path="res://scenes/ui/item_cell.tscn" id="5_cell"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/scroll.png" id="6_scroll"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/book.png" id="7_book"]
+[ext_resource type="PackedScene" path="res://scenes/ui/stats_panel.tscn" id="7_stats"]
+[ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="18_confirm"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
@@ -91,16 +92,6 @@ layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 color = Color(0.804, 0.776, 0.69, 0.35)
-
-[node name="StatsButton" type="Button" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(0, 22)
-layout_mode = 2
-tooltip_text = "Stats - coming soon"
-focus_mode = 0
-theme_type_variation = &"QuietButton"
-disabled = true
-text = "STATS"
-icon = ExtResource("7_book")
 
 [node name="SkillsButton" type="Button" parent="Margin/Column/TopBar"]
 custom_minimum_size = Vector2(0, 22)
@@ -252,7 +243,7 @@ placeholder = ExtResource("15_armour")
 
 [node name="Stage" type="Control" parent="Margin/Column/Main/HeroPanel/Interior/Content/Display"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 204)
+custom_minimum_size = Vector2(0, 136)
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
@@ -291,9 +282,18 @@ is_equipment_slot = true
 slot = 3
 placeholder = ExtResource("17_accessory")
 
+[node name="StatsPanel" parent="Margin/Column/Main/HeroPanel/Interior/Content" instance=ExtResource("7_stats")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="QuestGap" type="Control" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+mouse_filter = 2
+
 [node name="QuestButton" type="Button" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(168, 28)
+custom_minimum_size = Vector2(168, 24)
 layout_mode = 2
 size_flags_horizontal = 4
 tooltip_text = "Start the arena run"
@@ -339,3 +339,7 @@ text = "0/25"
 
 [node name="ItemMenu" type="PopupMenu" parent="."]
 unique_name_in_owner = true
+
+[node name="ConfirmDialog" parent="." instance=ExtResource("18_confirm")]
+unique_name_in_owner = true
+layout_mode = 1

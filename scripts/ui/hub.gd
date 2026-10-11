@@ -1,18 +1,21 @@
 class_name Hub
 extends Control
 ## The selected hero's home screen: the hero standing in a warm glow between
-## their four equipment slots on the left, their inventory on the right.
+## their four equipment slots on the left, their stats beneath, and their
+## inventory on the right.
 ##
 ## Items move between the inventory and the slots by drag-and-drop, by a
 ## right-click menu, or by activating a cell with Enter, Space or a
 ## double-click. Changes go through HeroData's own methods and are reported
 ## with hero_changed; the hub never loads or saves, the screen owner does.
-## Stats, Skills and Gacha are not built yet, so their tiles are locked. Runs
+## The stats panel under the hero follows every change, and leaving the hub
+## with free points still waiting to be applied asks what to do with them.
+## Skills and Gacha are not built yet, so their tiles are locked. Runs
 ## standalone with an unselected portrait.
 
 signal quest_requested
 signal change_hero_requested
-## The shown hero's equipment or inventory changed and should be saved.
+## The shown hero's equipment, inventory or stats changed and should be saved.
 signal hero_changed
 
 enum MenuAction { EQUIP, UNEQUIP }
@@ -25,9 +28,9 @@ const STAGE_HEIGHT: float = 68.0
 ## of the bottom one.
 const FEET_MARGIN: float = 11.0
 
-## Whole-number scale keeps the pixel art crisp. 4x does not fit 360 lines
-## alongside the nameplate, top bar and Start Quest.
-@export_range(1, 3) var doll_scale: int = 3
+## Whole-number scale keeps the pixel art crisp. 3x leaves no room for the
+## stats panel under the hero on 360 lines.
+@export_range(1, 3) var doll_scale: int = 2
 ## One inventory cell, instanced HeroData.INVENTORY_SIZE times into the grid.
 @export var item_cell_scene: PackedScene
 
@@ -35,6 +38,8 @@ var _hero: HeroData = null
 var _equipment_cells: Array[ItemCell] = []
 var _inventory_cells: Array[ItemCell] = []
 var _menu_cell: ItemCell = null
+## What to do once the player has said what happens to waiting stat points.
+var _after_leave_choice: Callable = Callable()
 
 @onready var _stage: Control = %Stage
 @onready var _doll_anchor: Node2D = %DollAnchor
@@ -50,8 +55,10 @@ var _menu_cell: ItemCell = null
 @onready var _armour_slot: ItemCell = %ArmourSlot
 @onready var _boots_slot: ItemCell = %BootsSlot
 @onready var _accessory_slot: ItemCell = %AccessorySlot
+@onready var _stats_panel: StatsPanel = %StatsPanel
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
+@onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
 
 
 func _ready() -> void:
@@ -61,6 +68,9 @@ func _ready() -> void:
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
 	_item_menu.id_pressed.connect(_on_menu_id_pressed)
+	_stats_panel.points_applied.connect(_on_points_applied)
+	_confirm_dialog.confirmed.connect(_on_leave_apply_chosen)
+	_confirm_dialog.cancelled.connect(_on_leave_discard_chosen)
 
 	_equipment_cells = [_weapon_slot, _armour_slot, _boots_slot, _accessory_slot]
 	for cell: ItemCell in _equipment_cells:
@@ -76,7 +86,7 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel") and not event.is_echo():
 		get_viewport().set_input_as_handled()
-		change_hero_requested.emit()
+		_leave(_request_change_hero)
 
 
 ## Can be called before ready, or when updating the visible hero.
@@ -114,6 +124,7 @@ func _connect_cell(cell: ItemCell) -> void:
 
 func _refresh() -> void:
 	_quest_button.disabled = _hero == null
+	_stats_panel.show_hero(_hero)
 	_refresh_items()
 	if _hero == null:
 		_name_label.text = "No hero selected"
@@ -233,8 +244,52 @@ func _on_cell_item_dropped(cell: ItemCell, item: EquipmentItem) -> void:
 
 
 func _on_quest_pressed() -> void:
-	quest_requested.emit()
+	_leave(_request_quest)
 
 
 func _on_change_hero_pressed() -> void:
+	_leave(_request_change_hero)
+
+
+func _request_quest() -> void:
+	quest_requested.emit()
+
+
+func _request_change_hero() -> void:
 	change_hero_requested.emit()
+
+
+func _on_points_applied() -> void:
+	hero_changed.emit()
+
+
+## Run `action` now, or once the player has chosen what happens to stat points
+## they have staged but not applied.
+func _leave(action: Callable) -> void:
+	if _hero == null or not _stats_panel.has_pending():
+		action.call()
+		return
+	_after_leave_choice = action
+	var count: int = _stats_panel.pending_total()
+	_confirm_dialog.open(
+		"Apply %d stat point%s before leaving?" % [count, "" if count == 1 else "s"],
+		"APPLY",
+		"DISCARD"
+	)
+
+
+func _on_leave_apply_chosen() -> void:
+	_stats_panel.apply()
+	_finish_leave()
+
+
+func _on_leave_discard_chosen() -> void:
+	_stats_panel.discard()
+	_finish_leave()
+
+
+func _finish_leave() -> void:
+	var action: Callable = _after_leave_choice
+	_after_leave_choice = Callable()
+	if action.is_valid():
+		action.call()
