@@ -64,7 +64,16 @@ static func find(weapon_id: StringName) -> WeaponData:
 ## Damage of one hit when `wielder` swings this weapon: the base damage plus
 ## each scaling factor times the wielder's matching stat.
 func damage_for(wielder: HeroData) -> float:
+	return damage_with(wielder.stats())
+
+
+## Damage of one hit for stat values `stats`, keyed like HeroData.STATS. Lets a
+## screen show what a hero's damage would be without changing the hero.
+func damage_with(stats: Dictionary[StringName, int]) -> float:
 	var damage: float = base_damage
 	for stat_name: StringName in scaling:
-		damage += scaling[stat_name] * wielder.stat_value(stat_name)
+		if not stats.has(stat_name):
+			push_error("WeaponData: %s scales off '%s', which is not a stat." % [id, stat_name])
+			continue
+		damage += scaling[stat_name] * stats[stat_name]
 	return damage

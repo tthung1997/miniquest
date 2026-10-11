@@ -110,13 +110,53 @@ func stat_value(stat_name: StringName) -> int:
 	return get(stat_name)
 
 
+## Every stat's current value, keyed by its name in STATS.
+func stats() -> Dictionary[StringName, int]:
+	var values: Dictionary[StringName, int] = {}
+	for stat_name: StringName in STATS:
+		values[stat_name] = get(stat_name)
+	return values
+
+
 ## Most health the hero can have: vitality, weighted by the class's durability.
 func max_health() -> float:
+	return max_health_with(vitality)
+
+
+## Most health the hero would have with `vitality_points` of vitality.
+func max_health_with(vitality_points: int) -> float:
 	var durability: float = 1.0
 	var current_class: ClassData = class_data()
 	if current_class != null:
 		durability = current_class.health_per_vitality
-	return maxf(vitality * durability * HEALTH_PER_VITALITY_POINT, 1.0)
+	return maxf(vitality_points * durability * HEALTH_PER_VITALITY_POINT, 1.0)
+
+
+## Spend free points: `allocation` maps a stat name from STATS to how many
+## points go into it. Applied all together or not at all; fails with an error
+## on an unknown stat, a negative amount, or more points than are unspent.
+func spend_points(allocation: Dictionary[StringName, int]) -> bool:
+	var total: int = 0
+	for stat_name: StringName in allocation:
+		if not STATS.has(stat_name):
+			push_error("HeroData: '%s' is not a stat." % stat_name)
+			return false
+		var amount: int = allocation[stat_name]
+		if amount < 0:
+			push_error("HeroData: cannot spend %d points on %s." % [amount, stat_name])
+			return false
+		total += amount
+	if total > unspent_points:
+		push_error("HeroData: cannot spend %d points with %d unspent." % [total, unspent_points])
+		return false
+	if total == 0:
+		return true
+
+	for stat_name: StringName in allocation:
+		set(stat_name, get(stat_name) + allocation[stat_name])
+	unspent_points -= total
+	emit_changed()
+	return true
 
 
 ## Bring a hero saved by an older version up to FORMAT_VERSION. Returns whether

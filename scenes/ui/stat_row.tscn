@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/stat_row.gd" id="1_row"]
+
+[node name="StatRow" type="HBoxContainer"]
+size_flags_horizontal = 3
+mouse_filter = 0
+theme_override_constants/separation = 4
+script = ExtResource("1_row")
+
+[node name="NameLabel" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "STR"
+
+[node name="ValueLabel" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+text = "--"
+horizontal_alignment = 2
+
+[node name="PendingLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"AccentLabel"
+
+[node name="DecreaseButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+tooltip_text = "Take back a point"
+text = "-"
+
+[node name="IncreaseButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+tooltip_text = "Spend a point"
+text = "+"

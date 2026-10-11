@@ -94,7 +94,9 @@ Four stats: **STR, DEX, INT, VIT**.
 Each level grants:
 - **Automatic class growth** — the majority of stat gain, applied without input.
   Every base class gains 4.0 points per level, distributed differently.
-- **Two free points** allocated by the player.
+- **Two free points** allocated by the player. Points are staged on the hub's
+  stats panel and only spent for good when the player applies them, since there
+  is no respec.
 
 Automatic growth deliberately dominates. With isolated slots and no respec, a
 badly allocated hero must be *suboptimal*, never *broken*.
@@ -365,9 +367,10 @@ points. Growth is fractional (Novice gains half a point of each stat a level),
 so the leftover is carried in the hero between level-ups.
 
 **Built so far:** kills give their enemy's `experience` (Bamboo: 2), a finished
-run banks the total, and levelling, stat growth, free points and the cap work.
-Not built: spending free points (the Stats screen is locked), class advancement
-(so a hero always uses Novice growth for now), and lineage growth.
+run banks the total, and levelling, stat growth, free points, the cap and
+spending free points (on the hub's stats panel, section 8) work.
+Not built: class advancement (so a hero always uses Novice growth for now), and
+lineage growth.
 
 ## 7. Quest selection
 
@@ -379,12 +382,22 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 ## 8. Hub
 
 **The hero stands on the left in a warm glow, between their four equipment
-slots, with their name and level above and Start Quest below; their inventory
-fills the right.** Stats, Skills and Gacha sit in the top bar.
+slots, with their name and level above and their stats and Start Quest below;
+their inventory fills the right.** Skills and Gacha sit in the top bar.
 
-The hero is rendered with full visible equipment at integer scale (3× or 4×). This
-is where the player admires their character, so it's worth the screen space.
+The hero is rendered with full visible equipment at integer scale (2×). 3× would
+look better but leaves no room for the stats beneath on 360 lines. This is
+where the player admires their character, so it's worth the screen space.
 
+- **Stats are always visible, not behind a button.** Under the hero: free points
+  left, each stat with −/+ buttons, and the numbers they lead to (health, and the
+  held weapon's damage, attack speed and range). Equipping a different weapon
+  and staging points both update those numbers at once, and a change that is
+  still pending shows in the accent colour (`HP 50 → 60`).
+- **Points are staged, then applied.** −/+ only change a pending allocation;
+  **Apply** spends it for good (there is no respec, section 5.4) and **Reset**
+  drops it. Leaving the hub with points still pending asks to apply or discard
+  them.
 - Equipment slots and inventory cells share one tile size, so the two panels
   read as one system. Empty inventory cells are faded so items stand out.
 - Items move between the inventory and the slots by **drag-and-drop**, a
