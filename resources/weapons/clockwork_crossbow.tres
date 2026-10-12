@@ -8,7 +8,7 @@
 [resource]
 script = ExtResource("1_data")
 id = &"clockwork_crossbow"
-display_name = "Tinker's Clockwork Crossbow"
+display_name = "Clockwork Crossbow"
 family = &"crossbow"
 price = 600
 icon = ExtResource("2_icon")

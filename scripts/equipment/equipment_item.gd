@@ -41,13 +41,17 @@ func get_move_speed_bonus() -> float:
 	return 0.0
 
 
-## What a cell shows on hover: the name, then whatever the item adds.
+## What a cell shows on hover: the name, then whatever the item adds, with
+## the stat points together on one line.
 func get_tooltip_text() -> String:
 	var lines: PackedStringArray = [get_display_name()]
 	var speed: float = get_move_speed_bonus()
 	if not is_zero_approx(speed):
 		lines.append("Move speed %+d%%" % roundi(speed * 100.0))
 	var bonuses: Dictionary[StringName, int] = get_stat_bonuses()
+	var points: PackedStringArray = []
 	for stat_name: StringName in bonuses:
-		lines.append("%s %+d" % [String(stat_name).left(3).to_upper(), bonuses[stat_name]])
+		points.append("%s %+d" % [String(stat_name).left(3).to_upper(), bonuses[stat_name]])
+	if not points.is_empty():
+		lines.append("  ".join(points))
 	return "\n".join(lines)

@@ -20,7 +20,8 @@ const COLUMNS: int = 7
 ## Gold of the throwaway hero this screen makes when run on its own.
 const TESTER_GOLD: int = 5000
 const BUY_HINT: String = "Buying is not open yet"
-const NOTHING_PICKED: String = "Pick something to try on"
+const NOTHING_PICKED: String = "Try it on"
+const NOTHING_PICKED_HINT: String = "Pick anything in the list to see it on your hero."
 const WEAPON_TITLES: Dictionary[StringName, String] = {
 	&"sword": "SWORDS", &"crossbow": "CROSSBOWS", &"wand": "WANDS"
 }
@@ -52,7 +53,7 @@ var _selected: EquipmentItem = null
 @onready var _gold_label: Label = %GoldLabel
 @onready var _name_label: Label = %NameLabel
 @onready var _detail_label: Label = %DetailLabel
-@onready var _price_row: Control = %PriceRow
+@onready var _price_group: Control = %PriceGroup
 @onready var _price_label: Label = %PriceLabel
 @onready var _reset_button: Button = %ResetButton
 @onready var _walk_button: Button = %WalkButton
@@ -273,10 +274,12 @@ func _starting_armour(pool: StringName) -> ArmourItem:
 func _refresh_info() -> void:
 	if _selected == null:
 		_name_label.text = NOTHING_PICKED
-		_detail_label.text = ""
-		_price_row.visible = false
+		_detail_label.text = NOTHING_PICKED_HINT
+		_price_group.visible = false
+		_buy_button.modulate.a = 0.0
 		return
-	_price_row.visible = true
+	_price_group.visible = true
+	_buy_button.modulate.a = 1.0
 	_price_label.text = str(StoreCatalog.price_of(_selected))
 	if _selected is ArmourItem:
 		_describe_armour(_selected)

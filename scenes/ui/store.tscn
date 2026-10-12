@@ -166,30 +166,40 @@ unique_name_in_owner = true
 
 [node name="NameLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 theme_type_variation = &"AccentLabel"
 theme_override_font_sizes/font_size = 16
-text = "Pick something to try on"
+text = "Try it on"
 horizontal_alignment = 1
-text_overrun_behavior = 3
+vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
 
 [node name="DetailLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_alignment = 1
 autowrap_mode = 3
+max_lines_visible = 3
 
 [node name="PriceRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PriceGroup" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 4
 alignment = 1
 
-[node name="Icon" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
+[node name="Icon" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow/PriceGroup"]
 custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
 size_flags_vertical = 4
@@ -197,11 +207,19 @@ mouse_filter = 2
 texture = ExtResource("5_coin")
 expand_mode = 1
 
-[node name="PriceLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
+[node name="PriceLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow/PriceGroup"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "0"
+
+[node name="BuyButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 24)
+layout_mode = 2
+size_flags_horizontal = 10
+disabled = true
+text = "BUY"
 
 [node name="ButtonRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 layout_mode = 2
@@ -234,13 +252,6 @@ size_flags_horizontal = 3
 tooltip_text = "Swing the weapon being tried"
 theme_type_variation = &"QuietButton"
 text = "ATTACK"
-
-[node name="BuyButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-disabled = true
-text = "BUY"
 
 [node name="CatalogPanel" type="PanelContainer" parent="Margin/Column/Main"]
 layout_mode = 2
