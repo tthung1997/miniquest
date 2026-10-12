@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"gnarled_wand"
 display_name = "Gnarled Twig"
+family = &"wand"
+price = 150
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

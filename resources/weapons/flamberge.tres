@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"flamberge"
 display_name = "Flamberge"
+family = &"sword"
+price = 800
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 base_damage = 5.0

@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"spiral_wand"
 display_name = "Twistwood Wand"
+family = &"wand"
+price = 400
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

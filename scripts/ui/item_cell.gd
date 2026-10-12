@@ -27,6 +27,12 @@ signal item_dropped(cell: ItemCell, item: EquipmentItem)
 ## Opacity of an empty inventory cell's socket, so filled cells stand out.
 ## Equipment slots stay solid; their silhouettes already read as empty.
 @export_range(0.0, 1.0, 0.05) var empty_opacity: float = 0.5
+## Whether the cell shows its item's drawn pixels centred, which a lone armour
+## piece needs. Set before the cell enters the tree.
+var center_icon: bool = false
+## Whether the cell's item can be dragged to another cell. Off where there is
+## nothing to drop it on, such as the store's listing.
+var draggable: bool = true
 
 var item: EquipmentItem = null:
 	set(value):
@@ -48,6 +54,7 @@ var _drop_hint: bool = false
 func _ready() -> void:
 	pressed.connect(_on_pressed)
 	_icon.placeholder = placeholder
+	_icon.center_content = center_icon
 	_refresh()
 
 
@@ -79,7 +86,7 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
-	if item == null or locked:
+	if item == null or locked or not draggable:
 		return null
 	set_drag_preview(_make_drag_preview())
 	return self

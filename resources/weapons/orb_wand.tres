@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"orb_wand"
 display_name = "Seer's Orb"
+family = &"wand"
+price = 300
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

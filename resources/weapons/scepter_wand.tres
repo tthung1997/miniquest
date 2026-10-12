@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"scepter_wand"
 display_name = "Gilded Scepter"
+family = &"wand"
+price = 900
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

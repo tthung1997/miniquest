@@ -13,14 +13,22 @@ extends Resource
 enum AttackStyle { MELEE, PROJECTILE }
 
 const DIRECTORY: String = "res://resources/weapons"
+const FILE_SUFFIX: String = ".tres"
 
 @export var id: StringName = &""
 @export var display_name: String = ""
+## Which kind of weapon this is: &"sword", &"crossbow" or &"wand". Each kind
+## has several templates, so screens that list weapons group them by this.
+@export var family: StringName = &""
 ## 16x16 inventory icon.
 @export var icon: Texture2D
 ## The in-hand layer drawn in front of the hero, built from the weapon's
 ## sheets by tools/build_sprite_frames.gd.
 @export var frames: SpriteFrames
+
+@export_group("Store")
+## Gold the store asks for it. A placeholder until the economy is tuned.
+@export_range(0, 100000, 10, "suffix:gold") var price: int = 0
 
 @export_group("Attack")
 @export var attack_style: AttackStyle = AttackStyle.MELEE
@@ -49,9 +57,25 @@ const DIRECTORY: String = "res://resources/weapons"
 @export var projectile: PackedScene
 
 
+## Every weapon's id, in alphabetical order.
+static func all_ids() -> Array[StringName]:
+	# Sorted as Strings: StringName comparison is not alphabetical.
+	var names: PackedStringArray = []
+	# ResourceLoader rather than DirAccess, so the listing still matches the
+	# resources after export, where files are remapped.
+	for file: String in ResourceLoader.list_directory(DIRECTORY):
+		if file.ends_with(FILE_SUFFIX):
+			names.append(file.trim_suffix(FILE_SUFFIX))
+	names.sort()
+	var ids: Array[StringName] = []
+	for weapon_name: String in names:
+		ids.append(StringName(weapon_name))
+	return ids
+
+
 ## The weapon with `weapon_id`, or null with an error if there is none.
 static func find(weapon_id: StringName) -> WeaponData:
-	var path: String = DIRECTORY.path_join("%s.tres" % weapon_id)
+	var path: String = DIRECTORY.path_join("%s%s" % [weapon_id, FILE_SUFFIX])
 	if not ResourceLoader.exists(path):
 		push_error("WeaponData: no weapon '%s' at %s." % [weapon_id, path])
 		return null

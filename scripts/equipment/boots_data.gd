@@ -19,6 +19,10 @@ const FILE_SUFFIX: String = ".tres"
 ## tools/build_sprite_frames.gd.
 @export var frames: SpriteFrames
 
+@export_group("Store")
+## Gold the store asks for it. A placeholder until the economy is tuned.
+@export_range(0, 100000, 10, "suffix:gold") var price: int = 0
+
 @export_group("Stats")
 ## Fraction of the hero's base move speed added: 0.1 is 10% faster.
 @export_range(0.0, 1.0, 0.01) var move_speed: float = 0.0

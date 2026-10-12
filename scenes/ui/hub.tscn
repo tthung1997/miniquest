@@ -93,6 +93,15 @@ size_flags_vertical = 4
 mouse_filter = 2
 color = Color(0.804, 0.776, 0.69, 0.35)
 
+[node name="StoreButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Browse and try on everything for sale"
+theme_type_variation = &"QuietButton"
+text = "STORE"
+icon = ExtResource("9_coin")
+
 [node name="SkillsButton" type="Button" parent="Margin/Column/TopBar"]
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2

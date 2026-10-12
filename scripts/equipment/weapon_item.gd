@@ -36,6 +36,22 @@ func get_display_name() -> String:
 	return weapon.display_name if weapon != null else String(weapon_id).capitalize()
 
 
+func get_tooltip_text() -> String:
+	var weapon: WeaponData = data()
+	if weapon == null:
+		return get_display_name()
+	var scaling: PackedStringArray = []
+	for stat_name: StringName in weapon.scaling:
+		var stat_text: String = String(stat_name).left(3).to_upper()
+		scaling.append("%s %s" % [String.num(weapon.scaling[stat_name]), stat_text])
+	var damage: String = String.num(weapon.base_damage)
+	if not scaling.is_empty():
+		damage += " + " + " + ".join(scaling)
+	return "%s\nDamage %s\nAttacks every %ss\nRange %d" % [
+		get_display_name(), damage, String.num(weapon.attack_interval), roundi(weapon.attack_range)
+	]
+
+
 func get_icon_layers() -> Array[Texture2D]:
 	var layers: Array[Texture2D] = []
 	var weapon: WeaponData = data()

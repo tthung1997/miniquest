@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"storm_wand"
 display_name = "Stormcaller"
+family = &"wand"
+price = 250
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

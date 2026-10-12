@@ -9,6 +9,8 @@
 script = ExtResource("1_data")
 id = &"candle_wand"
 display_name = "Ember Taper"
+family = &"wand"
+price = 500
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 attack_style = 1

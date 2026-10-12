@@ -15,6 +15,7 @@ extends Control
 
 signal quest_requested
 signal change_hero_requested
+signal store_requested
 ## The shown hero's equipment, inventory or stats changed and should be saved.
 signal hero_changed
 
@@ -58,6 +59,7 @@ var _after_leave_choice: Callable = Callable()
 @onready var _stats_panel: StatsPanel = %StatsPanel
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
+@onready var _store_button: Button = %StoreButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
 
 
@@ -67,6 +69,7 @@ func _ready() -> void:
 	_stage.resized.connect(_place_doll)
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
+	_store_button.pressed.connect(_on_store_pressed)
 	_item_menu.id_pressed.connect(_on_menu_id_pressed)
 	_stats_panel.points_applied.connect(_on_points_applied)
 	_confirm_dialog.confirmed.connect(_on_leave_apply_chosen)
@@ -251,6 +254,14 @@ func _on_quest_pressed() -> void:
 
 func _on_change_hero_pressed() -> void:
 	_leave(_request_change_hero)
+
+
+func _on_store_pressed() -> void:
+	_leave(_request_store)
+
+
+func _request_store() -> void:
+	store_requested.emit()
 
 
 func _request_quest() -> void:

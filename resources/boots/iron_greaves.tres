@@ -8,6 +8,7 @@
 script = ExtResource("1_data")
 id = &"iron_greaves"
 display_name = "Iron Greaves"
+price = 350
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 move_speed = 0.06

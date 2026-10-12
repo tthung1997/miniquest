@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ArmourPrices" format=3]
+
+[ext_resource type="Script" path="res://scripts/store/armour_prices.gd" id="1_prices"]
+
+[resource]
+script = ExtResource("1_prices")
+hat = 60
+shirt = 90
+pants = 60
