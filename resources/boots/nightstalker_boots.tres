@@ -8,6 +8,7 @@
 script = ExtResource("1_data")
 id = &"nightstalker_boots"
 display_name = "Nightstalker Boots"
+price = 1000
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
 move_speed = 0.18

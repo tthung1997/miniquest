@@ -1,0 +1,79 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/bone_wand_attack.png" id="1_m5ob8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/bone_wand_idle.png" id="2_npyju"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/bone_wand_walk.png" id="3_mnthw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kqyc"]
+atlas = ExtResource("1_m5ob8")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ayksb"]
+atlas = ExtResource("1_m5ob8")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5o3ff"]
+atlas = ExtResource("1_m5ob8")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xkhl4"]
+atlas = ExtResource("2_npyju")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7qfo"]
+atlas = ExtResource("3_mnthw")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tnubn"]
+atlas = ExtResource("3_mnthw")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7o2ef"]
+atlas = ExtResource("3_mnthw")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5vxsn"]
+atlas = ExtResource("3_mnthw")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0kqyc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ayksb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5o3ff")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xkhl4")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7qfo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tnubn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7o2ef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5vxsn")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 8.0
+}]

@@ -1,0 +1,322 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/store.gd" id="1_store"]
+[ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="3_doll"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_cell.tscn" id="4_cell"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="5_coin"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/arrow_left.png" id="6_arrow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="7_shadow"]
+[ext_resource type="Texture2D" path="res://assets/sprites/props/hero_dais.png" id="8_dais"]
+
+[sub_resource type="Gradient" id="StageGlow"]
+colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
+
+[sub_resource type="GradientTexture2D" id="StageGlowTexture"]
+gradient = SubResource("StageGlow")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.58)
+fill_to = Vector2(0.5, -0.02)
+
+[sub_resource type="ButtonGroup" id="TabGroup"]
+
+[node name="Store" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_store")
+item_cell_scene = ExtResource("4_cell")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.408, 0.392, 0.337, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="BackButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Back to the hub"
+theme_type_variation = &"QuietButton"
+text = "HUB"
+icon = ExtResource("6_arrow")
+
+[node name="Divider" type="ColorRect" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(1, 12)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.804, 0.776, 0.69, 0.35)
+
+[node name="TitleLabel" type="Label" parent="Margin/Column/TopBar"]
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "STORE"
+
+[node name="Spacer" type="Control" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="GoldChip" type="PanelContainer" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Gold"
+theme_type_variation = &"Chip"
+
+[node name="Row" type="HBoxContainer" parent="Margin/Column/TopBar/GoldChip"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/GoldChip/Row"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("5_coin")
+expand_mode = 1
+
+[node name="GoldLabel" type="Label" parent="Margin/Column/TopBar/GoldChip/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "--"
+
+[node name="Main" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="PreviewPanel" type="PanelContainer" parent="Margin/Column/Main"]
+custom_minimum_size = Vector2(212, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/PreviewPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Backdrop" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior"]
+texture_filter = 2
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("StageGlowTexture")
+expand_mode = 1
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Stage" type="Control" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 136)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="DollAnchor" type="Node2D" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage"]
+unique_name_in_owner = true
+
+[node name="Dais" type="Sprite2D" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage/DollAnchor"]
+position = Vector2(2, 3)
+texture = ExtResource("8_dais")
+
+[node name="Shadow" type="Sprite2D" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage/DollAnchor"]
+position = Vector2(2, 1)
+texture = ExtResource("7_shadow")
+
+[node name="PaperDoll" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage/DollAnchor" instance=ExtResource("3_doll")]
+unique_name_in_owner = true
+
+[node name="NameLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+theme_override_font_sizes/font_size = 16
+text = "Try it on"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
+
+[node name="DetailLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 3
+
+[node name="PriceRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="PriceGroup" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow/PriceGroup"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("5_coin")
+expand_mode = 1
+
+[node name="PriceLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow/PriceGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "0"
+
+[node name="BuyButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content/PriceRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(76, 24)
+layout_mode = 2
+size_flags_horizontal = 10
+disabled = true
+text = "BUY"
+
+[node name="ButtonRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ResetButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Dress the hero in their own gear again"
+theme_type_variation = &"QuietButton"
+text = "RESET"
+
+[node name="WalkButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Walk or stand still"
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+text = "WALK"
+
+[node name="AttackButton" type="Button" parent="Margin/Column/Main/PreviewPanel/Interior/Content/ButtonRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Swing the weapon being tried"
+theme_type_variation = &"QuietButton"
+text = "ATTACK"
+
+[node name="CatalogPanel" type="PanelContainer" parent="Margin/Column/Main"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/CatalogPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="TabRow" type="HBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="WeaponsTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("TabGroup")
+text = "WEAPONS"
+
+[node name="BootsTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+button_group = SubResource("TabGroup")
+text = "BOOTS"
+
+[node name="ArmourTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+button_group = SubResource("TabGroup")
+text = "ARMOUR"
+
+[node name="ClassRow" type="HBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Sections" type="VBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2

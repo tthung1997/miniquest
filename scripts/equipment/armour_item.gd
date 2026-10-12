@@ -111,6 +111,19 @@ func piece_id(piece: Piece) -> int:
 	return NO_PIECE
 
 
+## Swap the art worn on `piece` for variant `id`, or take it off with NO_PIECE.
+## For building an item up piece by piece; a rolled item keeps its pieces.
+func set_piece_id(piece: Piece, id: int) -> void:
+	match piece:
+		Piece.HAT:
+			hat_id = id
+		Piece.SHIRT:
+			shirt_id = id
+		Piece.PANTS:
+			pants_id = id
+	_icon_loaded = false
+
+
 ## The frames to draw for `piece`, or null when this item has no such piece.
 func frames_for(piece: Piece) -> SpriteFrames:
 	var id: int = piece_id(piece)

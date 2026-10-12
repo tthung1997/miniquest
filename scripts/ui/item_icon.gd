@@ -19,11 +19,20 @@ extends Control
 	set(value):
 		placeholder_color = value
 		queue_redraw()
+## Centre each layer's drawn pixels instead of its whole canvas. For an item
+## whose layers sit in fixed zones, such as one armour piece shown alone, which
+## would otherwise hang at the top or bottom of the cell.
+@export var center_content: bool = false:
+	set(value):
+		center_content = value
+		queue_redraw()
 
 var item: EquipmentItem = null:
 	set(value):
 		item = value
 		queue_redraw()
+
+var _used_rects: Dictionary[Texture2D, Rect2] = {}
 
 
 func _init() -> void:
@@ -33,13 +42,27 @@ func _init() -> void:
 func _draw() -> void:
 	if item == null:
 		if placeholder != null:
-			_draw_layer(placeholder, placeholder_color)
+			_draw_layer(placeholder, placeholder_color, false)
 		return
 	for layer: Texture2D in item.get_icon_layers():
-		_draw_layer(layer, Color.WHITE)
+		_draw_layer(layer, Color.WHITE, center_content)
 
 
-func _draw_layer(texture: Texture2D, tint: Color) -> void:
-	var drawn: Vector2 = texture.get_size() * icon_scale
+func _draw_layer(texture: Texture2D, tint: Color, centre_pixels: bool) -> void:
+	var source: Rect2 = Rect2(Vector2.ZERO, texture.get_size())
+	if centre_pixels:
+		source = _used_rect(texture)
+	var drawn: Vector2 = source.size * icon_scale
 	var origin: Vector2 = ((size - drawn) * 0.5).floor()
-	draw_texture_rect(texture, Rect2(origin, drawn), false, tint)
+	draw_texture_rect_region(texture, Rect2(origin, drawn), source, tint)
+
+
+## The part of `texture` that is not transparent, remembered per texture.
+func _used_rect(texture: Texture2D) -> Rect2:
+	if not _used_rects.has(texture):
+		var image: Image = texture.get_image()
+		var used: Rect2i = image.get_used_rect() if image != null else Rect2i()
+		if used.size == Vector2i.ZERO:
+			used = Rect2i(Vector2i.ZERO, Vector2i(texture.get_size()))
+		_used_rects[texture] = Rect2(used)
+	return _used_rects[texture]

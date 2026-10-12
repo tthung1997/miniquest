@@ -8,6 +8,7 @@ extends Node
 
 @export var character_select_scene: PackedScene
 @export var hub_scene: PackedScene
+@export var store_scene: PackedScene
 @export var arena_run_scene: PackedScene
 
 var _current: Node = null
@@ -16,8 +17,13 @@ var _hero: HeroData = null
 
 
 func _ready() -> void:
-	if character_select_scene == null or hub_scene == null or arena_run_scene == null:
-		push_error("Main: CharacterSelect, Hub and ArenaRun scenes must be wired.")
+	if (
+		character_select_scene == null
+		or hub_scene == null
+		or store_scene == null
+		or arena_run_scene == null
+	):
+		push_error("Main: CharacterSelect, Hub, Store and ArenaRun scenes must be wired.")
 		return
 	_show_character_select()
 
@@ -52,8 +58,21 @@ func _show_hub() -> void:
 	hub.show_hero(_hero)
 	hub.hero_changed.connect(_save_hero)
 	hub.quest_requested.connect(_show_arena_run)
+	hub.store_requested.connect(_show_store)
 	hub.change_hero_requested.connect(_show_character_select)
 	_swap_to(hub)
+
+
+## The store only lets the hero browse and try things on, so it needs no save.
+func _show_store() -> void:
+	var store: Node = store_scene.instantiate()
+	if store is not Store:
+		push_error("Main: store_scene must have a Store root.")
+		store.free()
+		return
+	store.show_hero(_hero)
+	store.back_requested.connect(_show_hub)
+	_swap_to(store)
 
 
 func _show_arena_run() -> void:
