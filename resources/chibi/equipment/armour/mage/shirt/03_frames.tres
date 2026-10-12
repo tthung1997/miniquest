@@ -1,0 +1,52 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/armour/mage/shirt/03_idle.png" id="1_bgr7e"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/armour/mage/shirt/03_walk.png" id="2_06vir"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ueb3i"]
+atlas = ExtResource("1_bgr7e")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjdjr"]
+atlas = ExtResource("2_06vir")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuc2k"]
+atlas = ExtResource("2_06vir")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bulim"]
+atlas = ExtResource("2_06vir")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5wdb5"]
+atlas = ExtResource("2_06vir")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ueb3i")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjdjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uuc2k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bulim")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5wdb5")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 8.0
+}]

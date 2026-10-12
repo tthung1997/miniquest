@@ -1,0 +1,79 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/runed_wand_attack.png" id="1_37gjy"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/runed_wand_idle.png" id="2_balkg"]
+[ext_resource type="Texture2D" path="res://assets/sprites/chibi/equipment/weapon/runed_wand_walk.png" id="3_2o4r6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dj1ri"]
+atlas = ExtResource("1_37gjy")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gu1m7"]
+atlas = ExtResource("1_37gjy")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_diqrd"]
+atlas = ExtResource("1_37gjy")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mx8a5"]
+atlas = ExtResource("2_balkg")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88q0d"]
+atlas = ExtResource("3_2o4r6")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y2j8u"]
+atlas = ExtResource("3_2o4r6")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pbcp6"]
+atlas = ExtResource("3_2o4r6")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4sln"]
+atlas = ExtResource("3_2o4r6")
+region = Rect2(192, 0, 64, 64)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dj1ri")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gu1m7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_diqrd")
+}],
+"loop": 0,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mx8a5")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_88q0d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y2j8u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pbcp6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s4sln")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 8.0
+}]

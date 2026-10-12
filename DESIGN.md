@@ -201,6 +201,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   cosmetic only: stats still come from the template and rarity. The rolled pieces
   are stored on the item, by piece id, so adding art to a pool never changes what
   an existing item looks like. Advanced classes wear their base class's armour.
+  Mage, Ranger and Warrior each have ten variants of every piece (Novice has
+  one, so far).
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
   in front of the body: the sword and wand are held low, pointing forward and
@@ -224,6 +226,14 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   hardest with a sword only because Warriors grow STR, and a Novice, growing
   every stat evenly, favours none. Each weapon is a fixed template; its numbers
   are placeholders until enemies exist.
+- **Ten weapons per type.** Sword, Crossbow and Wand are each the first of ten:
+  a type is a way of attacking (slash, piercing bolt, bursting bolt), and each
+  of its ten templates has its own name, art and numbers, so they differ in
+  damage, attack speed and reach and none is strictly better than the others.
+  Some add a small secondary scaling (a Katana's DEX, a Flamberge's INT). Every
+  variant keeps its type's grip, tip and release point, so the shared slash
+  and bolt effects line up. The extra templates are not yet given to heroes or
+  dropped; see section 11.
 - **Every hero starts with all three weapons**, the Sword held and the Crossbow and
   Wand carried, so the first runs are a chance to find the one that suits the
   build. Heroes saved before weapons existed are given the same set on load.
@@ -599,6 +609,9 @@ Out until later:
   much, given that they also start further along the ramp.
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost.
+- How the 27 extra weapons are obtained (drops once they have rarity, packs, or
+  as run rewards), and whether weapons of one type should be restricted by
+  hero level.
 
 **None of the balance numbers are anchored.** Enemy health and damage do not
 exist, so `design/skills.json` is internally consistent and validated against
