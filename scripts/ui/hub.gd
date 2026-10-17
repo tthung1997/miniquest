@@ -152,10 +152,7 @@ func _refresh() -> void:
 		hero_class.display_name if hero_class != null else String(_hero.class_id)
 	)
 	_name_label.text = _hero.hero_name
-	_info_tag.show_text(
-		"Lv %d  %s" % [_hero.level, class_text],
-		hero_class.icon if hero_class != null else null
-	)
+	_info_tag.show_text("Lv %d  %s" % [_hero.level, class_text], hero_class)
 	_gold_label.text = str(_hero.gold)
 	var progress: Vector2i = Levelling.progress(_hero.experience)
 	_exp_label.text = "MAX" if progress.y == 0 else "%d/%d" % [progress.x, progress.y]

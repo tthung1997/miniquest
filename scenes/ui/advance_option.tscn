@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/advance_option.gd" id="1_option"]
+[ext_resource type="PackedScene" path="res://scenes/ui/class_badge.tscn" id="2_badge"]
 
 [node name="AdvanceOption" type="PanelContainer"]
 custom_minimum_size = Vector2(160, 0)
@@ -12,13 +13,11 @@ script = ExtResource("1_option")
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="IconRect" type="TextureRect" parent="Content"]
+[node name="Badge" parent="Content" instance=ExtResource("2_badge")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_horizontal = 4
-expand_mode = 1
-stretch_mode = 5
+badge_scale = 2
 
 [node name="NameLabel" type="Label" parent="Content"]
 unique_name_in_owner = true

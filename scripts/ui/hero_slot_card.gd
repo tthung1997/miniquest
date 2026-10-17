@@ -42,10 +42,7 @@ func show_hero(hero: HeroData) -> void:
 		hero_class.display_name if hero_class != null else String(hero.class_id)
 	)
 	_name_label.text = hero.hero_name
-	_info_tag.show_text(
-		"Lv %d  %s" % [hero.level, class_name_text],
-		hero_class.icon if hero_class != null else null
-	)
+	_info_tag.show_text("Lv %d  %s" % [hero.level, class_name_text], hero_class)
 	_doll.wear_armour(hero.armour)
 	_doll.wear_boots(hero.boots)
 	_doll.wield(hero.weapon)

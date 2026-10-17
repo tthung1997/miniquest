@@ -582,6 +582,11 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   advance dialog. Sword-like classes are told apart by silhouette: Spellblade
   has sparks and a purple grip, Duelist a thin rapier with a red guard, and
   Assassin crossed daggers.
+- **Tier is marked on the icon** by a `ClassBadge`: a bronze, silver or gold
+  plate around it (tier 0, 1, 2) on the hub and the advance dialog, or the bare
+  icon with a gem per tier under it on the hero slot cards, where a plate would
+  crowd the card. Plate and gem art is in `assets/sprites/ui/tier/`. A tier past
+  the art shows as gold until it gets its own plate.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 
