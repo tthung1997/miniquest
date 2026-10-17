@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"warrior"
+display_name = "Warrior"
+description = "Stands in the middle of the swarm and stays there. Highest survivability of the three, shortest reach."
+tier = 1
+prerequisites = Array[StringName]([&"novice"])
+required_level = 5
+armour_pool = &"warrior"
+stat_growth = Dictionary[StringName, float]({
+&"strength": 2.5,
+&"vitality": 1.5
+})
+health_per_vitality = 1.2

@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/scroll.png" id="6_scroll"]
 [ext_resource type="PackedScene" path="res://scenes/ui/stats_panel.tscn" id="7_stats"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="18_confirm"]
+[ext_resource type="PackedScene" path="res://scenes/ui/advance_dialog.tscn" id="19_advance"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
@@ -101,6 +102,15 @@ tooltip_text = "Browse and try on everything for sale"
 theme_type_variation = &"QuietButton"
 text = "STORE"
 icon = ExtResource("9_coin")
+
+[node name="AdvanceButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Advance to a new class"
+theme_type_variation = &"QuietButton"
+disabled = true
+text = "ADVANCE"
 
 [node name="SkillsButton" type="Button" parent="Margin/Column/TopBar"]
 custom_minimum_size = Vector2(0, 22)
@@ -350,5 +360,9 @@ text = "0/25"
 unique_name_in_owner = true
 
 [node name="ConfirmDialog" parent="." instance=ExtResource("18_confirm")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="AdvanceDialog" parent="." instance=ExtResource("19_advance")]
 unique_name_in_owner = true
 layout_mode = 1

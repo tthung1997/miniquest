@@ -162,8 +162,7 @@ func _add_win_bonus(result: RunResult) -> void:
 
 ## The armour art pool drops are rolled from: the hero's class's.
 func _armour_pool() -> StringName:
-	var hero_class: ClassData = _hero_data.class_data() if _hero_data != null else null
-	return hero_class.armour_pool if hero_class != null else HeroData.STARTING_CLASS
+	return _hero_data.armour_pool() if _hero_data != null else HeroData.STARTING_CLASS
 
 
 func _on_hero_died() -> void:

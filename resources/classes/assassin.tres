@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"assassin"
+display_name = "Assassin"
+description = "Deletes single targets and disengages. Struggles against density."
+tier = 2
+prerequisites = Array[StringName]([&"ranger"])
+required_level = 15
+stat_requirements = Dictionary[StringName, int]({
+&"dexterity": 45
+})
+stat_growth = Dictionary[StringName, float]({
+&"dexterity": 2.0
+})

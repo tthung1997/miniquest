@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"berserker"
+display_name = "Berserker"
+description = "Trades the Warrior's caution for output that climbs as its health falls."
+tier = 2
+prerequisites = Array[StringName]([&"warrior"])
+required_level = 15
+stat_requirements = Dictionary[StringName, int]({
+&"strength": 45
+})
+stat_growth = Dictionary[StringName, float]({
+&"strength": 2.0
+})

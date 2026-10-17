@@ -112,8 +112,7 @@ func show_hero(hero: HeroData) -> void:
 
 
 func _armour_pool_of(hero: HeroData) -> StringName:
-	var hero_class: ClassData = hero.class_data()
-	return hero_class.armour_pool if hero_class != null else HeroData.STARTING_CLASS
+	return hero.armour_pool()
 
 
 func _refresh_hero() -> void:

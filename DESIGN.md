@@ -408,8 +408,18 @@ so the leftover is carried in the hero between level-ups.
 **Built so far:** kills give their enemy's `experience` (Bamboo: 2), a finished
 run banks the total, and levelling, stat growth, free points, the cap and
 spending free points (on the hub's stats panel, section 8) work.
-Not built: class advancement (so a hero always uses Novice growth for now), and
-lineage growth.
+
+**Class advancement is built** for tiers 0–2 (section 5.3). A hero's growth each
+level is the sum over their lineage, which is saved as `past_classes` plus the
+current `class_id`. The hub's Advance button lists what the hero can become
+and what they still lack. Requirements count earned stats only, so gear cannot
+unlock a class, and staged points must be applied first. Not built: skills, and
+tier 3, which only needs new `ClassData` files naming the tier below as their
+prerequisite.
+
+`armour_pool` and `health_per_vitality` are inherited from the nearest class in
+the lineage that sets one, so a Spellblade wears the armour of whichever parent
+the hero came through.
 
 ## 7. Quest selection
 
@@ -422,7 +432,7 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 **The hero stands on the left in a warm glow, between their four equipment
 slots, with their name and level above and their stats and Start Quest below;
-their inventory fills the right.** Skills and Gacha sit in the top bar.
+their inventory fills the right.** Advance, Skills and Gacha sit in the top bar.
 
 The hero is rendered with full visible equipment at integer scale (2×). 3× would
 look better but leaves no room for the stats beneath on 360 lines. This is
@@ -589,7 +599,7 @@ In:
 Out until later:
 - Platformer quest type.
 - Gacha.
-- Tier-2 and tier-3 class advancements.
+- Tier-3 class advancements.
 - Hardcore heroes.
 - Audio.
 
