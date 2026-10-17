@@ -13,6 +13,7 @@ const MISSING_PREFIX: String = "Needs "
 
 var _class_id: StringName = &""
 
+@onready var _icon_rect: TextureRect = %IconRect
 @onready var _name_label: Label = %NameLabel
 @onready var _growth_label: Label = %GrowthLabel
 @onready var _description_label: Label = %DescriptionLabel
@@ -30,6 +31,7 @@ func show_option(hero: HeroData, target: ClassData) -> void:
 	var missing: PackedStringArray = hero.unmet_requirements(target)
 	if not is_node_ready():
 		await ready
+	_icon_rect.texture = target.icon
 	_name_label.text = target.display_name
 	_growth_label.text = _growth_text(target)
 	_description_label.text = target.description

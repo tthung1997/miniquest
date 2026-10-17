@@ -575,6 +575,13 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   the hero's. The greatsword and crossbow are custom throughout, icons
   included: the greatsword in the palette of the pack's Sword2 it grew from,
   and the crossbow in that of the pack Bow it replaced, as the pack has none.
+- **Class icons are custom 16×16 LibreSprite art**, one per class, in
+  `assets/sprites/ui/class_icons/<class>.png` with `.ase` sources beside them,
+  in the pack's palette with the items' dark-brown outline. Each is set as
+  `ClassData.icon` and shown on the hub nameplate, the hero slot cards and the
+  advance dialog. Sword-like classes are told apart by silhouette: Spellblade
+  has sparks and a purple grip, Duelist a thin rapier with a red guard, and
+  Assassin crossed daggers.
 - Code can proceed immediately with placeholder layers. The architecture is
   what matters; art drops in later without code changes.
 

@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="ClassData" format=3]
 
 [ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/warrior.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_class")
 id = &"warrior"
 display_name = "Warrior"
+icon = ExtResource("2_icon")
 description = "Stands in the middle of the swarm and stays there. Highest survivability of the three, shortest reach."
 tier = 1
 prerequisites = Array[StringName]([&"novice"])

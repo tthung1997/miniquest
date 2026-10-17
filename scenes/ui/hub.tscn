@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/stats_panel.tscn" id="7_stats"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="18_confirm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/advance_dialog.tscn" id="19_advance"]
+[ext_resource type="PackedScene" path="res://scenes/ui/class_tag.tscn" id="20_tag"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
@@ -226,13 +227,9 @@ text = "No hero selected"
 horizontal_alignment = 1
 text_overrun_behavior = 3
 
-[node name="InfoLabel" type="Label" parent="Margin/Column/Main/HeroPanel/Interior/Content/Nameplate"]
+[node name="InfoTag" parent="Margin/Column/Main/HeroPanel/Interior/Content/Nameplate" instance=ExtResource("20_tag")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"AccentLabel"
-theme_override_font_sizes/font_size = 16
-text = "Choose a hero to start"
-horizontal_alignment = 1
 
 [node name="Display" type="HBoxContainer" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
 layout_mode = 2

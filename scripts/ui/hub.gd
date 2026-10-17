@@ -48,7 +48,7 @@ var _after_leave_choice: Callable = Callable()
 @onready var _doll_anchor: Node2D = %DollAnchor
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _name_label: Label = %NameLabel
-@onready var _info_label: Label = %InfoLabel
+@onready var _info_tag: ClassTag = %InfoTag
 @onready var _gold_label: Label = %GoldLabel
 @onready var _exp_label: Label = %ExpLabel
 @onready var _count_label: Label = %CountLabel
@@ -139,7 +139,7 @@ func _refresh() -> void:
 	_refresh_advance_button()
 	if _hero == null:
 		_name_label.text = "No hero selected"
-		_info_label.text = "Choose a hero to start"
+		_info_tag.show_text("Choose a hero to start")
 		_gold_label.text = "--"
 		_exp_label.text = "--"
 		_doll.wear_armour(null)
@@ -152,7 +152,10 @@ func _refresh() -> void:
 		hero_class.display_name if hero_class != null else String(_hero.class_id)
 	)
 	_name_label.text = _hero.hero_name
-	_info_label.text = "Lv %d  %s" % [_hero.level, class_text]
+	_info_tag.show_text(
+		"Lv %d  %s" % [_hero.level, class_text],
+		hero_class.icon if hero_class != null else null
+	)
 	_gold_label.text = str(_hero.gold)
 	var progress: Vector2i = Levelling.progress(_hero.experience)
 	_exp_label.text = "MAX" if progress.y == 0 else "%d/%d" % [progress.x, progress.y]

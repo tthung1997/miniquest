@@ -16,6 +16,8 @@ const FILE_SUFFIX: String = ".tres"
 
 @export var id: StringName = &""
 @export var display_name: String = ""
+## Emblem shown beside the class name: a 16x16 icon.
+@export var icon: Texture2D
 @export_multiline var description: String = ""
 @export_range(0, 3) var tier: int = 0
 ## Classes a hero can advance into this one from, by being it right now. More
