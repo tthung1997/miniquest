@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/spellblade.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"spellblade"
+display_name = "Spellblade"
+icon = ExtResource("2_icon")
+description = "The sword-swinging mage. Reachable from either side: a Warrior who invested INT, or a Mage who invested STR."
+tier = 2
+prerequisites = Array[StringName]([&"warrior", &"mage"])
+required_level = 15
+stat_requirements = Dictionary[StringName, int]({
+&"intelligence": 25,
+&"strength": 25
+})
+stat_growth = Dictionary[StringName, float]({
+&"intelligence": 1.0,
+&"strength": 1.0
+})

@@ -13,6 +13,9 @@ const POOLS: Array[StringName] = [&"novice", &"mage", &"ranger", &"warrior"]
 
 @export_range(0, 25) var spare_armours: int = 8
 @export_range(0, 60) var unspent_points: int = 10
+## Level the hero starts at, with Novice growth. Raise it to 5 to try the
+## class advance dialog, or to 15 with enough points spent for tier 2.
+@export_range(1, 30) var hero_level: int = 5
 @export var hero_name: String = "Tester"
 
 @onready var _hub: Hub = $Hub
@@ -22,6 +25,7 @@ func _ready() -> void:
 	var hero: HeroData = HeroData.create(hero_name)
 	if hero == null:
 		return
+	hero.gain_experience(Levelling.total_exp_for(hero_level))
 	hero.unspent_points = unspent_points
 	for i in mini(spare_armours, HeroData.INVENTORY_SIZE):
 		var armour: ArmourItem = ArmourItem.roll(POOLS[i % POOLS.size()])

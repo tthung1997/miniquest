@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/duelist.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"duelist"
+display_name = "Duelist"
+icon = ExtResource("2_icon")
+description = "Melee that keeps moving. Weaker per hit than a Berserker, far harder to pin down."
+tier = 2
+prerequisites = Array[StringName]([&"warrior", &"ranger"])
+required_level = 15
+stat_requirements = Dictionary[StringName, int]({
+&"dexterity": 25,
+&"strength": 25
+})
+stat_growth = Dictionary[StringName, float]({
+&"dexterity": 1.0,
+&"strength": 1.0
+})

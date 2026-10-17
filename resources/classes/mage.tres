@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/mage.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"mage"
+display_name = "Mage"
+icon = ExtResource("2_icon")
+description = "Highest raw damage and the best crowd control, on the thinnest health pool. Punished hard for being caught."
+tier = 1
+prerequisites = Array[StringName]([&"novice"])
+required_level = 5
+armour_pool = &"mage"
+stat_growth = Dictionary[StringName, float]({
+&"intelligence": 2.5,
+&"vitality": 1.5
+})
+health_per_vitality = 0.8

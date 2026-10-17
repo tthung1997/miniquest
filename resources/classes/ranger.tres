@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/ranger.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"ranger"
+display_name = "Ranger"
+icon = ExtResource("2_icon")
+description = "Fast attacks, fast feet. Wins by never being where the swarm is, loses when cornered."
+tier = 1
+prerequisites = Array[StringName]([&"novice"])
+required_level = 5
+armour_pool = &"ranger"
+stat_growth = Dictionary[StringName, float]({
+&"dexterity": 2.5,
+&"vitality": 1.5
+})
+health_per_vitality = 1.0

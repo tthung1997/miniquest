@@ -1,11 +1,14 @@
 [gd_resource type="Resource" script_class="ClassData" format=3]
 
 [ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/novice.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_class")
 id = &"novice"
 display_name = "Novice"
+icon = ExtResource("2_icon")
+description = "Grows evenly and slowly in everything, which is exactly why you want out of it."
 tier = 0
 armour_pool = &"novice"
 stat_growth = Dictionary[StringName, float]({
@@ -14,3 +17,4 @@ stat_growth = Dictionary[StringName, float]({
 &"strength": 0.5,
 &"vitality": 0.5
 })
+health_per_vitality = 1.0

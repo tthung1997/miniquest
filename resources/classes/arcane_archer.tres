@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ClassData" format=3]
+
+[ext_resource type="Script" path="res://scripts/classes/class_data.gd" id="1_class"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/class_icons/arcane_archer.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_class")
+id = &"arcane_archer"
+display_name = "Arcane Archer"
+icon = ExtResource("2_icon")
+description = "Ranged damage that covers ground rather than pointing at one enemy."
+tier = 2
+prerequisites = Array[StringName]([&"mage", &"ranger"])
+required_level = 15
+stat_requirements = Dictionary[StringName, int]({
+&"dexterity": 25,
+&"intelligence": 25
+})
+stat_growth = Dictionary[StringName, float]({
+&"dexterity": 1.0,
+&"intelligence": 1.0
+})

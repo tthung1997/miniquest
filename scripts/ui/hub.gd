@@ -10,8 +10,10 @@ extends Control
 ## with hero_changed; the hub never loads or saves, the screen owner does.
 ## The stats panel under the hero follows every change, and leaving the hub
 ## with free points still waiting to be applied asks what to do with them.
-## Skills and Gacha are not built yet, so their tiles are locked. Runs
-## standalone with an unselected portrait.
+## Advance opens a dialog of the classes the hero can become; the choice goes
+## through HeroData.advance_to() and is reported with hero_changed like any
+## other edit. Skills and Gacha are not built yet, so their tiles are locked.
+## Runs standalone with an unselected portrait.
 
 signal quest_requested
 signal change_hero_requested
@@ -46,7 +48,7 @@ var _after_leave_choice: Callable = Callable()
 @onready var _doll_anchor: Node2D = %DollAnchor
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _name_label: Label = %NameLabel
-@onready var _info_label: Label = %InfoLabel
+@onready var _info_tag: ClassTag = %InfoTag
 @onready var _gold_label: Label = %GoldLabel
 @onready var _exp_label: Label = %ExpLabel
 @onready var _count_label: Label = %CountLabel
@@ -60,7 +62,9 @@ var _after_leave_choice: Callable = Callable()
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
 @onready var _store_button: Button = %StoreButton
+@onready var _advance_button: Button = %AdvanceButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
+@onready var _advance_dialog: AdvanceDialog = %AdvanceDialog
 
 
 func _ready() -> void:
@@ -70,6 +74,9 @@ func _ready() -> void:
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
 	_store_button.pressed.connect(_on_store_pressed)
+	_advance_button.pressed.connect(_on_advance_pressed)
+	_advance_dialog.class_chosen.connect(_on_class_chosen)
+	_advance_dialog.closed.connect(_advance_button.grab_focus)
 	_item_menu.id_pressed.connect(_on_menu_id_pressed)
 	_stats_panel.points_applied.connect(_on_points_applied)
 	_confirm_dialog.confirmed.connect(_on_leave_apply_chosen)
@@ -129,9 +136,10 @@ func _refresh() -> void:
 	_quest_button.disabled = _hero == null
 	_stats_panel.show_hero(_hero)
 	_refresh_items()
+	_refresh_advance_button()
 	if _hero == null:
 		_name_label.text = "No hero selected"
-		_info_label.text = "Choose a hero to start"
+		_info_tag.show_text("Choose a hero to start")
 		_gold_label.text = "--"
 		_exp_label.text = "--"
 		_doll.wear_armour(null)
@@ -144,13 +152,31 @@ func _refresh() -> void:
 		hero_class.display_name if hero_class != null else String(_hero.class_id)
 	)
 	_name_label.text = _hero.hero_name
-	_info_label.text = "Lv %d  %s" % [_hero.level, class_text]
+	_info_tag.show_text("Lv %d  %s" % [_hero.level, class_text], hero_class)
 	_gold_label.text = str(_hero.gold)
 	var progress: Vector2i = Levelling.progress(_hero.experience)
 	_exp_label.text = "MAX" if progress.y == 0 else "%d/%d" % [progress.x, progress.y]
 	_doll.wear_armour(_hero.armour)
 	_doll.wear_boots(_hero.boots)
 	_doll.wield(_hero.weapon)
+
+
+## The button is disabled when there is nothing to advance into, and gets an
+## exclamation mark when the hero can take a class right now.
+func _refresh_advance_button() -> void:
+	var options: Array[ClassData] = _hero.advancement_options() if _hero != null else []
+	var ready_now: bool = false
+	for option: ClassData in options:
+		if _hero.can_advance_to(option):
+			ready_now = true
+			break
+	_advance_button.disabled = options.is_empty()
+	_advance_button.text = "ADVANCE!" if ready_now else "ADVANCE"
+	_advance_button.tooltip_text = (
+		"Choose a new class" if ready_now
+		else "Advance to a new class" if not options.is_empty()
+		else "No further classes yet"
+	)
 
 
 func _refresh_items() -> void:
@@ -258,6 +284,22 @@ func _on_change_hero_pressed() -> void:
 
 func _on_store_pressed() -> void:
 	_leave(_request_store)
+
+
+func _on_advance_pressed() -> void:
+	if _hero == null:
+		return
+	var note: String = ""
+	if _stats_panel.has_pending():
+		note = "Apply your waiting stat points first: only spent points count."
+	_advance_dialog.open(_hero, note)
+
+
+func _on_class_chosen(class_id: StringName) -> void:
+	if _hero == null or not _hero.advance_to(class_id):
+		return
+	_on_hero_edited()
+	_focus_default()
 
 
 func _request_store() -> void:

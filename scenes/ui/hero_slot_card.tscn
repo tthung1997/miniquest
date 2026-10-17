@@ -4,6 +4,7 @@
 [ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/inset.png" id="3_well"]
 [ext_resource type="PackedScene" path="res://scenes/paper_doll.tscn" id="4_doll"]
+[ext_resource type="PackedScene" path="res://scenes/ui/class_tag.tscn" id="5_tag"]
 
 [node name="HeroSlotCard" type="PanelContainer"]
 theme = ExtResource("2_theme")
@@ -45,13 +46,10 @@ text = "Name"
 horizontal_alignment = 1
 text_overrun_behavior = 3
 
-[node name="InfoLabel" type="Label" parent="Interior/Content/Text"]
+[node name="InfoTag" parent="Interior/Content/Text" instance=ExtResource("5_tag")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"AccentLabel"
-theme_override_font_sizes/font_size = 16
-text = "Info"
-horizontal_alignment = 1
+badge_style = 1
 
 [node name="Buttons" type="HBoxContainer" parent="Interior/Content"]
 layout_mode = 2

@@ -20,7 +20,7 @@ const DOLL_FEET_MARGIN: float = 18.0
 @onready var _doll_anchor: Node2D = %DollAnchor
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _name_label: Label = %NameLabel
-@onready var _info_label: Label = %InfoLabel
+@onready var _info_tag: ClassTag = %InfoTag
 @onready var _play_button: Button = %PlayButton
 @onready var _delete_button: Button = %DeleteButton
 @onready var _create_button: Button = %CreateButton
@@ -42,7 +42,7 @@ func show_hero(hero: HeroData) -> void:
 		hero_class.display_name if hero_class != null else String(hero.class_id)
 	)
 	_name_label.text = hero.hero_name
-	_info_label.text = "Lv %d  %s" % [hero.level, class_name_text]
+	_info_tag.show_text("Lv %d  %s" % [hero.level, class_name_text], hero_class)
 	_doll.wear_armour(hero.armour)
 	_doll.wear_boots(hero.boots)
 	_doll.wield(hero.weapon)
@@ -51,13 +51,13 @@ func show_hero(hero: HeroData) -> void:
 
 func show_empty() -> void:
 	_name_label.text = "Empty slot"
-	_info_label.text = "Slot %d" % (slot + 1)
+	_info_tag.show_text("Slot %d" % (slot + 1))
 	_show_state(false, false, true)
 
 
 func show_unreadable() -> void:
 	_name_label.text = "Unreadable"
-	_info_label.text = "Save can't be read"
+	_info_tag.show_text("Save can't be read")
 	_show_state(false, true, false)
 
 

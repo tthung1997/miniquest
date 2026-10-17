@@ -36,6 +36,9 @@ const INVENTORY_SIZE: int = 25
 @export var experience: int = 0
 @export var gold: int = 0
 @export var class_id: StringName = STARTING_CLASS
+## Every class the hero was before `class_id`, oldest first. Empty for a hero
+## still in their starting class, so older saves need no upgrade.
+@export var past_classes: Array[StringName] = []
 
 @export_group("Stats")
 @export var strength: int = STARTING_STAT
@@ -106,6 +109,77 @@ func class_data() -> ClassData:
 	return ClassData.find(class_id)
 
 
+## Every class the hero has been, oldest first, ending with the current one.
+func lineage() -> Array[StringName]:
+	var path: Array[StringName] = past_classes.duplicate()
+	path.append(class_id)
+	return path
+
+
+## The armour art pool the hero's gear and drops come from: the most recent
+## class in the lineage that sets one.
+func armour_pool() -> StringName:
+	var path: Array[StringName] = lineage()
+	for i: int in range(path.size() - 1, -1, -1):
+		var step: ClassData = ClassData.find(path[i])
+		if step != null and step.armour_pool != &"":
+			return step.armour_pool
+	return STARTING_CLASS
+
+
+## Every class the hero could advance into from the one they are now, whether
+## or not they meet its requirements yet.
+func advancement_options() -> Array[ClassData]:
+	return ClassData.advancements_from(class_id)
+
+
+## What the hero still lacks to advance into `target`, as short readable
+## phrases such as "Lv 15" or "STR 45 (have 37)". Empty when they can.
+func unmet_requirements(target: ClassData) -> PackedStringArray:
+	var missing: PackedStringArray = []
+	if target == null or not target.prerequisites.has(class_id):
+		missing.append("Not reachable from here")
+		return missing
+	if level < target.required_level:
+		missing.append("Lv %d" % target.required_level)
+	var earned: Dictionary[StringName, int] = stats()
+	for stat_name: StringName in target.stat_requirements:
+		if not STATS.has(stat_name):
+			push_error("HeroData: class '%s' needs unknown stat '%s'." % [target.id, stat_name])
+			missing.append("%s ?" % stat_name)
+			continue
+		var needed: int = target.stat_requirements[stat_name]
+		if earned[stat_name] < needed:
+			var label: String = String(stat_name).left(3).to_upper()
+			missing.append("%s %d (have %d)" % [label, needed, earned[stat_name]])
+	return missing
+
+
+func can_advance_to(target: ClassData) -> bool:
+	return unmet_requirements(target).is_empty()
+
+
+## Become `class_id`, keeping everything the hero has. From now on each level
+## grows their stats by this class's growth as well as every earlier one's.
+## Permanent: there is no going back. Fails with an error unless the hero meets
+## the class's requirements.
+func advance_to(target_id: StringName) -> bool:
+	var target: ClassData = ClassData.find(target_id)
+	if target == null:
+		return false
+	var missing: PackedStringArray = unmet_requirements(target)
+	if not missing.is_empty():
+		push_error(
+			"HeroData: %s cannot become %s yet: %s."
+			% [hero_name, target.display_name, ", ".join(missing)]
+		)
+		return false
+	past_classes.append(class_id)
+	class_id = target_id
+	emit_changed()
+	return true
+
+
 ## The value of `stat_name`, one of STATS. An unknown name is an error and
 ## counts as zero, so a typo in a weapon template cannot pass for a real stat.
 func stat_value(stat_name: StringName) -> int:
@@ -156,12 +230,17 @@ func max_health() -> float:
 	return max_health_with(total_stats()[&"vitality"])
 
 
-## Most health the hero would have with `vitality_points` of vitality.
+## Most health the hero would have with `vitality_points` of vitality. The
+## durability multiplier comes from the most recent class in the lineage that
+## sets one.
 func max_health_with(vitality_points: int) -> float:
 	var durability: float = 1.0
-	var current_class: ClassData = class_data()
-	if current_class != null:
-		durability = current_class.health_per_vitality
+	var path: Array[StringName] = lineage()
+	for i: int in range(path.size() - 1, -1, -1):
+		var step: ClassData = ClassData.find(path[i])
+		if step != null and step.health_per_vitality > 0.0:
+			durability = step.health_per_vitality
+			break
 	return maxf(vitality_points * durability * HEALTH_PER_VITALITY_POINT, 1.0)
 
 
@@ -254,15 +333,18 @@ func level_after(amount: int) -> int:
 func _level_up() -> void:
 	level += 1
 	unspent_points += Levelling.FREE_POINTS_PER_LEVEL
-	var growing_class: ClassData = class_data()
-	if growing_class == null:
-		return
-	for stat_name: StringName in growing_class.stat_growth:
-		if not STATS.has(stat_name):
-			push_error("HeroData: class '%s' grows unknown stat '%s'." % [class_id, stat_name])
+	var growth: Dictionary[StringName, float] = {}
+	for step_id: StringName in lineage():
+		var step: ClassData = ClassData.find(step_id)
+		if step == null:
 			continue
-		var growth: float = growing_class.stat_growth[stat_name]
-		var owed: float = growth_remainder.get(stat_name, 0.0) + growth
+		for stat_name: StringName in step.stat_growth:
+			if not STATS.has(stat_name):
+				push_error("HeroData: class '%s' grows unknown stat '%s'." % [step_id, stat_name])
+				continue
+			growth[stat_name] = growth.get(stat_name, 0.0) + step.stat_growth[stat_name]
+	for stat_name: StringName in growth:
+		var owed: float = growth_remainder.get(stat_name, 0.0) + growth[stat_name]
 		# A hair of slack so 0.1 added ten times still makes a whole point.
 		var whole: int = floori(owed + 0.0001)
 		set(stat_name, get(stat_name) + whole)
