@@ -281,7 +281,8 @@ func _drop_loot(enemy: Enemy) -> void:
 	if _item_drops >= _director.quest.max_item_drops:
 		return
 	if Drops.item_dropped(enemy.data, _rng):
-		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng)
+		var difficulty: float = _director.quest.start_difficulty(_director.ramp_start)
+		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng, difficulty)
 		var loot: Pickup = _new_pickup(enemy.global_position) if item != null else null
 		if loot != null:
 			loot.set_item(item)

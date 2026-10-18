@@ -450,17 +450,20 @@ awarded for time survived directly.
 |---|---|---|
 | **Exp** | Banked | Banked |
 | **Gold and item drops picked up** | Banked | Lost |
-| **Win bonus** | Extra gold and exp, plus one or more extra item drop rolls | None |
+| **Win bonus** | Extra gold and exp, plus one extra item | None |
 
 Every run pays exp, so a fresh build is never a wasted session, but a win is
-clearly worth more. A win adds 60 exp and 40 gold, and rolls for item drops: one
-roll that always lands, plus one more roll for each 30 s of ramp the hero's level
-skipped (section 4), each landing half the time. So a higher-level hero's win
-drops more. All of these are starting values, to be tuned.
+clearly worth more. A win adds 60 exp, 40 gold and one item, the same for every
+hero. **The amount of loot never depends on the hero's level; its quality does**:
+a hero who starts further along the ramp (section 4) rolls higher rarities more
+often (`QuestData.start_difficulty`, 0 at level 1 up to 1 at the level shift's
+cap, and `RarityData.DIFFICULTY_GAIN`). All of these are starting values, to be
+tuned.
 
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
-rarely, an item (2%), though never more than 3 items a run (`max_item_drops` on
-the quest), however lucky the rolls; at about 2% a run often comes near it. Items are armour, rolled from the art pool of the hero's
+rarely, an item (2%), though never more than 2 items a run (`max_item_drops` on
+the quest), however lucky the rolls. With the win bonus that is at most 3 items
+in a won run, for every hero. Items are armour, rolled from the art pool of the hero's
 class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
 weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
@@ -761,8 +764,8 @@ Out until later:
 - Whether gold has sinks other than gacha.
 - What the final elite at the end of the run is, and whether it is worth a
   dedicated reward.
-- Whether the win bonus's drop-roll rule (section 6.5) rewards high-level heroes too
-  much, given that they also start further along the ramp.
+- Whether the way difficulty shifts loot rarity (section 6.5) rewards high-level
+  heroes too much, given that they also start further along the ramp.
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's

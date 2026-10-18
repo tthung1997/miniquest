@@ -36,9 +36,12 @@ static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
 
 
 ## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
-## art of `pool`, at a rarity weighted by each rarity's drop weight. Null, with
-## an error, when nothing could be rolled.
-static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> EquipmentItem:
+## art of `pool`, at a rarity weighted by each rarity's drop weight at
+## `difficulty` (see QuestData.start_difficulty). Null, with an error, when
+## nothing could be rolled.
+static func roll_item(
+	pool: StringName, rng: RandomNumberGenerator, difficulty: float = 0.0
+) -> EquipmentItem:
 	var item: EquipmentItem = null
 	if rng.randf() < BOOTS_SHARE:
 		item = BootsItem.roll(rng)
@@ -46,23 +49,21 @@ static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> Equipment
 		item = ArmourItem.roll(pool, rng)
 	if item == null:
 		return null
-	var rarity: RarityData = _roll_rarity(rng)
+	var rarity: RarityData = _roll_rarity(rng, difficulty)
 	if rarity != null:
 		item.rarity = rarity.id
 	return item
 
 
-## The items a win adds: the first roll always lands, each later one with the
-## quest's chance. `ramp_start` is where the run began, which sets how many
-## rolls there are.
+## The items a win adds: the quest's fixed count, the same for every hero.
+## `ramp_start` is where the run began, which sets how good they are.
 static func win_bonus_items(
 	quest: QuestData, ramp_start: float, pool: StringName, rng: RandomNumberGenerator
 ) -> Array[EquipmentItem]:
 	var items: Array[EquipmentItem] = []
-	for roll: int in quest.win_bonus_rolls(ramp_start):
-		if roll > 0 and rng.randf() >= quest.win_bonus_drop_chance:
-			continue
-		var item: EquipmentItem = roll_item(pool, rng)
+	var difficulty: float = quest.start_difficulty(ramp_start)
+	for i: int in quest.win_bonus_item_count:
+		var item: EquipmentItem = roll_item(pool, rng, difficulty)
 		if item != null:
 			items.append(item)
 	return items
@@ -70,13 +71,13 @@ static func win_bonus_items(
 
 ## The rarity of a new item: the forced one when a debug build has it set,
 ## otherwise a weighted roll.
-static func _roll_rarity(rng: RandomNumberGenerator) -> RarityData:
+static func _roll_rarity(rng: RandomNumberGenerator, difficulty: float) -> RarityData:
 	_read_args()
 	if OS.is_debug_build() and forced_rarity != &"":
 		var forced: RarityData = RarityData.find(forced_rarity)
 		if forced != null:
 			return forced
-	return RarityData.roll(rng)
+	return RarityData.roll(rng, difficulty)
 
 
 static func _read_args() -> void:

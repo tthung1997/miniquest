@@ -19,6 +19,9 @@ const GLOW_BANDS: int = 4
 ## pulse: 0.3 dips to 70%.
 const PULSE_SPEED: float = 3.0
 const PULSE_DEPTH: float = 0.3
+## How strongly difficulty favours higher rarities: at full difficulty a rarity's
+## weight is multiplied by 1 plus this for each step above Common. A placeholder.
+const DIFFICULTY_GAIN: float = 1.5
 
 static var _glow_texture: ImageTexture = null
 
@@ -76,27 +79,36 @@ static func find(rarity_id: StringName) -> RarityData:
 	return data
 
 
-## Pick a rarity at random, weighted by each one's `drop_weight`. Null, with an
-## error, when no rarity can drop.
-static func roll(rng: RandomNumberGenerator) -> RarityData:
+## Pick a rarity at random, weighted by each one's `drop_weight_at(difficulty)`.
+## Null, with an error, when no rarity can drop.
+static func roll(rng: RandomNumberGenerator, difficulty: float = 0.0) -> RarityData:
 	var rarities: Array[RarityData] = all()
 	var total: float = 0.0
 	for rarity: RarityData in rarities:
-		total += rarity.drop_weight
+		total += rarity.drop_weight_at(difficulty)
 	if total <= 0.0:
 		push_error("RarityData: no rarity has a drop weight, so none can drop.")
 		return null
 
 	var pick: float = rng.randf() * total
 	for rarity: RarityData in rarities:
-		pick -= rarity.drop_weight
-		if pick < 0.0 and rarity.drop_weight > 0.0:
+		var weight: float = rarity.drop_weight_at(difficulty)
+		pick -= weight
+		if pick < 0.0 and weight > 0.0:
 			return rarity
 	# Rounding can leave the pick just past the end; the last that can drop wins.
 	for i: int in range(rarities.size() - 1, -1, -1):
-		if rarities[i].drop_weight > 0.0:
+		if rarities[i].drop_weight_at(difficulty) > 0.0:
 			return rarities[i]
 	return null
+
+
+## This rarity's share of drops at `difficulty`, from 0.0 to 1.0 (see
+## QuestData.start_difficulty). Each step up in rarity gains DIFFICULTY_GAIN of
+## its weight per unit of difficulty, so a harder run shifts drops upwards
+## without ever removing the common ones.
+func drop_weight_at(difficulty: float) -> float:
+	return drop_weight * (1.0 + difficulty * DIFFICULTY_GAIN * order)
 
 
 ## `points` scaled by this rarity, rounded up so that any higher rarity is
