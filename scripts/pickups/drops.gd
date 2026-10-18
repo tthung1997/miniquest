@@ -12,7 +12,8 @@ const BOOTS_SHARE: float = 0.3
 ## command line, as in `godot --path . -- --rarity=epic --item-chance=1`, or
 ## set them from a preview scene. `forced_rarity` makes every roll that
 ## rarity; `item_chance_override` replaces each enemy's chance of leaving an
-## item. The command line is read on the first roll.
+## item, though the quest's cap on items per run still applies. The command line
+## is read on the first roll.
 static var forced_rarity: StringName = &""
 static var item_chance_override: float = -1.0
 static var _args_read: bool = false

@@ -459,7 +459,8 @@ skipped (section 4), each landing half the time. So a higher-level hero's win
 drops more. All of these are starting values, to be tuned.
 
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
-rarely, an item (2%). Items are armour, rolled from the art pool of the hero's
+rarely, an item (2%), though never more than 5 items a run (`max_item_drops` on
+the quest), however lucky the rolls; at about 2% a run seldom comes near it. Items are armour, rolled from the art pool of the hero's
 class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
 weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are

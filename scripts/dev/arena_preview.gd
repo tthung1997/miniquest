@@ -2,8 +2,9 @@ class_name ArenaPreview
 extends Node
 ## Runs the arena with a throwaway hero wearing a weapon, armour and boots of
 ## one rarity, so the rarity can be seen in play: the aura and the weapon
-## outline on the hero, and the glow on dropped items. Every kill drops an
-## item, at that same rarity, so the ground glow can be seen too.
+## outline on the hero, and the glow on dropped items. Kills drop items often,
+## at that same rarity, so the ground glow can be seen too; the quest's cap
+## still limits a run to a few.
 ##
 ## F1 to F5 switch the rarity, lowest first, and redress the hero at once. A
 ## finished run restarts the scene. Nothing is saved.
@@ -15,8 +16,9 @@ const BOOTS_ID: StringName = &"wind_walkers"
 
 ## Rarity the hero starts in, by id: common, uncommon, rare, epic or legendary.
 @export var start_rarity: StringName = &"legendary"
-## Chance each kill leaves an item.
-@export_range(0.0, 1.0, 0.05) var item_chance: float = 1.0
+## Chance each kill leaves an item. The quest's per-run cap still applies, so
+## this only decides how soon the few items arrive.
+@export_range(0.0, 1.0, 0.05) var item_chance: float = 0.15
 @export_range(1, 30) var hero_level: int = 5
 @export var hero_name: String = "Tester"
 

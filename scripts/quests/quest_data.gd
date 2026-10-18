@@ -57,6 +57,11 @@ extends Resource
 @export_range(5.0, 300.0, 1.0, "suffix:s") var win_bonus_seconds_per_roll: float = 30.0
 @export_range(0.0, 1.0, 0.05) var win_bonus_drop_chance: float = 0.5
 
+@export_group("Drops")
+## Most items a run's kills can leave on the ground, however lucky the rolls.
+## The win bonus is on top of these.
+@export_range(0, 100) var max_item_drops: int = 5
+
 
 ## Where on the ramp, in seconds, a hero of `level` begins.
 func start_for(level: int) -> float:
