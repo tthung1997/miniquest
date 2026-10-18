@@ -45,6 +45,9 @@ static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> Equipment
 		item = ArmourItem.roll(pool, rng)
 	if item == null:
 		return null
+	# Novice armour is plain clothes: always Common.
+	if item is ArmourItem and (item as ArmourItem).pool == ArmourItem.NOVICE_POOL:
+		return item
 	var rarity: RarityData = _roll_rarity(rng)
 	if rarity != null:
 		item.rarity = rarity.id

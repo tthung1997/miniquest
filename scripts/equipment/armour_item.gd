@@ -101,6 +101,14 @@ func get_display_name() -> String:
 	return "%s Armour" % String(pool).capitalize()
 
 
+## Novice armour is plain clothes and is always Common, whatever id is stored,
+## so a preview or an old save cannot make it anything better.
+func get_rarity() -> RarityData:
+	if pool == NOVICE_POOL:
+		return RarityData.find(RarityData.COMMON)
+	return super.get_rarity()
+
+
 ## The rolled points, multiplied by this item's rarity.
 func get_stat_bonuses() -> Dictionary[StringName, int]:
 	var rarity_data: RarityData = get_rarity()
