@@ -60,7 +60,7 @@ extends Resource
 @export_group("Drops")
 ## Most items a run's kills can leave on the ground, however lucky the rolls.
 ## The win bonus is on top of these.
-@export_range(0, 100) var max_item_drops: int = 5
+@export_range(0, 100) var max_item_drops: int = 3
 
 
 ## Where on the ramp, in seconds, a hero of `level` begins.
