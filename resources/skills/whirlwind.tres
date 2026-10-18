@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirlwind.png" id="1_wligq"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_rkypn"]
+
+[resource]
+script = ExtResource("2_rkypn")
+id = &"whirlwind"
+display_name = "Whirlwind"
+icon = ExtResource("1_wligq")
+class_id = &"berserker"
+description = "Spin continuously, hitting everything around you again and again."
+effect_note = "Hits four times over 2s. Power is the total across all four, not per hit."
+target = 1
+scaling = Dictionary[StringName, float]({
+&"strength": 1.26
+})
+base_power = 25.0
+power_per_level = 14.0
+cooldown = 7.0
+cooldown_reduction_per_level = 0.3
+radius = 56.0
+hits = 4
+duration = 2.0
+tint = Color(1, 0.3, 0.25, 0.7)

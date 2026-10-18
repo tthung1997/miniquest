@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/piercing_shot.png" id="1_lkxm6"]
+[ext_resource type="PackedScene" path="res://scenes/effects/crossbow_bolt.tscn" id="2_4src0"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_moeo4"]
+
+[resource]
+script = ExtResource("3_moeo4")
+id = &"piercing_shot"
+display_name = "Piercing Shot"
+icon = ExtResource("1_lkxm6")
+class_id = &"ranger"
+description = "An arrow that punches through everything in a line."
+effect_note = "Pierces all enemies along its path rather than stopping at the first."
+kind = 2
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.74
+})
+base_power = 14.0
+power_per_level = 8.0
+cooldown = 3.0
+cooldown_reduction_per_level = 0.15
+cast_range = 200.0
+projectile = ExtResource("2_4src0")
+pierces = true
+tint = Color(1, 0.9, 0.4, 0.7)

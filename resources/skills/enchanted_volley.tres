@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/enchanted_volley.png" id="1_jp604"]
+[ext_resource type="PackedScene" path="res://scenes/effects/magic_bolt.tscn" id="2_ko7s5"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_jo2pa"]
+
+[resource]
+script = ExtResource("3_jo2pa")
+id = &"enchanted_volley"
+display_name = "Enchanted Volley"
+icon = ExtResource("1_jp604")
+class_id = &"arcane_archer"
+description = "Three arrows, each splitting into sparks on impact."
+kind = 2
+scaling = Dictionary[StringName, float]({
+&"dexterity": 1.36,
+&"intelligence": 1.36
+})
+base_power = 31.0
+power_per_level = 18.0
+cooldown = 4.5
+cooldown_reduction_per_level = 0.2
+cast_range = 190.0
+projectile = ExtResource("2_ko7s5")
+projectile_count = 3
+spread = 0.22
+tint = Color(0.7, 0.45, 1, 0.7)

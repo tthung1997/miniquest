@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/arcane_surge.png" id="1_pus02"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_jbg6i"]
+
+[resource]
+script = ExtResource("2_jbg6i")
+id = &"arcane_surge"
+display_name = "Arcane Surge"
+icon = ExtResource("1_pus02")
+class_id = &"archmage"
+description = "Everything comes off cooldown faster for a short window."
+effect_note = "Power is read as percent cooldown rate, lasting 6s."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"intelligence": 0.5
+})
+base_power = 25.0
+power_per_level = 6.0
+cooldown = 25.0
+cooldown_reduction_per_level = 1.0
+tint = Color(0.7, 0.45, 1, 0.7)
+buff = &"arcane_surge"
+buff_duration = 6.0

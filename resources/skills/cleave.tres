@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/cleave.png" id="1_qyqlm"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_6t77x"]
+
+[resource]
+script = ExtResource("2_6t77x")
+id = &"cleave"
+display_name = "Cleave"
+icon = ExtResource("1_qyqlm")
+class_id = &"warrior"
+description = "A wide horizontal swing through everything in front of you."
+target = 1
+scaling = Dictionary[StringName, float]({
+&"strength": 0.49
+})
+base_power = 10.0
+power_per_level = 6.0
+cooldown = 4.0
+cooldown_reduction_per_level = 0.2
+radius = 52.0
+frontal = true
+tint = Color(1, 0.6, 0.2, 0.7)

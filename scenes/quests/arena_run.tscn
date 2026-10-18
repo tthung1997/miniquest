@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="9_confirm"]
 [ext_resource type="PackedScene" path="res://scenes/ui/run_end_panel.tscn" id="10_end"]
 [ext_resource type="PackedScene" path="res://scenes/pickups/pickup.tscn" id="11_pickup"]
+[ext_resource type="PackedScene" path="res://scenes/ui/skill_bar.tscn" id="12_skillbar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/upgrade_overlay.tscn" id="13_upgrade"]
 
 [node name="ArenaRun" type="Node2D"]
 y_sort_enabled = true
@@ -42,15 +44,23 @@ enemy_parent = NodePath("..")
 
 [node name="Root" type="Control" parent="HUD"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 
 [node name="Readout" type="Label" parent="HUD/Root"]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 8.0
-offset_right = 430.0
+offset_right = 630.0
 offset_bottom = 54.0
+
+[node name="SkillBar" parent="HUD/Root" instance=ExtResource("12_skillbar")]
+unique_name_in_owner = true
+layout_mode = 1
 
 [node name="Overlay" type="CanvasLayer" parent="."]
 process_mode = 3
@@ -60,6 +70,9 @@ layer = 2
 unique_name_in_owner = true
 
 [node name="RetreatDialog" parent="Overlay" instance=ExtResource("9_confirm")]
+unique_name_in_owner = true
+
+[node name="UpgradeOverlay" parent="Overlay" instance=ExtResource("13_upgrade")]
 unique_name_in_owner = true
 
 [node name="EndPanel" parent="Overlay" instance=ExtResource("10_end")]

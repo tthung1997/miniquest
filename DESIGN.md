@@ -158,8 +158,18 @@ cover more situations. Otherwise nobody picks pure.
 
 ### 5.4 No respec
 
-Not at launch. Isolated hero slots already serve that purpose, and a respec would
-undermine the weight of the tier-2 stat commitment.
+Not for stats, at launch. Isolated hero slots already serve that purpose, and a
+respec would undermine the weight of the tier-2 stat commitment.
+
+**Skill points can be reset, for gold, from the skill tree.** A hero earns only
+one a level and has a capped number to spend, so an early choice would otherwise
+be punished for good, and skills do not define a hero the way stats and class
+do. The price is 5 gold for each point taken back (`SKILL_RESET_COST_PER_POINT`),
+so a hero who has invested more pays more to change their mind, and a level-up
+is worth spending carefully without being a trap. Resetting returns every point
+and puts skills back to level 1; a class whose skills needed points in the one
+before closes again until they are re-spent. It is a gold sink for the economy
+(section 11), and the 5 is a placeholder.
 
 ### 5.5 Skills
 
@@ -169,17 +179,48 @@ undermine the weight of the tier-2 stat commitment.
 - **A run starts with one equipped skill.** More are acquired mid-run from the
   upgrade offers.
 - **Maximum four active skills** at the end of a run.
-- Skills have cooldowns, and each has a per-skill **auto-cast / manual toggle**.
-  Auto fires the moment the cooldown is ready; manual waits for a key press. Set
-  per skill, so filler damage can be automated while a heal or panic button is
-  held for timing. A few reactive skills refuse auto-cast entirely — a panic
-  button that fires itself is not a panic button.
+- Skills have cooldowns. One **auto-cast / manual switch** covers every skill,
+  and it is flipped in the run (a button on the skill bar, or `Tab`), not in the
+  hub. Auto fires a skill the moment its cooldown is ready; manual waits for a
+  key press, so a heal or panic button can be held for timing. A few reactive
+  skills refuse auto-cast entirely and are always cast by hand — a panic button
+  that fires itself is not a panic button. The switch starts on at each run.
 - **Damage is split deliberately**: half from stats, a third from skill levels,
   the rest flat. Stats stay the largest contributor, maxing a skill roughly
   doubles it, and no skill is ever build-independent.
 - Because skills accumulate, **Novice's skills must stay useful to every class**.
   Whirl therefore scales off STR, DEX and INT equally, so an Archmage is not
   offered a dead strength skill for the rest of the hero's life.
+
+**Built.** A hero has every skill granted by a class in their lineage
+(`resources/skills/`, one `SkillData` per skill, generated from
+`design/skills.json` by `tools/build_skills.gd`, which also holds how each skill
+is carried out in the arena: area, strike, projectile, delayed area, heal, buff
+or trap). Each skill has a 16×16 icon, drawn by `tools/build_skill_icons.gd` and
+shown in a chamfered square frame (`SkillFrame`) in the tree, on the skill bar
+and on level-up cards. Each level gained earns **1 skill point**, spent in the
+hub's skill tree to raise a skill one level for good, up to its max of 5.
+**A class's skills open only after the hero has spent enough points on the
+skills of the class before it** (3 for a base class, 6 for an advancement;
+`skill_points_required`), so the lower skills cannot be skipped. A skill's top
+level costs 4 points, so a pair of skills holds 8 at most.
+Points are spent on the click, not staged: a point is small, and one mis-click
+does not warrant a confirmation. **Skill points can be reset for gold**, all at
+once, and spent again; see 5.4. The tree also picks the skill a run **starts
+with**. Skills are cast with the keys `1`–`4` in the order of the on-screen skill
+bar, whether or not auto-cast is on, and `Tab` switches auto-cast.
+
+Auto-cast waits for a reason: an aimed skill needs an enemy in reach, an area
+skill an enemy inside its radius, a self buff an enemy within its cast range,
+and Second Wind a hero below 60% health. A manual press never wastes a cooldown
+either; it does nothing when there is nothing to hit or heal. Skill damage
+scales with the run's damage upgrades; healing and buffs do not.
+
+Statuses the skills add to the hero are timed (`HeroBuffs`), and recasting one
+refreshes rather than stacks it. Vanish makes enemies stop hurting the hero but
+not stop chasing. Shadow Strike blinks behind its target but has no critical
+hit, because the game has no crit system yet. Skill cast ranges, area radii,
+projectile counts and the buff durations are placeholders in the tool.
 
 ### 5.6 Equipment
 
@@ -347,6 +388,30 @@ Presented as a choice of options on in-run level up (and from pickups).
 - Skills offered are drawn *only from what that hero has unlocked*, so permanent
   progression widens the possibility space rather than only raising numbers.
 
+**Built.** Kills feed the run's own levelling, which starts at level 1 each run
+and is forgotten at the end: leaving level L takes `round(8 × L ^ 1.3)` of the
+experience earned in the run, so a full run is worth roughly eight to ten
+levels (`QuestData`; placeholders). Each level pauses the run behind a choice of
+three separate cards, each clickable as a whole, or picked with the arrow keys
+and Enter, or `1`–`3`. The
+cards ignore input for 0.4 s so a skill key pressed as the level lands does not
+pick one by accident. Levels earned together are offered one after another.
+
+An offer is one of:
+
+- **A skill the hero carries, one level higher** for the rest of the run, until
+  it reaches its max (5). The level is shared with the permanent one: a skill
+  trained to 3 at the hub starts the run at 3 and can be offered up to 5.
+- **A skill the hero has unlocked but is not carrying**, while they carry fewer
+  than four. It joins at its permanent level and follows the hero's auto/manual
+  setting for it.
+- **A generic upgrade**, which can be taken again and again: *Light Feet* (+10%
+  speed), *Sharpened* (+10% damage), *Second Helping* (heal 30%) and *Magnet*
+  (+16 px pickup radius), as `GenericUpgrade` files in `resources/upgrades/`.
+
+Three distinct options are drawn evenly from that pool. Upgrades from pickups,
+which the design mentions, are not built; there are no upgrade pickups to find.
+
 ### 6.5 Rewards
 
 **Kills and pickups feed the run's tally; ending the run banks it.** Nothing is
@@ -413,9 +478,11 @@ spending free points (on the hub's stats panel, section 8) work.
 level is the sum over their lineage, which is saved as `past_classes` plus the
 current `class_id`. The hub's Advance button lists what the hero can become
 and what they still lack. Requirements count earned stats only, so gear cannot
-unlock a class, and staged points must be applied first. Not built: skills, and
-tier 3, which only needs new `ClassData` files naming the tier below as their
-prerequisite.
+unlock a class, and staged points must be applied first. Skills are built
+(section 5.5), and tier 3 is not: it only needs new `ClassData` files naming the
+tier below as their prerequisite. Each level also earns a skill point
+(`SKILL_POINTS_PER_LEVEL`); heroes saved before skills existed are given the
+points their levels earned.
 
 `armour_pool` and `health_per_vitality` are inherited from the nearest class in
 the lineage that sets one, so a Spellblade wears the armour of whichever parent
@@ -432,7 +499,21 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 **The hero stands on the left in a warm glow, between their four equipment
 slots, with their name and level above and their stats and Start Quest below;
-their inventory fills the right.** Advance, Skills and Gacha sit in the top bar.
+their inventory fills the right.** Inventory, Advance, Skills and Gacha sit in
+the top bar. Inventory and Skills are two views of the same right-hand panel,
+and the panel keeps one size whichever is up (a view that runs long scrolls
+rather than resizing the screen). Skills is marked with an exclamation mark
+while the hero has points to spend. Gacha is still locked.
+
+The skill tree shows only skills the hero can learn: a coloured box for each
+class on their path (each class has its own colour in its file), oldest first,
+holding its name and its pair of skills. A class they did not take never
+appears. A box that is not open yet says how many skill points the hero has
+spent on the class above out of the number it needs
+(`ClassData.skill_points_required`), and its skills are padlocked: they cannot
+be trained, started with or offered in a run. Picking a skill (click, or arrow
+keys) shows its details below, with **Level up**, **Start with** and **Reset**
+buttons; Reset shows its gold price and asks to confirm.
 
 The hero is rendered with full visible equipment at integer scale (2×). 3× would
 look better but leaves no room for the stats beneath on 360 lines. This is
@@ -625,8 +706,11 @@ Out until later:
 - Enemy roster and the final shape of the difficulty ramp (it starts linear), and
   the START_PER_LEVEL and START_CAP values in section 4. The roster comes from
   the Ninja Adventure monsters (section 9.3).
-- The generic in-run upgrade pool — heals, stat boosts, screen clears. Run-to-run
-  variety before tier 2 depends on it, and it does not exist as data yet.
+- The generic in-run upgrade pool is four placeholders (section 6.4): speed,
+  damage, a heal and pickup radius. Screen clears and the like are not built.
+  Run-to-run variety before tier 2 still leans mostly on it.
+- Whether an in-run skill level should be able to pass the max a hero has trained
+  the skill to; today the cap is the skill's own (5) for both.
 - Whether `health_per_vitality` alone is enough to make a Mage feel fragile.
 - Cooldown reduction stacks from skill levels, the accessory slot and Arcane
   Surge against only a 0.2s floor. An obvious place for a build to break the game.

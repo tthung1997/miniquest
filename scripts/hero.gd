@@ -18,6 +18,9 @@ signal facing_changed(facing_right: bool)
 ## The listener adds it to the world: the hero does not reach up into the
 ## level it stands in.
 signal projectile_released(projectile: Projectile)
+## A skill made something for the world, such as a ground marker or a trap, to
+## be added at `at` in global space. The listener adds it, like a projectile.
+signal effect_spawned(effect: Node2D, at: Vector2)
 ## The hero's pickup radius reached `pickup`. The listener decides what that
 ## means and calls its collect().
 signal pickup_reached(pickup: Pickup)
@@ -58,14 +61,20 @@ const MELEE_REACH_BEHIND: float = 12.0
 @export var weapon: WeaponItem
 
 var health: Health = null
+## Timed statuses from skills, such as Bulwark.
+var buffs: HeroBuffs = HeroBuffs.new()
 
 var _stats: HeroData = null
 var _move_multiplier: float = 1.0
+## What this run's upgrades have added: fractions of running speed and of damage.
+var _run_speed_bonus: float = 0.0
+var _run_damage_bonus: float = 0.0
 var _attack_cooldown: float = 0.0
 var _aim_point: Vector2 = Vector2.INF
 var _dead: bool = false
 var _pickup_circle: CircleShape2D = CircleShape2D.new()
 
+@onready var skills: SkillCaster = $SkillCaster
 @onready var _doll: PaperDoll = $PaperDoll
 @onready var _sensor: TargetSensor = $TargetSensor
 @onready var _pickup_area: Area2D = $PickupArea
@@ -85,17 +94,22 @@ func _ready() -> void:
 	_pickup_circle.radius = pickup_radius
 	_pickup_shape.shape = _pickup_circle
 	_pickup_area.area_entered.connect(_on_pickup_area_entered)
+	skills.projectile_released.connect(_on_skill_projectile_released)
+	skills.effect_spawned.connect(_on_skill_effect_spawned)
 
 
 ## Dress this hero as `data`, and give them full health for it. Their stats
 ## are what the held weapon's damage is worked out from, and their boots set
-## how fast they run.
+## how fast they run. Whatever a previous run gave them is forgotten.
 func apply(data: HeroData) -> void:
 	_stats = data
 	armour = data.armour
 	boots = data.boots
 	weapon = data.weapon
 	_move_multiplier = data.move_speed_multiplier()
+	_run_speed_bonus = 0.0
+	_run_damage_bonus = 0.0
+	buffs.clear()
 	_doll.wear_armour(armour)
 	_doll.wear_boots(boots)
 	_doll.wield(weapon)
@@ -104,13 +118,73 @@ func apply(data: HeroData) -> void:
 	_pickup_area.set_deferred(&"monitoring", true)
 
 
-## Lose `amount` of health. The died signal follows when none is left.
-func take_damage(amount: float) -> void:
-	health.take_damage(amount)
+## Lose `amount` of health, less whatever Bulwark takes off. `attacker`, when
+## known, is who Riposte throws the blow back at. The died signal follows when
+## no health is left.
+func take_damage(amount: float, attacker: Enemy = null) -> void:
+	if _dead:
+		return
+	if buffs.is_active(HeroBuffs.RIPOSTE):
+		var reflected: float = buffs.consume(HeroBuffs.RIPOSTE)
+		if attacker != null and is_instance_valid(attacker):
+			attacker.take_damage(reflected * damage_multiplier())
+		return
+	var reduction: float = buffs.magnitude(HeroBuffs.BULWARK) / 100.0
+	health.take_damage(amount * (1.0 - reduction))
+
+
+## Recover up to `amount` health.
+func heal(amount: float) -> void:
+	health.heal(amount)
 
 
 func is_dead() -> bool:
 	return _dead
+
+
+## Whether enemies can hurt the hero: not while Vanish is hiding them.
+func is_targetable() -> bool:
+	return not buffs.is_active(HeroBuffs.VANISH)
+
+
+## Stat values skills scale off, keyed like HeroData.STATS. A hero with no saved
+## stats, such as one placed in a scene run on its own, has the starting ones.
+func skill_stats() -> Dictionary[StringName, int]:
+	if _stats != null:
+		return _stats.total_stats()
+	var values: Dictionary[StringName, int] = {}
+	for stat_name: StringName in HeroData.STATS:
+		values[stat_name] = HeroData.STARTING_STAT
+	return values
+
+
+## What every hit the hero deals is multiplied by: 1.0 plus the run's damage
+## upgrades.
+func damage_multiplier() -> float:
+	return 1.0 + _run_damage_bonus
+
+
+## Whether a body of the hero's size fits at `point` in global space.
+func can_stand_at(point: Vector2) -> bool:
+	return not test_move(Transform2D(0.0, point), Vector2.ZERO)
+
+
+## Put the hero at `point` in global space, as a blink does.
+func teleport_to(point: Vector2) -> void:
+	global_position = point
+
+
+## Take an upgrade from the run's general pool, for the rest of the run.
+func apply_upgrade(upgrade: GenericUpgrade) -> void:
+	match upgrade.effect:
+		GenericUpgrade.Effect.MOVE_SPEED:
+			_run_speed_bonus += upgrade.amount
+		GenericUpgrade.Effect.HEAL:
+			heal(health.maximum * upgrade.amount)
+		GenericUpgrade.Effect.DAMAGE:
+			_run_damage_bonus += upgrade.amount
+		GenericUpgrade.Effect.PICKUP_RADIUS:
+			pickup_radius += upgrade.amount
 
 
 ## Hold `item`, or nothing when null.
@@ -139,12 +213,18 @@ func _physics_process(delta: float) -> void:
 		_update_animation()
 		return
 
+	buffs.tick(delta)
 	var input: Vector2 = Input.get_vector(
 		&"move_left", &"move_right", &"move_up", &"move_down"
 	)
 	input.y *= vertical_ratio
 
-	var target: Vector2 = input * speed * _move_multiplier
+	var speed_multiplier: float = (
+		_move_multiplier
+		+ _run_speed_bonus
+		+ buffs.magnitude(HeroBuffs.SWIFT_STEP) / 100.0
+	)
+	var target: Vector2 = input * speed * speed_multiplier
 	if acceleration <= 0.0:
 		velocity = target
 	elif target.is_zero_approx():
@@ -166,7 +246,13 @@ func _auto_attack(delta: float) -> void:
 		return
 	var enemy: Enemy = _sensor.nearest_enemy(global_position, data.attack_range)
 	if enemy != null and attack(enemy.center()):
-		_attack_cooldown = data.attack_interval
+		_attack_cooldown = data.attack_interval / _attack_speed_multiplier()
+
+
+## Blood Frenzy swings faster the more health is missing.
+func _attack_speed_multiplier() -> float:
+	var bonus: float = buffs.magnitude(HeroBuffs.BLOOD_FRENZY) / 100.0
+	return 1.0 + bonus * (1.0 - health.ratio())
 
 
 func _update_sensor_range() -> void:
@@ -217,10 +303,27 @@ func _on_pickup_area_entered(area: Area2D) -> void:
 		pickup_reached.emit(area)
 
 
-## What one hit of `data` deals, from the hero's stats. A hero with no saved
-## stats, such as one placed in a scene run on its own, deals the base damage.
+## Skills' projectiles go into the world the same way the weapon's do.
+func _on_skill_projectile_released(projectile: Projectile) -> void:
+	if projectile_released.get_connections().is_empty():
+		projectile.free()
+		return
+	projectile_released.emit(projectile)
+
+
+func _on_skill_effect_spawned(effect: Node2D, at: Vector2) -> void:
+	if effect_spawned.get_connections().is_empty():
+		effect.free()
+		return
+	effect_spawned.emit(effect, at)
+
+
+## What one hit of `data` deals, from the hero's stats, plus Flame Brand's fire
+## while it burns, times the run's damage upgrades. A hero with no saved stats,
+## such as one placed in a scene run on its own, deals the base damage.
 func _damage_of(data: WeaponData) -> float:
-	return data.base_damage if _stats == null else data.damage_for(_stats)
+	var base: float = data.base_damage if _stats == null else data.damage_for(_stats)
+	return (base + buffs.magnitude(HeroBuffs.FLAME_BRAND)) * damage_multiplier()
 
 
 func _on_doll_attack_released() -> void:

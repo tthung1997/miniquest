@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/skill_node.gd" id="1_node"]
+[ext_resource type="Script" path="res://scripts/ui/skill_frame.gd" id="2_frame"]
+
+[node name="SkillNode" type="Control"]
+custom_minimum_size = Vector2(34, 34)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 34.0
+offset_bottom = 34.0
+focus_mode = 2
+mouse_default_cursor_shape = 2
+script = ExtResource("1_node")
+
+[node name="Frame" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 34.0
+offset_bottom = 34.0
+script = ExtResource("2_frame")
+icon_scale = 2
+padding = 1

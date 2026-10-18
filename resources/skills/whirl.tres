@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirl.png" id="1_qfo8r"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_qud7b"]
+
+[resource]
+script = ExtResource("2_qud7b")
+id = &"whirl"
+display_name = "Whirl"
+icon = ExtResource("1_qfo8r")
+class_id = &"novice"
+description = "A clumsy spin that clips anything standing too close. Draws on all three offensive stats equally, so it stays usable whichever class you become."
+target = 1
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.28,
+&"intelligence": 0.28,
+&"strength": 0.28
+})
+base_power = 7.0
+power_per_level = 4.0
+cooldown_reduction_per_level = 0.2
+radius = 44.0
+tint = Color(0.95, 0.95, 0.95, 0.7)

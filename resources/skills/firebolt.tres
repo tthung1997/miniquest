@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/firebolt.png" id="1_p3w6q"]
+[ext_resource type="PackedScene" path="res://scenes/effects/magic_bolt.tscn" id="2_55swk"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_3u0jn"]
+
+[resource]
+script = ExtResource("3_3u0jn")
+id = &"firebolt"
+display_name = "Firebolt"
+icon = ExtResource("1_p3w6q")
+class_id = &"mage"
+description = "A fast bolt at the nearest target. Cheap, constant, reliable."
+kind = 2
+scaling = Dictionary[StringName, float]({
+&"intelligence": 0.88
+})
+base_power = 17.0
+power_per_level = 10.0
+cooldown = 2.5
+cooldown_reduction_per_level = 0.15
+cast_range = 180.0
+projectile = ExtResource("2_55swk")
+tint = Color(1, 0.6, 0.2, 0.7)

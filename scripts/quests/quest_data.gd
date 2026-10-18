@@ -39,6 +39,14 @@ extends Resource
 @export_range(0.1, 50.0, 0.1) var damage_scale_start: float = 1.0
 @export_range(0.1, 50.0, 0.1) var damage_scale_end: float = 2.0
 
+@export_group("In-run levels")
+## Experience to leave in-run level L is round(base * L ^ exponent). Each level
+## gained earns one upgrade pick (DESIGN.md section 6.4). Placeholders.
+@export_range(1.0, 500.0, 1.0) var run_level_exp_base: float = 8.0
+@export_range(0.5, 3.0, 0.05) var run_level_exp_exponent: float = 1.3
+## Options shown on each upgrade pick.
+@export_range(2, 5) var offer_count: int = 3
+
 @export_group("Win bonus")
 ## What winning adds on top of what the hero collected (DESIGN.md section 6.5).
 @export_range(0, 10000) var win_bonus_experience: int = 60
@@ -79,6 +87,11 @@ func health_scale_at(progress: float) -> float:
 
 func damage_scale_at(progress: float) -> float:
 	return lerpf(damage_scale_start, damage_scale_end, progress)
+
+
+## Experience an in-run level takes to leave, for `level` from 1.
+func run_exp_to_leave(level: int) -> int:
+	return roundi(run_level_exp_base * pow(maxi(level, 1), run_level_exp_exponent))
 
 
 ## How many item rolls a win earns for a run that began `ramp_start` seconds

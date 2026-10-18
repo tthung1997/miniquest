@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GenericUpgrade" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrades/generic_upgrade.gd" id="1_upgrade"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/upgrade_icons/heal.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_upgrade")
+icon = ExtResource("2_icon")
+id = &"heal"
+display_name = "Second Helping"
+description = "Recover 30% of your health right now."
+effect = 1
+amount = 0.3

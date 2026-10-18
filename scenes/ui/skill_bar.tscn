@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/skill_bar.gd" id="1_bar"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/skill_slot.tscn" id="3_slot"]
+
+[node name="SkillBar" type="HBoxContainer"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -46.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("2_theme")
+theme_override_constants/separation = 4
+alignment = 1
+script = ExtResource("1_bar")
+slot_scene = ExtResource("3_slot")
+
+[node name="AutoButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 38)
+layout_mode = 2
+tooltip_text = "Auto-cast: skills fire by themselves when ready (Tab)"
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+text = "AUTO"

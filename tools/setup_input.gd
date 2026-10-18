@@ -12,6 +12,11 @@ func _init() -> void:
 	_add_action("move_up", [KEY_W, KEY_UP])
 	_add_action("move_down", [KEY_S, KEY_DOWN])
 	_add_action("pause", [KEY_ESCAPE, KEY_P])
+	_add_action("skill_1", [KEY_1])
+	_add_action("skill_2", [KEY_2])
+	_add_action("skill_3", [KEY_3])
+	_add_action("skill_4", [KEY_4])
+	_add_action("toggle_auto_cast", [KEY_TAB])
 
 	var err := ProjectSettings.save()
 	if err == OK:

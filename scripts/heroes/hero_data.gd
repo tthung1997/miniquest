@@ -8,7 +8,8 @@ extends Resource
 ## Bumped whenever a saved field changes meaning, so a loader can migrate.
 ## 2: heroes carry weapons; older heroes are given the starting set by upgrade().
 ## 3: the Bow became the Crossbow; upgrade() renames carried bows.
-const FORMAT_VERSION: int = 3
+## 4: heroes earn skill points; upgrade() gives older heroes the ones their levels earned.
+const FORMAT_VERSION: int = 4
 const STARTING_CLASS: StringName = &"novice"
 ## Every hero starts with every base weapon so they can find the one that suits
 ## their stats: this one held, the rest carried.
@@ -24,6 +25,9 @@ const STATS: Array[StringName] = [&"strength", &"dexterity", &"intelligence", &"
 ## A placeholder, like every combat number until enemies exist.
 const HEALTH_PER_VITALITY_POINT: float = 10.0
 const NAME_MAX_LENGTH: int = 12
+## Gold charged for each skill point taken back by a skill reset. A placeholder
+## until the economy is tuned: a run is worth roughly 50 to 100 gold.
+const SKILL_RESET_COST_PER_POINT: int = 5
 ## Inventory cells per hero, shown all at once in the hub.
 const INVENTORY_SIZE: int = 25
 
@@ -50,6 +54,16 @@ const INVENTORY_SIZE: int = 25
 ## a class that grows a stat by half a point a level still adds one every
 ## second level.
 @export var growth_remainder: Dictionary[StringName, float] = {}
+
+@export_group("Skills")
+## Points earned by levelling and not yet put into a skill.
+@export var unspent_skill_points: int = 0
+## Points put into each skill, keyed by skill id. A skill a class grants starts
+## at level 1, so its level is 1 plus what is here.
+@export var skill_points_spent: Dictionary[StringName, int] = {}
+## The skill a run begins with. Empty, or one the hero has not unlocked, means
+## the first skill they have.
+@export var starting_skill: StringName = &""
 
 @export_group("Equipment")
 @export var weapon: WeaponItem
@@ -180,6 +194,141 @@ func advance_to(target_id: StringName) -> bool:
 	return true
 
 
+## Every skill the hero has learned: those granted by a class in their lineage,
+## oldest class first, once the class's skill points requirement is met. A class
+## whose requirement is not met yet has its skills in lineage_skills() but not
+## here, so they cannot be trained, started with or offered in a run.
+func unlocked_skills() -> Array[SkillData]:
+	var open: Array[StringName] = []
+	for granting_id: StringName in lineage():
+		if skills_open(granting_id):
+			open.append(granting_id)
+	return SkillData.granted_by(open)
+
+
+## Every skill granted by a class in the hero's lineage, learned or not.
+func lineage_skills() -> Array[SkillData]:
+	return SkillData.granted_by(lineage())
+
+
+## Skill points the hero has spent on the skills of class `granting_id`.
+func skill_points_in(granting_id: StringName) -> int:
+	var total: int = 0
+	for skill: SkillData in SkillData.granted_by([granting_id]):
+		total += skill_points_spent.get(skill.id, 0)
+	return total
+
+
+## The class the hero advanced from to reach `granting_id`, or empty for the
+## first class in their lineage.
+func class_before(granting_id: StringName) -> StringName:
+	var path: Array[StringName] = lineage()
+	var index: int = path.find(granting_id)
+	return path[index - 1] if index > 0 else &""
+
+
+## Skill points spent on the previous class's skills, and how many the class
+## needs: x is what the hero has, y what is required.
+func skill_gate(granting_id: StringName) -> Vector2i:
+	var granting: ClassData = ClassData.find(granting_id)
+	var before: StringName = class_before(granting_id)
+	if granting == null or before == &"":
+		return Vector2i.ZERO
+	return Vector2i(skill_points_in(before), granting.skill_points_required)
+
+
+## Whether the skills of class `granting_id` are open to the hero.
+func skills_open(granting_id: StringName) -> bool:
+	var gate: Vector2i = skill_gate(granting_id)
+	return gate.x >= gate.y
+
+
+## The skill's level as the hero has trained it: 1 for one just unlocked, up to
+## its maximum.
+func skill_level(skill: SkillData) -> int:
+	return mini(1 + skill_points_spent.get(skill.id, 0), skill.max_level)
+
+
+## The trained levels of every unlocked skill, keyed by id.
+func skill_levels() -> Dictionary[StringName, int]:
+	var levels: Dictionary[StringName, int] = {}
+	for skill: SkillData in unlocked_skills():
+		levels[skill.id] = skill_level(skill)
+	return levels
+
+
+func can_raise_skill(skill: SkillData) -> bool:
+	return (
+		unspent_skill_points > 0
+		and skill_level(skill) < skill.max_level
+		and unlocked_skills().has(skill)
+	)
+
+
+## Spend a skill point to raise `skill` one level for good.
+func raise_skill(skill: SkillData) -> bool:
+	if not can_raise_skill(skill):
+		push_error("HeroData: %s cannot raise %s." % [hero_name, skill.display_name])
+		return false
+	skill_points_spent[skill.id] = skill_points_spent.get(skill.id, 0) + 1
+	unspent_skill_points -= 1
+	emit_changed()
+	return true
+
+
+## Take back every skill point spent, to be spent again, for a price in gold
+## (skill_reset_cost()). Skills return to level 1, and any class whose skills
+## needed points in the one before closes again until they are re-spent. Fails
+## with an error when the hero cannot pay or has nothing to take back.
+func reset_skill_points() -> bool:
+	if not can_reset_skills():
+		push_error("HeroData: %s cannot reset skill points." % hero_name)
+		return false
+	gold -= skill_reset_cost()
+	for spent: int in skill_points_spent.values():
+		unspent_skill_points += spent
+	skill_points_spent.clear()
+	emit_changed()
+	return true
+
+
+## Skill points spent on skills in total.
+func skill_points_total_spent() -> int:
+	var total: int = 0
+	for spent: int in skill_points_spent.values():
+		total += spent
+	return total
+
+
+## Gold a reset costs: a fixed price for each point spent, so a hero who has
+## invested more pays more to change their mind.
+func skill_reset_cost() -> int:
+	return skill_points_total_spent() * SKILL_RESET_COST_PER_POINT
+
+
+func can_reset_skills() -> bool:
+	return skill_points_total_spent() > 0 and gold >= skill_reset_cost()
+
+
+## The skill a run begins with: the chosen one if the hero still has it, else
+## their first attack. Null only for a hero with no skills at all.
+func start_skill() -> SkillData:
+	var skills: Array[SkillData] = unlocked_skills()
+	for skill: SkillData in skills:
+		if skill.id == starting_skill:
+			return skill
+	return SkillData.default_start(skills)
+
+
+func set_start_skill(skill: SkillData) -> bool:
+	if not unlocked_skills().has(skill):
+		push_error("HeroData: %s has not unlocked %s." % [hero_name, skill.display_name])
+		return false
+	starting_skill = skill.id
+	emit_changed()
+	return true
+
+
 ## The value of `stat_name`, one of STATS. An unknown name is an error and
 ## counts as zero, so a typo in a weapon template cannot pass for a real stat.
 func stat_value(stat_name: StringName) -> int:
@@ -280,6 +429,8 @@ func upgrade() -> bool:
 		_give_starting_weapons()
 	if format_version < 3:
 		_rename_weapons()
+	if format_version < 4:
+		unspent_skill_points += (level - 1) * Levelling.SKILL_POINTS_PER_LEVEL
 	format_version = FORMAT_VERSION
 	emit_changed()
 	return true
@@ -333,6 +484,7 @@ func level_after(amount: int) -> int:
 func _level_up() -> void:
 	level += 1
 	unspent_points += Levelling.FREE_POINTS_PER_LEVEL
+	unspent_skill_points += Levelling.SKILL_POINTS_PER_LEVEL
 	var growth: Dictionary[StringName, float] = {}
 	for step_id: StringName in lineage():
 		var step: ClassData = ClassData.find(step_id)

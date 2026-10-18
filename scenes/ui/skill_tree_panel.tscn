@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/skill_tree_panel.gd" id="1_panel"]
+[ext_resource type="Script" path="res://scripts/ui/skill_tree_view.gd" id="2_tree"]
+[ext_resource type="Script" path="res://scripts/ui/skill_frame.gd" id="3_frame"]
+[ext_resource type="PackedScene" path="res://scenes/ui/skill_node.tscn" id="4_node"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="5_coin"]
+
+[node name="SkillTreePanel" type="VBoxContainer"]
+theme_override_constants/separation = 6
+script = ExtResource("1_panel")
+
+[node name="Header" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SKILLS"
+
+[node name="PointsLabel" type="Label" parent="Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "0 points"
+
+[node name="TreeScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Tree" type="Control" parent="TreeScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("2_tree")
+node_scene = ExtResource("4_node")
+
+[node name="Divider" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+color = Color(0.8, 0.77, 0.69, 0.35)
+
+[node name="DetailScroll" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Detail" type="HBoxContainer" parent="DetailScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DetailFrame" type="Control" parent="DetailScroll/Detail"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 0
+script = ExtResource("3_frame")
+icon_scale = 2
+padding = 3
+
+[node name="Text" type="VBoxContainer" parent="DetailScroll/Detail"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="NameRow" type="HBoxContainer" parent="DetailScroll/Detail/Text"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NameLabel" type="Label" parent="DetailScroll/Detail/Text/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "Skill"
+
+[node name="LevelLabel" type="Label" parent="DetailScroll/Detail/Text/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="DetailScroll/Detail/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="NumbersLabel" type="Label" parent="DetailScroll/Detail/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="NoteLabel" type="Label" parent="DetailScroll/Detail/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="RequirementLabel" type="Label" parent="DetailScroll/Detail/Text"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TrainButton" type="Button" parent="Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "LEVEL UP"
+
+[node name="StartButton" type="Button" parent="Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "START WITH"
+
+[node name="ResetColumn" type="VBoxContainer" parent="Buttons"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="CostRow" type="HBoxContainer" parent="Buttons/ResetColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 3
+
+[node name="CoinIcon" type="TextureRect" parent="Buttons/ResetColumn/CostRow"]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("5_coin")
+expand_mode = 1
+
+[node name="CostLabel" type="Label" parent="Buttons/ResetColumn/CostRow"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+text = "0"
+
+[node name="ResetButton" type="Button" parent="Buttons/ResetColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Take back every skill point to spend again"
+text = "RESET"
