@@ -9,7 +9,8 @@ extends Resource
 ## 2: heroes carry weapons; older heroes are given the starting set by upgrade().
 ## 3: the Bow became the Crossbow; upgrade() renames carried bows.
 ## 4: heroes earn skill points; upgrade() gives older heroes the ones their levels earned.
-const FORMAT_VERSION: int = 4
+## 5: armour rolls stat points; upgrade() rolls them for armour that has none.
+const FORMAT_VERSION: int = 5
 const STARTING_CLASS: StringName = &"novice"
 ## Every hero starts with every base weapon so they can find the one that suits
 ## their stats: this one held, the rest carried.
@@ -431,6 +432,8 @@ func upgrade() -> bool:
 		_rename_weapons()
 	if format_version < 4:
 		unspent_skill_points += (level - 1) * Levelling.SKILL_POINTS_PER_LEVEL
+	if format_version < 5:
+		_roll_armour_stats()
 	format_version = FORMAT_VERSION
 	emit_changed()
 	return true
@@ -606,6 +609,18 @@ func _worn() -> Array[EquipmentItem]:
 		if item != null:
 			items.append(item)
 	return items
+
+
+## Roll stat points for every worn or carried armour that predates armour
+## having them.
+func _roll_armour_stats() -> void:
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.randomize()
+	var items: Array[EquipmentItem] = inventory.duplicate()
+	items.append(armour)
+	for item: EquipmentItem in items:
+		if item is ArmourItem and (item as ArmourItem).stat_points.is_empty():
+			(item as ArmourItem).roll_stats(rng)
 
 
 ## Point every held or carried weapon with a renamed id at its new id.

@@ -229,7 +229,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 | Slot | Carries |
 | --- | --- |
 | Weapon | Damage, scaling type, attack speed |
-| Armour | Defence, VIT |
+| Armour | VIT, plus a stat its class leans on (Defence is not built) |
 | Boots | Move speed, plus a few stat points |
 | Accessory | Cooldown reduction, crit, pickup radius |
 
@@ -238,12 +238,21 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   hat.
 - **Armour looks are rolled per piece.** Each base class has its own pool of hat,
   shirt and pants art. When an Armour item is acquired, each piece is rolled
-  separately from its class's pool, so two Mages rarely look the same. The roll is
-  cosmetic only: stats still come from the template and rarity. The rolled pieces
+  separately from its class's pool, so two Mages rarely look the same. The pieces
   are stored on the item, by piece id, so adding art to a pool never changes what
   an existing item looks like. Advanced classes wear their base class's armour.
   Mage, Ranger and Warrior each have ten variants of every piece (Novice has
   one, so far).
+- **Armour stats are rolled once per item.** Each Armour item rolls a few stat
+  points when acquired and keeps them: 2 to 4 VIT on every one, plus 1 to 3
+  points of the stat its base class leans on (Mage INT, Ranger DEX, Warrior STR;
+  Novice none). These are the Common values, saved on the item as
+  `stat_points`; rarity multiplies them when read, so an item keeps its roll if
+  its rarity changes. Armour gives no Defence: there is no such stat, and the
+  existing four are all it uses. The rolls are placeholders. This is the one place
+  an item has a random roll, because armour has no fixed template the way weapons
+  and boots do. Saves from before this get a roll for their armour on load
+  (`HeroData.upgrade()`).
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
   in front of the body: the sword and wand are held low, pointing forward and
@@ -298,10 +307,9 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   `RarityData` in `resources/rarities/` and an item stores only its id (saves
   from before rarities load as Common). A rarity sets a stat multiplier (x1.0,
   1.25, 1.5, 1.8, 2.2), a drop weight (60, 25, 10, 4, 1) and how it looks; all
-  placeholders. The multiplier scales a weapon's damage and scaling, and a pair
-  of boots' speed and stat points (points round up, so a 1-point bonus still
-  improves). **Armour has no numbers yet, so its rarity is only its look**; it
-  will scale defence and VIT once those exist. Every item a run drops, armour or
+  placeholders. The multiplier scales a weapon's damage and scaling, a pair of
+  boots' speed and stat points, and an armour's rolled stat points (points round
+  up, so a 1-point bonus still improves). Every item a run drops, armour or
   boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
   and starting weapons exist, all Common.
 - **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
