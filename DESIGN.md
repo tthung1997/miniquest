@@ -309,7 +309,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 
 - **Items drop during runs**, randomly, and must be physically picked up.
 - **Gold buys gacha packs** in the hub.
-- **The store lists everything.** A Store button in the hub opens a screen
+- **The store lists everything.** Clicking the gold count in the hub opens a screen
   with every weapon (30), every pair of boots (13) and every armour piece
   (a class's art at a time), each with a price. Picking anything puts it on the
   hero's doll in place of what they wear, with WALK and ATTACK buttons to see it

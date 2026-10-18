@@ -15,7 +15,7 @@ extends Control
 ## through HeroData.advance_to() and is reported with hero_changed like any
 ## other edit. Skills swaps the inventory for the skill tree, where skill points
 ## are spent and the skill a run starts with is chosen; Gacha is not built yet,
-## so its tile is locked.
+## so its tile is locked. The gold count is a button too: it opens the store.
 ## Runs standalone with an unselected portrait.
 
 signal quest_requested
@@ -53,6 +53,7 @@ var _after_leave_choice: Callable = Callable()
 @onready var _name_label: Label = %NameLabel
 @onready var _info_tag: ClassTag = %InfoTag
 @onready var _gold_label: Label = %GoldLabel
+@onready var _gold_button: Button = %GoldButton
 @onready var _exp_label: Label = %ExpLabel
 @onready var _count_label: Label = %CountLabel
 @onready var _inventory_grid: GridContainer = %InventoryGrid
@@ -64,7 +65,6 @@ var _after_leave_choice: Callable = Callable()
 @onready var _stats_panel: StatsPanel = %StatsPanel
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
-@onready var _store_button: Button = %StoreButton
 @onready var _inventory_button: Button = %InventoryButton
 @onready var _skills_button: Button = %SkillsButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
@@ -80,7 +80,7 @@ func _ready() -> void:
 	_stage.resized.connect(_place_doll)
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
-	_store_button.pressed.connect(_on_store_pressed)
+	_gold_button.pressed.connect(_on_store_pressed)
 	_info_tag.pressed.connect(_on_advance_pressed)
 	_advance_dialog.class_chosen.connect(_on_class_chosen)
 	_advance_dialog.closed.connect(_focus_class_tag)
@@ -179,7 +179,9 @@ func _refresh() -> void:
 ## The class tag is only a button when there is something to advance into, and
 ## shows an exclamation mark when the hero can take a class right now.
 func _refresh_advance_cue() -> void:
-	var options: Array[ClassData] = _hero.advancement_options() if _hero != null else []
+	var options: Array[ClassData] = []
+	if _hero != null:
+		options = _hero.advancement_options()
 	var ready_now: bool = false
 	for option: ClassData in options:
 		if _hero.can_advance_to(option):
