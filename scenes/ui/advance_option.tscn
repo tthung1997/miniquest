@@ -2,51 +2,124 @@
 
 [ext_resource type="Script" path="res://scripts/ui/advance_option.gd" id="1_option"]
 [ext_resource type="PackedScene" path="res://scenes/ui/class_badge.tscn" id="2_badge"]
+[ext_resource type="Script" path="res://scripts/ui/divider_ornament.gd" id="3_divider"]
+
+[sub_resource type="Gradient" id="Gradient_glow"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(1, 1, 1, 0.5, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_glow"]
+gradient = SubResource("Gradient_glow")
+width = 96
+height = 96
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
 
 [node name="AdvanceOption" type="PanelContainer"]
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(160, 230)
 size_flags_horizontal = 3
-theme_type_variation = &"InteriorPanel"
+focus_mode = 2
 script = ExtResource("1_option")
 
-[node name="Content" type="VBoxContainer" parent="."]
+[node name="Plate" type="PanelContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Plate"]
+layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="Badge" parent="Content" instance=ExtResource("2_badge")]
-unique_name_in_owner = true
+[node name="TagChip" type="PanelContainer" parent="Plate/Content"]
 layout_mode = 2
 size_flags_horizontal = 4
-badge_scale = 2
+mouse_filter = 2
+theme_type_variation = &"Chip"
 
-[node name="NameLabel" type="Label" parent="Content"]
+[node name="TagLabel" type="Label" parent="Plate/Content/TagChip"]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"AccentLabel"
+text = "TIER"
+horizontal_alignment = 1
+
+[node name="IconStage" type="Control" parent="Plate/Content"]
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Glow" type="TextureRect" parent="Plate/Content/IconStage"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -48.0
+offset_right = 48.0
+offset_bottom = 48.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_glow")
+
+[node name="Badge" parent="Plate/Content/IconStage" instance=ExtResource("2_badge")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+badge_scale = 3
+
+[node name="NameLabel" type="Label" parent="Plate/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
 theme_type_variation = &"AccentLabel"
 theme_override_font_sizes/font_size = 16
 text = "Class"
 horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="GrowthLabel" type="Label" parent="Content"]
+[node name="Divider" type="Control" parent="Plate/Content"]
 unique_name_in_owner = true
 layout_mode = 2
+script = ExtResource("3_divider")
+
+[node name="GrowthLabel" type="Label" parent="Plate/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="DescriptionLabel" type="Label" parent="Content"]
+[node name="DescriptionLabel" type="Label" parent="Plate/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 theme_type_variation = &"MutedLabel"
-autowrap_mode = 3
-
-[node name="RequirementLabel" type="Label" parent="Content"]
-unique_name_in_owner = true
-layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ChooseButton" type="Button" parent="Content"]
+[node name="RequirementLabel" type="Label" parent="Plate/Content"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "BECOME"
+mouse_filter = 2
+horizontal_alignment = 1
+autowrap_mode = 3

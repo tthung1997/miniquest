@@ -10,11 +10,12 @@ extends Control
 ## with hero_changed; the hub never loads or saves, the screen owner does.
 ## The stats panel under the hero follows every change, and leaving the hub
 ## with free points still waiting to be applied asks what to do with them.
-## Advance opens a dialog of the classes the hero can become; the choice goes
+## Advancing is done from the class under the hero's name: it opens a dialog of
+## the classes the hero can become; the choice goes
 ## through HeroData.advance_to() and is reported with hero_changed like any
 ## other edit. Skills swaps the inventory for the skill tree, where skill points
 ## are spent and the skill a run starts with is chosen; Gacha is not built yet,
-## so its tile is locked.
+## so its tile is locked. The gold count is a button too: it opens the store.
 ## Runs standalone with an unselected portrait.
 
 signal quest_requested
@@ -32,6 +33,8 @@ const STAGE_HEIGHT: float = 68.0
 ## Puts the frame's top row on the stage's top edge and leaves the dais clear
 ## of the bottom one.
 const FEET_MARGIN: float = 11.0
+## Tint of the gold chip's wood while the mouse is over it.
+const GOLD_HOVER_TINT: Color = Color(1.3, 1.25, 1.15)
 
 ## Whole-number scale keeps the pixel art crisp. 3x leaves no room for the
 ## stats panel under the hero on 360 lines.
@@ -52,6 +55,8 @@ var _after_leave_choice: Callable = Callable()
 @onready var _name_label: Label = %NameLabel
 @onready var _info_tag: ClassTag = %InfoTag
 @onready var _gold_label: Label = %GoldLabel
+@onready var _gold_chip: PanelContainer = %GoldChip
+@onready var _gold_button: Button = %GoldButton
 @onready var _exp_label: Label = %ExpLabel
 @onready var _count_label: Label = %CountLabel
 @onready var _inventory_grid: GridContainer = %InventoryGrid
@@ -63,8 +68,6 @@ var _after_leave_choice: Callable = Callable()
 @onready var _stats_panel: StatsPanel = %StatsPanel
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
-@onready var _store_button: Button = %StoreButton
-@onready var _advance_button: Button = %AdvanceButton
 @onready var _inventory_button: Button = %InventoryButton
 @onready var _skills_button: Button = %SkillsButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
@@ -80,10 +83,12 @@ func _ready() -> void:
 	_stage.resized.connect(_place_doll)
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
-	_store_button.pressed.connect(_on_store_pressed)
-	_advance_button.pressed.connect(_on_advance_pressed)
+	_gold_button.pressed.connect(_on_store_pressed)
+	_gold_button.mouse_entered.connect(_set_gold_hover.bind(true))
+	_gold_button.mouse_exited.connect(_set_gold_hover.bind(false))
+	_info_tag.pressed.connect(_on_advance_pressed)
 	_advance_dialog.class_chosen.connect(_on_class_chosen)
-	_advance_dialog.closed.connect(_advance_button.grab_focus)
+	_advance_dialog.closed.connect(_focus_class_tag)
 	_inventory_button.pressed.connect(_on_inventory_pressed)
 	_skills_button.pressed.connect(_on_skills_pressed)
 	_skills_view.hero_changed.connect(_on_hero_edited)
@@ -148,7 +153,7 @@ func _refresh() -> void:
 	_quest_button.disabled = _hero == null
 	_stats_panel.show_hero(_hero)
 	_refresh_items()
-	_refresh_advance_button()
+	_refresh_advance_cue()
 	_refresh_skills_button()
 	if _hero != null and _skills_view.visible:
 		_skills_view.show_hero(_hero)
@@ -176,21 +181,21 @@ func _refresh() -> void:
 	_doll.wield(_hero.weapon)
 
 
-## The button is disabled when there is nothing to advance into, and gets an
-## exclamation mark when the hero can take a class right now.
-func _refresh_advance_button() -> void:
-	var options: Array[ClassData] = _hero.advancement_options() if _hero != null else []
+## The class tag is only a button when there is something to advance into, and
+## shows an exclamation mark when the hero can take a class right now.
+func _refresh_advance_cue() -> void:
+	var options: Array[ClassData] = []
+	if _hero != null:
+		options = _hero.advancement_options()
 	var ready_now: bool = false
 	for option: ClassData in options:
 		if _hero.can_advance_to(option):
 			ready_now = true
 			break
-	_advance_button.disabled = options.is_empty()
-	_advance_button.text = "ADVANCE!" if ready_now else "ADVANCE"
-	_advance_button.tooltip_text = (
-		"Choose a new class" if ready_now
-		else "Advance to a new class" if not options.is_empty()
-		else "No further classes yet"
+	_info_tag.show_action(
+		not options.is_empty(),
+		ready_now,
+		"Choose a new class" if ready_now else "Advance to a new class",
 	)
 
 
@@ -222,6 +227,24 @@ func _focus_default() -> void:
 		_change_hero_button.grab_focus()
 	else:
 		_quest_button.grab_focus()
+
+
+## The gold chip is the store's click target, so the whole chip brightens under
+## the mouse, as an item cell does.
+func _set_gold_hover(hovered: bool) -> void:
+	if not hovered:
+		_gold_chip.remove_theme_stylebox_override(&"panel")
+		return
+	var box: StyleBoxTexture = _gold_chip.get_theme_stylebox(&"panel").duplicate()
+	box.modulate_color = GOLD_HOVER_TINT
+	_gold_chip.add_theme_stylebox_override(&"panel", box)
+
+
+func _focus_class_tag() -> void:
+	if _info_tag.focus_mode == Control.FOCUS_NONE:
+		_focus_default()
+	else:
+		_info_tag.grab_focus()
 
 
 func _place_doll() -> void:

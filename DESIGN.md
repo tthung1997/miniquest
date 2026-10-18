@@ -309,7 +309,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 
 - **Items drop during runs**, randomly, and must be physically picked up.
 - **Gold buys gacha packs** in the hub.
-- **The store lists everything.** A Store button in the hub opens a screen
+- **The store lists everything.** Clicking the gold count in the hub opens a screen
   with every weapon (30), every pair of boots (13) and every armour piece
   (a class's art at a time), each with a price. Picking anything puts it on the
   hero's doll in place of what they wear, with WALK and ATTACK buttons to see it
@@ -476,7 +476,9 @@ spending free points (on the hub's stats panel, section 8) work.
 
 **Class advancement is built** for tiers 0–2 (section 5.3). A hero's growth each
 level is the sum over their lineage, which is saved as `past_classes` plus the
-current `class_id`. The hub's Advance button lists what the hero can become
+current `class_id`. Advancing is done by clicking the class tag under the hero's
+name, which gains a cue (`!` when a class can be taken now) while there is
+somewhere to advance to; the dialog lists what the hero can become
 and what they still lack. Requirements count earned stats only, so gear cannot
 unlock a class, and staged points must be applied first. Skills are built
 (section 5.5), and tier 3 is not: it only needs new `ClassData` files naming the
