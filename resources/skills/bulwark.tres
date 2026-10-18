@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/bulwark.png" id="1_3fht2"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_3mrpr"]
+
+[resource]
+script = ExtResource("2_3mrpr")
+id = &"bulwark"
+display_name = "Bulwark"
+icon = ExtResource("1_3fht2")
+class_id = &"warrior"
+description = "Set your feet and take far less damage for a few seconds."
+effect_note = "Power is read as percent damage reduction, capped at 70%, lasting 4s."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"vitality": 0.6
+})
+base_power = 20.0
+power_per_level = 6.0
+cooldown = 16.0
+cooldown_reduction_per_level = 0.8
+tint = Color(0.4, 0.55, 1, 0.7)
+buff = &"bulwark"
+buff_duration = 4.0

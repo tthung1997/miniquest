@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/riposte.png" id="1_ks0dd"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_smfgm"]
+
+[resource]
+script = ExtResource("2_smfgm")
+id = &"riposte"
+display_name = "Riposte"
+icon = ExtResource("1_ks0dd")
+class_id = &"duelist"
+description = "Turn the next blow you take into one of your own."
+effect_note = "Negates the next hit taken within 4s and reflects power as damage. Manual only: automated on cooldown it would almost always be spent on a hit that was not going to land."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.7,
+&"strength": 0.5
+})
+base_power = 20.0
+power_per_level = 7.0
+cooldown = 12.0
+cooldown_reduction_per_level = 0.6
+supports_auto_cast = false
+tint = Color(0.95, 0.95, 0.95, 0.7)
+buff = &"riposte"
+buff_duration = 4.0

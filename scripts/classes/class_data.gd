@@ -3,8 +3,8 @@ extends Resource
 ## One class in the class tree. Instances live in resources/classes/, one file
 ## per class, named after its id.
 ##
-## Only the fields something reads today are here. Skills are in
-## design/skills.json and move here when combat needs them.
+## Only the fields something reads today are here. Skills live in SkillData: a
+## hero's skills are those whose `class_id` is in their lineage.
 ##
 ## A class's stat growth is its own. A hero's growth each level is the sum over
 ## their whole lineage (HeroData.lineage()), so a Berserker also gains Novice
@@ -18,8 +18,15 @@ const FILE_SUFFIX: String = ".tres"
 @export var display_name: String = ""
 ## Emblem shown beside the class name: a 16x16 icon.
 @export var icon: Texture2D
+## Colour of the class's box in the skill tree, to tell classes apart.
+@export var color: Color = Color(0.7, 0.65, 0.55)
 @export_multiline var description: String = ""
 @export_range(0, 3) var tier: int = 0
+## Skill points the hero must have spent on the skills of the class they
+## advanced from before this class's own skills unlock. It stops a hero skipping
+## the lower skills to pile points into the higher ones. A class's skills are
+## always open when this is zero.
+@export_range(0, 40) var skill_points_required: int = 0
 ## Classes a hero can advance into this one from, by being it right now. More
 ## than one makes this reachable from any of them, as the hybrids are. Empty
 ## for a class a hero starts as.

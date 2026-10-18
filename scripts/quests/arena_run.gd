@@ -9,6 +9,11 @@ extends Node2D
 ## is, the tree is paused behind a results panel until the player continues,
 ## and then `finished` carries the RunResult to whoever banks it. The run
 ## itself saves nothing and changes no scene.
+##
+## Kills also feed the run's own levelling (RunProgress). Each in-run level
+## pauses the run behind the upgrade overlay and applies the pick: a skill
+## taken or raised, or a generic upgrade (DESIGN.md section 6.4). The hero
+## starts with the one skill their hub screen chose, and carries at most four.
 
 ## The player pressed Continue on the results panel. The tree is no longer
 ## paused, so whatever listens can swap scenes.
@@ -37,6 +42,13 @@ var _ending: bool = false
 var _result: RunResult = null
 var _run_started: bool = false
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var _progress: RunProgress = null
+## Every skill the hero can be offered, and the level they have trained each to.
+var _unlocked: Array[SkillData] = []
+var _permanent_levels: Dictionary[StringName, int] = {}
+## Level-ups still waiting for their pick, and whether one is being picked now.
+var _pending_picks: int = 0
+var _choosing: bool = false
 
 @onready var hero: Hero = $Hero
 @onready var _arena: ArenaMap = $Meadow
@@ -45,13 +57,16 @@ var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 @onready var _projectiles: Node2D = $Projectiles
 @onready var _director: RunDirector = $RunDirector
 @onready var _readout: Label = $HUD/Root/Readout
+@onready var _skill_bar: SkillBar = %SkillBar
 @onready var _pause_menu: PauseMenu = %PauseMenu
 @onready var _retreat_dialog: ConfirmDialog = %RetreatDialog
+@onready var _upgrade_overlay: UpgradeOverlay = %UpgradeOverlay
 @onready var _end_panel: RunEndPanel = %EndPanel
 
 
 func _ready() -> void:
 	_rng.randomize()
+	_progress = RunProgress.new(_director.quest)
 	# Run on its own there is no saved hero to dress from, so start armed.
 	if hero.weapon == null:
 		hero.wield(WeaponItem.create(STANDALONE_WEAPON))
@@ -64,14 +79,20 @@ func _ready() -> void:
 	_camera.limit_bottom = limits.end.y
 
 	hero.projectile_released.connect(_on_hero_projectile_released)
+	hero.effect_spawned.connect(_on_hero_effect_spawned)
 	hero.pickup_reached.connect(_on_hero_pickup_reached)
 	hero.died.connect(_on_hero_died)
+	hero.skills.skills_changed.connect(_on_skills_changed)
+	hero.skills.auto_cast_changed.connect(_skill_bar.show_auto_cast)
+	_skill_bar.auto_cast_toggle_requested.connect(_on_auto_cast_toggle_requested)
+	_skill_bar.show_auto_cast(hero.skills.auto_cast)
 	_director.enemy_killed.connect(_on_enemy_killed)
 	_director.survived.connect(_on_run_survived)
 	_pause_menu.resume_requested.connect(_on_resume_requested)
 	_pause_menu.retreat_requested.connect(_on_retreat_requested)
 	_retreat_dialog.confirmed.connect(_end.bind(RunResult.Outcome.RETREATED))
 	_retreat_dialog.cancelled.connect(_pause_menu.open)
+	_upgrade_overlay.offer_chosen.connect(_on_offer_chosen)
 	_end_panel.continue_pressed.connect(_on_continue_pressed)
 
 	# A saved hero is shown right after this scene is added, which starts the
@@ -90,6 +111,13 @@ func _exit_tree() -> void:
 func show_hero(data: HeroData) -> void:
 	_hero_data = data
 	hero.apply(data)
+	_unlocked = data.unlocked_skills()
+	_permanent_levels = data.skill_levels()
+	var loadout: Array[HeldSkill] = []
+	var start: SkillData = data.start_skill()
+	if start != null:
+		loadout.append(HeldSkill.new(start, _permanent_levels[start.id]))
+	hero.skills.set_loadout(loadout)
 	_start_run(data.level)
 	_refresh()
 
@@ -100,14 +128,24 @@ func _process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"pause") and not event.is_echo() and not _ending:
+		if _choosing:
+			return
 		get_viewport().set_input_as_handled()
 		get_tree().paused = true
 		_pause_menu.open()
 
 
 func _start_standalone_run() -> void:
-	if not _run_started:
-		_start_run(1)
+	if _run_started:
+		return
+	# No saved hero to take skills from: play as a fresh Novice.
+	_unlocked = SkillData.granted_by([HeroData.STARTING_CLASS])
+	var loadout: Array[HeldSkill] = []
+	var start: SkillData = SkillData.default_start(_unlocked)
+	if start != null:
+		loadout.append(HeldSkill.new(start))
+	hero.skills.set_loadout(loadout)
+	_start_run(1)
 
 
 func _start_run(level: int) -> void:
@@ -184,6 +222,50 @@ func _on_enemy_killed(enemy: Enemy) -> void:
 	_kills += 1
 	_experience += enemy.data.experience
 	_drop_loot(enemy)
+	var gained: int = _progress.add_experience(enemy.data.experience)
+	if gained > 0 and not _ending:
+		_pending_picks += gained
+		_offer_upgrades.call_deferred()
+
+
+## Pause the run and offer the next waiting upgrade pick, if there is one and
+## nothing else is in the way.
+func _offer_upgrades() -> void:
+	if _choosing or _pending_picks <= 0 or _ending:
+		return
+	if _pause_menu.visible or _retreat_dialog.visible:
+		return
+	var offers: Array[UpgradeOffer] = UpgradePool.roll(
+		_unlocked,
+		hero.skills.held,
+		_permanent_levels,
+		_director.quest.offer_count,
+		_rng,
+	)
+	if offers.is_empty():
+		_pending_picks = 0
+		return
+	_pending_picks -= 1
+	_choosing = true
+	get_tree().paused = true
+	_upgrade_overlay.open(offers, _progress.level - _pending_picks)
+
+
+func _on_offer_chosen(offer: UpgradeOffer) -> void:
+	match offer.kind:
+		UpgradeOffer.Kind.SKILL:
+			if offer.raises_held:
+				hero.skills.level_up(offer.skill.id)
+			else:
+				hero.skills.add_skill(HeldSkill.new(offer.skill, offer.skill_level))
+		UpgradeOffer.Kind.GENERIC:
+			hero.apply_upgrade(offer.upgrade)
+	_upgrade_overlay.close()
+	_choosing = false
+	if _pending_picks > 0:
+		_offer_upgrades()
+	else:
+		get_tree().paused = false
 
 
 ## Leave whatever `enemy` drops where it fell.
@@ -235,6 +317,7 @@ func _on_hero_pickup_reached(pickup: Pickup) -> void:
 func _on_resume_requested() -> void:
 	_pause_menu.close()
 	get_tree().paused = false
+	_offer_upgrades.call_deferred()
 
 
 func _on_retreat_requested() -> void:
@@ -251,17 +334,34 @@ func _on_hero_projectile_released(projectile: Projectile) -> void:
 	_projectiles.add_child(projectile)
 
 
+func _on_hero_effect_spawned(effect: Node2D, at: Vector2) -> void:
+	_projectiles.add_child(effect)
+	effect.global_position = at
+
+
+func _on_skills_changed() -> void:
+	_skill_bar.show_skills(hero.skills.held)
+
+
+func _on_auto_cast_toggle_requested() -> void:
+	hero.skills.set_auto_cast(not hero.skills.auto_cast)
+
+
 func _refresh() -> void:
+	var level: Vector2i = _progress.progress() if _progress != null else Vector2i.ZERO
 	_readout.text = (
-		"HP %d/%d    kills %d    exp +%d    gold %d    items %d    time %s / %s\nEsc to pause"
-		% [
-			ceili(hero.health.current),
-			roundi(hero.health.maximum),
-			_kills,
-			_experience,
-			_gold,
-			_items.size(),
-			RunResult.clock(_director.elapsed),
-			RunResult.clock(_director.quest.duration),
-		]
-	)
+		"HP %d/%d    Lv %d (%d/%d)    kills %d    exp +%d    gold %d    items %d\n"
+		+ "time %s / %s    Esc to pause    1-4 cast skills    Tab auto-cast"
+	) % [
+		ceili(hero.health.current),
+		roundi(hero.health.maximum),
+		_progress.level if _progress != null else 1,
+		level.x,
+		level.y,
+		_kills,
+		_experience,
+		_gold,
+		_items.size(),
+		RunResult.clock(_director.elapsed),
+		RunResult.clock(_director.quest.duration),
+	]

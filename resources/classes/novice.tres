@@ -8,6 +8,7 @@ script = ExtResource("1_class")
 id = &"novice"
 display_name = "Novice"
 icon = ExtResource("2_icon")
+color = Color(0.62, 0.56, 0.46, 1)
 description = "Grows evenly and slowly in everything, which is exactly why you want out of it."
 tier = 0
 armour_pool = &"novice"

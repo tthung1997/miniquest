@@ -12,7 +12,9 @@ extends Control
 ## with free points still waiting to be applied asks what to do with them.
 ## Advance opens a dialog of the classes the hero can become; the choice goes
 ## through HeroData.advance_to() and is reported with hero_changed like any
-## other edit. Skills and Gacha are not built yet, so their tiles are locked.
+## other edit. Skills swaps the inventory for the skill tree, where skill points
+## are spent and the skill a run starts with is chosen; Gacha is not built yet,
+## so its tile is locked.
 ## Runs standalone with an unselected portrait.
 
 signal quest_requested
@@ -63,8 +65,13 @@ var _after_leave_choice: Callable = Callable()
 @onready var _change_hero_button: Button = %ChangeHeroButton
 @onready var _store_button: Button = %StoreButton
 @onready var _advance_button: Button = %AdvanceButton
+@onready var _inventory_button: Button = %InventoryButton
+@onready var _skills_button: Button = %SkillsButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
 @onready var _advance_dialog: AdvanceDialog = %AdvanceDialog
+@onready var _skills_view: SkillTreePanel = %SkillsView
+@onready var _reset_dialog: ConfirmDialog = %ResetDialog
+@onready var _inventory_content: VBoxContainer = %Content
 
 
 func _ready() -> void:
@@ -77,6 +84,11 @@ func _ready() -> void:
 	_advance_button.pressed.connect(_on_advance_pressed)
 	_advance_dialog.class_chosen.connect(_on_class_chosen)
 	_advance_dialog.closed.connect(_advance_button.grab_focus)
+	_inventory_button.pressed.connect(_on_inventory_pressed)
+	_skills_button.pressed.connect(_on_skills_pressed)
+	_skills_view.hero_changed.connect(_on_hero_edited)
+	_skills_view.reset_requested.connect(_on_reset_requested)
+	_reset_dialog.confirmed.connect(_skills_view.reset_confirmed)
 	_item_menu.id_pressed.connect(_on_menu_id_pressed)
 	_stats_panel.points_applied.connect(_on_points_applied)
 	_confirm_dialog.confirmed.connect(_on_leave_apply_chosen)
@@ -137,6 +149,9 @@ func _refresh() -> void:
 	_stats_panel.show_hero(_hero)
 	_refresh_items()
 	_refresh_advance_button()
+	_refresh_skills_button()
+	if _hero != null and _skills_view.visible:
+		_skills_view.show_hero(_hero)
 	if _hero == null:
 		_name_label.text = "No hero selected"
 		_info_tag.show_text("Choose a hero to start")
@@ -177,6 +192,14 @@ func _refresh_advance_button() -> void:
 		else "Advance to a new class" if not options.is_empty()
 		else "No further classes yet"
 	)
+
+
+## Marked with an exclamation mark when there are skill points to spend.
+func _refresh_skills_button() -> void:
+	var points: int = _hero.unspent_skill_points if _hero != null else 0
+	_skills_button.disabled = _hero == null
+	_inventory_button.disabled = _hero == null
+	_skills_button.text = "SKILLS!" if points > 0 else "SKILLS"
 
 
 func _refresh_items() -> void:
@@ -293,6 +316,33 @@ func _on_advance_pressed() -> void:
 	if _stats_panel.has_pending():
 		note = "Apply your waiting stat points first: only spent points count."
 	_advance_dialog.open(_hero, note)
+
+
+func _on_inventory_pressed() -> void:
+	_show_skills(false)
+
+
+func _on_skills_pressed() -> void:
+	_show_skills(true)
+
+
+## Show the skill tree or the inventory in the same panel.
+func _show_skills(showing: bool) -> void:
+	if _hero == null or _skills_view.visible == showing:
+		return
+	_skills_view.visible = showing
+	_inventory_content.visible = not showing
+	_refresh()
+	if showing:
+		_skills_view.focus_selected()
+
+
+func _on_reset_requested(cost: int) -> void:
+	_reset_dialog.open(
+		"Take back every skill point for %d gold? Skills go back to level 1." % cost,
+		"RESET",
+		"CANCEL",
+	)
 
 
 func _on_class_chosen(class_id: StringName) -> void:

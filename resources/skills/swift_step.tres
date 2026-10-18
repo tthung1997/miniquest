@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/swift_step.png" id="1_bsm4s"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_rwv5v"]
+
+[resource]
+script = ExtResource("2_rwv5v")
+id = &"swift_step"
+display_name = "Swift Step"
+icon = ExtResource("1_bsm4s")
+class_id = &"ranger"
+description = "A burst of speed to get out of a closing circle."
+effect_note = "Power is read as percent move speed, lasting 3s."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.4
+})
+base_power = 25.0
+power_per_level = 5.0
+cooldown = 12.0
+cooldown_reduction_per_level = 0.6
+tint = Color(1, 0.9, 0.4, 0.7)
+buff = &"swift_step"
+buff_duration = 3.0

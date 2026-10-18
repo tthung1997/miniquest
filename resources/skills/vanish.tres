@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/vanish.png" id="1_uqbaw"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_54667"]
+
+[resource]
+script = ExtResource("2_54667")
+id = &"vanish"
+display_name = "Vanish"
+icon = ExtResource("1_uqbaw")
+class_id = &"assassin"
+description = "Drop out of sight. Nothing can target you while you are gone."
+effect_note = "Power is read as tenths of a second of untargetability. Manual only: a panic button that fires itself is not a panic button."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.3
+})
+base_power = 15.0
+power_per_level = 3.0
+cooldown = 22.0
+cooldown_reduction_per_level = 1.0
+supports_auto_cast = false
+tint = Color(0.7, 0.45, 1, 0.7)
+buff = &"vanish"

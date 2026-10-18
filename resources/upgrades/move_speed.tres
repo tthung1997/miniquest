@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="GenericUpgrade" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrades/generic_upgrade.gd" id="1_upgrade"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/upgrade_icons/move_speed.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_upgrade")
+icon = ExtResource("2_icon")
+id = &"move_speed"
+display_name = "Light Feet"
+description = "Run 10% faster, for this run."
+effect = 0
+amount = 0.1

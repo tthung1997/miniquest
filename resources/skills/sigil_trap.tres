@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/sigil_trap.png" id="1_2kb5o"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_arrp7"]
+
+[resource]
+script = ExtResource("2_arrp7")
+id = &"sigil_trap"
+display_name = "Sigil Trap"
+icon = ExtResource("1_2kb5o")
+class_id = &"arcane_archer"
+description = "Leave a rune on the ground behind you. It waits."
+effect_note = "Places a rune at the hero's position that detonates when an enemy touches it. Rewards kiting in circles."
+target = 2
+kind = 6
+scaling = Dictionary[StringName, float]({
+&"dexterity": 0.5,
+&"intelligence": 0.9
+})
+base_power = 14.0
+power_per_level = 5.0
+cooldown = 9.0
+cooldown_reduction_per_level = 0.4
+radius = 32.0
+tint = Color(0.7, 0.45, 1, 0.7)

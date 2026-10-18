@@ -31,6 +31,8 @@ var target: Hero = null
 var health: Health = null
 
 var _contact_cooldown: float = 0.0
+var _slow_amount: float = 0.0
+var _slow_left: float = 0.0
 var _flash: Tween = null
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
@@ -50,13 +52,16 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_contact_cooldown = maxf(_contact_cooldown - delta, 0.0)
+	_slow_left = maxf(_slow_left - delta, 0.0)
+	if is_zero_approx(_slow_left):
+		_slow_amount = 0.0
 	if target == null or not is_instance_valid(target):
 		velocity = Vector2.ZERO
 		return
 
 	var to_target: Vector2 = target.global_position - global_position
 	if to_target.length() > STOP_DISTANCE:
-		velocity = to_target.normalized() * data.speed
+		velocity = to_target.normalized() * data.speed * (1.0 - _slow_amount)
 	else:
 		velocity = Vector2.ZERO
 	move_and_slide()
@@ -82,13 +87,23 @@ func take_damage(amount: float) -> void:
 		_flash_white()
 
 
+## Move at `1 - amount` of normal speed for `seconds`. A stronger or longer
+## slow replaces a weaker one.
+func slow(amount: float, seconds: float) -> void:
+	_slow_amount = clampf(maxf(amount, _slow_amount), 0.0, 0.95)
+	_slow_left = maxf(seconds, _slow_left)
+
+
 func _hit_touching_target() -> void:
 	if _contact_cooldown > 0.0:
 		return
 	for body: Node2D in _contact.get_overlapping_bodies():
 		if body is Hero:
 			var hero: Hero = body
-			hero.take_damage(data.contact_damage * damage_scale)
+			# A hero nobody can target is walked through, not hurt.
+			if not hero.is_targetable():
+				return
+			hero.take_damage(data.contact_damage * damage_scale, self)
 			_contact_cooldown = data.contact_interval
 			return
 

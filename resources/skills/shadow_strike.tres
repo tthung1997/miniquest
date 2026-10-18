@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/shadow_strike.png" id="1_nj04u"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_l3074"]
+
+[resource]
+script = ExtResource("2_l3074")
+id = &"shadow_strike"
+display_name = "Shadow Strike"
+icon = ExtResource("1_nj04u")
+class_id = &"assassin"
+description = "Blink to the target and hit it where it cannot see you."
+effect_note = "Teleports the hero behind the target and always crits. Doubles as mobility, which is the real reason to take it."
+kind = 1
+scaling = Dictionary[StringName, float]({
+&"dexterity": 3.14
+})
+base_power = 61.0
+power_per_level = 36.0
+cooldown = 6.0
+cooldown_reduction_per_level = 0.3
+cast_range = 140.0
+teleports = true
+tint = Color(0.7, 0.45, 1, 0.7)

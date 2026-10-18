@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/flurry.png" id="1_qllhy"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_ca56r"]
+
+[resource]
+script = ExtResource("2_ca56r")
+id = &"flurry"
+display_name = "Flurry"
+icon = ExtResource("1_qllhy")
+class_id = &"duelist"
+description = "A rapid sequence of thrusts at whatever is nearest."
+kind = 1
+scaling = Dictionary[StringName, float]({
+&"dexterity": 1.49,
+&"strength": 1.49
+})
+base_power = 34.0
+power_per_level = 20.0
+cooldown = 3.5
+cooldown_reduction_per_level = 0.2
+cast_range = 48.0
+hits = 5
+duration = 0.6
+tint = Color(0.95, 0.95, 0.95, 0.7)

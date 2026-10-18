@@ -10,6 +10,8 @@ extends RefCounted
 const MAX_LEVEL: int = 30
 ## Free stat points a hero earns for each level gained.
 const FREE_POINTS_PER_LEVEL: int = 2
+## Skill points a hero earns for each level gained.
+const SKILL_POINTS_PER_LEVEL: int = 1
 ## A placeholder curve to be tuned by play.
 const EXP_BASE: float = 40.0
 const EXP_EXPONENT: float = 1.25

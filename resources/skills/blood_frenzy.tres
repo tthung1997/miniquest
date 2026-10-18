@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/blood_frenzy.png" id="1_ok305"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_rc7tl"]
+
+[resource]
+script = ExtResource("2_rc7tl")
+id = &"blood_frenzy"
+display_name = "Blood Frenzy"
+icon = ExtResource("1_ok305")
+class_id = &"berserker"
+description = "The closer to death you are, the faster you swing."
+effect_note = "Attack speed bonus scaled by missing health, lasting 6s. Rewards staying in the swarm."
+target = 2
+kind = 5
+scaling = Dictionary[StringName, float]({
+&"strength": 0.8
+})
+base_power = 30.0
+power_per_level = 8.0
+cooldown = 18.0
+cooldown_reduction_per_level = 0.9
+tint = Color(1, 0.3, 0.25, 0.7)
+buff = &"blood_frenzy"
+buff_duration = 6.0

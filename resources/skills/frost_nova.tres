@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/frost_nova.png" id="1_5wxqi"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_lqmse"]
+
+[resource]
+script = ExtResource("2_lqmse")
+id = &"frost_nova"
+display_name = "Frost Nova"
+icon = ExtResource("1_5wxqi")
+class_id = &"mage"
+description = "A ring of ice that hurts a little and slows a lot."
+effect_note = "Slows everything hit by 50% for 3s. The Mage's answer to being surrounded."
+target = 1
+scaling = Dictionary[StringName, float]({
+&"intelligence": 0.66
+})
+base_power = 13.0
+power_per_level = 7.0
+cooldown = 8.0
+cooldown_reduction_per_level = 0.4
+radius = 64.0
+tint = Color(0.5, 0.9, 1, 0.7)
+slow = 0.5
+slow_duration = 3.0
