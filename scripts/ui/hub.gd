@@ -33,6 +33,8 @@ const STAGE_HEIGHT: float = 68.0
 ## Puts the frame's top row on the stage's top edge and leaves the dais clear
 ## of the bottom one.
 const FEET_MARGIN: float = 11.0
+## Tint of the gold chip's wood while the mouse is over it.
+const GOLD_HOVER_TINT: Color = Color(1.3, 1.25, 1.15)
 
 ## Whole-number scale keeps the pixel art crisp. 3x leaves no room for the
 ## stats panel under the hero on 360 lines.
@@ -53,6 +55,7 @@ var _after_leave_choice: Callable = Callable()
 @onready var _name_label: Label = %NameLabel
 @onready var _info_tag: ClassTag = %InfoTag
 @onready var _gold_label: Label = %GoldLabel
+@onready var _gold_chip: PanelContainer = %GoldChip
 @onready var _gold_button: Button = %GoldButton
 @onready var _exp_label: Label = %ExpLabel
 @onready var _count_label: Label = %CountLabel
@@ -81,6 +84,8 @@ func _ready() -> void:
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
 	_gold_button.pressed.connect(_on_store_pressed)
+	_gold_button.mouse_entered.connect(_set_gold_hover.bind(true))
+	_gold_button.mouse_exited.connect(_set_gold_hover.bind(false))
 	_info_tag.pressed.connect(_on_advance_pressed)
 	_advance_dialog.class_chosen.connect(_on_class_chosen)
 	_advance_dialog.closed.connect(_focus_class_tag)
@@ -222,6 +227,17 @@ func _focus_default() -> void:
 		_change_hero_button.grab_focus()
 	else:
 		_quest_button.grab_focus()
+
+
+## The gold chip is the store's click target, so the whole chip brightens under
+## the mouse, as an item cell does.
+func _set_gold_hover(hovered: bool) -> void:
+	if not hovered:
+		_gold_chip.remove_theme_stylebox_override(&"panel")
+		return
+	var box: StyleBoxTexture = _gold_chip.get_theme_stylebox(&"panel").duplicate()
+	box.modulate_color = GOLD_HOVER_TINT
+	_gold_chip.add_theme_stylebox_override(&"panel", box)
 
 
 func _focus_class_tag() -> void:

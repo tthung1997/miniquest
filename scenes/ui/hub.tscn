@@ -24,6 +24,8 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_view"]
 
+[sub_resource type="StyleBoxEmpty" id="GoldClear"]
+
 [sub_resource type="AtlasTexture" id="ClosedChest"]
 atlas = ExtResource("8_chest")
 region = Rect2(0, 0, 16, 16)
@@ -138,6 +140,7 @@ size_flags_horizontal = 3
 mouse_filter = 2
 
 [node name="GoldChip" type="PanelContainer" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 theme_type_variation = &"Chip"
@@ -147,7 +150,10 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Gold - open the store to browse and try on everything for sale"
 mouse_default_cursor_shape = 2
-theme_type_variation = &"QuietButton"
+theme_override_styles/normal = SubResource("GoldClear")
+theme_override_styles/hover = SubResource("GoldClear")
+theme_override_styles/pressed = SubResource("GoldClear")
+theme_override_styles/disabled = SubResource("GoldClear")
 
 [node name="Row" type="HBoxContainer" parent="Margin/Column/TopBar/GoldChip"]
 layout_mode = 2
