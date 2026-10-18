@@ -1,7 +1,8 @@
 class_name HubPreview
 extends Node
 ## Opens the hub with a throwaway hero carrying rolled armour from every pool
-## and every pair of boots, so equipping can be tried before item drops exist.
+## and every pair of boots, cycling through every rarity, so equipping and
+## rarity can be tried before item drops are tuned.
 ##
 ## The hero is never saved: hero_changed is left unconnected. Raise
 ## `spare_armours` to 25 to try a full inventory, and `unspent_points` to try
@@ -27,12 +28,21 @@ func _ready() -> void:
 		return
 	hero.gain_experience(Levelling.total_exp_for(hero_level))
 	hero.unspent_points = unspent_points
+	var rarities: Array[RarityData] = RarityData.all()
 	for i in mini(spare_armours, HeroData.INVENTORY_SIZE):
 		var armour: ArmourItem = ArmourItem.roll(POOLS[i % POOLS.size()])
-		if armour == null or not hero.add_to_inventory(armour):
+		if armour == null:
 			return
+		armour.rarity = rarities[i % rarities.size()].id
+		if not hero.add_to_inventory(armour):
+			return
+	var next_rarity: int = 0
 	for boots_id: StringName in BootsData.all_ids():
 		var boots: BootsItem = BootsItem.create(boots_id)
-		if boots == null or not hero.add_to_inventory(boots):
+		if boots == null:
+			break
+		boots.rarity = rarities[next_rarity % rarities.size()].id
+		next_rarity += 1
+		if not hero.add_to_inventory(boots):
 			break
 	_hub.show_hero(hero)

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RarityData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/rarity_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"epic"
+display_name = "Epic"
+order = 3
+color = Color(0.72, 0.42, 0.95, 1)
+stat_multiplier = 1.8
+drop_weight = 4.0
+tint_strength = 0.35

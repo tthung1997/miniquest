@@ -163,6 +163,9 @@ func _collect_layers() -> void:
 
 
 func _apply_armour() -> void:
+	var tint: Material = _tint_of(_armour)
+	for layer: AnimatedSprite2D in [_hat, _shirt, _pants]:
+		layer.material = tint
 	if _armour == null:
 		_hat.sprite_frames = null
 		_shirt.sprite_frames = null
@@ -175,10 +178,18 @@ func _apply_armour() -> void:
 
 func _apply_boots() -> void:
 	_boots_layer.sprite_frames = _boots.frames() if _boots != null else null
+	_boots_layer.material = _tint_of(_boots)
 
 
 func _apply_weapon() -> void:
 	_weapon_layer.sprite_frames = _weapon.frames() if _weapon != null else null
+	_weapon_layer.material = _tint_of(_weapon)
+
+
+## The material that recolours `item`'s art for its rarity; null for no item or
+## a rarity that leaves the art as drawn.
+func _tint_of(item: EquipmentItem) -> Material:
+	return item.get_rarity().get_tint_material() if item != null else null
 
 
 func _sync_layers() -> void:

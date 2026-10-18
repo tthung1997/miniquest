@@ -22,13 +22,20 @@ static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
 
 
 ## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
-## art of `pool`. Null, with an error, when nothing could be rolled.
+## art of `pool`, at a rarity weighted by each rarity's drop weight. Null, with
+## an error, when nothing could be rolled.
 static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> EquipmentItem:
+	var item: EquipmentItem = null
 	if rng.randf() < BOOTS_SHARE:
-		var boots: BootsItem = BootsItem.roll(rng)
-		if boots != null:
-			return boots
-	return ArmourItem.roll(pool, rng)
+		item = BootsItem.roll(rng)
+	if item == null:
+		item = ArmourItem.roll(pool, rng)
+	if item == null:
+		return null
+	var rarity: RarityData = RarityData.roll(rng)
+	if rarity != null:
+		item.rarity = rarity.id
+	return item
 
 
 ## The items a win adds: the first roll always lands, each later one with the

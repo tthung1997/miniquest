@@ -4,7 +4,8 @@ extends Control
 ## scale so the pixel art stays crisp. Shows a faded placeholder when empty.
 ##
 ## Purely visual and ignores the mouse, so it can sit inside a cell or follow
-## the cursor as a drag preview.
+## the cursor as a drag preview. Its material recolours the art for the item's
+## rarity, so it never draws the rarity frame, which would be recoloured too.
 
 @export_range(1, 4) var icon_scale: int = 2:
 	set(value):
@@ -30,6 +31,7 @@ extends Control
 var item: EquipmentItem = null:
 	set(value):
 		item = value
+		material = item.get_rarity().get_tint_material() if item != null else null
 		queue_redraw()
 
 var _used_rects: Dictionary[Texture2D, Rect2] = {}

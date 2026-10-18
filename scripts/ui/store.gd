@@ -260,7 +260,9 @@ func _try_armour_piece(single: ArmourItem) -> void:
 ## wear that class's, otherwise the first variant of each piece.
 func _starting_armour(pool: StringName) -> ArmourItem:
 	if _hero.armour != null and _hero.armour.pool == pool:
-		return _hero.armour.duplicate() as ArmourItem
+		var worn: ArmourItem = _hero.armour.duplicate() as ArmourItem
+		worn.rarity = RarityData.COMMON
+		return worn
 	var armour: ArmourItem = ArmourItem.new()
 	armour.pool = pool
 	for piece: ArmourItem.Piece in StoreCatalog.ARMOUR_PIECES:

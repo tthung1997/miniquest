@@ -318,11 +318,12 @@ func _on_skill_effect_spawned(effect: Node2D, at: Vector2) -> void:
 	effect_spawned.emit(effect, at)
 
 
-## What one hit of `data` deals, from the hero's stats, plus Flame Brand's fire
-## while it burns, times the run's damage upgrades. A hero with no saved stats,
-## such as one placed in a scene run on its own, deals the base damage.
-func _damage_of(data: WeaponData) -> float:
-	var base: float = data.base_damage if _stats == null else data.damage_for(_stats)
+## What one hit of `item` deals, from the hero's stats and the item's rarity,
+## plus Flame Brand's fire while it burns, times the run's damage upgrades. A
+## hero with no saved stats, such as one placed in a scene run on its own, deals
+## the base damage.
+func _damage_of(item: WeaponItem) -> float:
+	var base: float = item.base_damage() if _stats == null else item.damage_for(_stats)
 	return (base + buffs.magnitude(HeroBuffs.FLAME_BRAND)) * damage_multiplier()
 
 
@@ -339,7 +340,7 @@ func _on_doll_attack_released() -> void:
 
 ## Hurt every enemy within range on the side the hero faces.
 func _strike(data: WeaponData) -> void:
-	var damage: float = _damage_of(data)
+	var damage: float = _damage_of(weapon)
 	var facing: float = 1.0 if _doll.is_facing_right() else -1.0
 	for enemy: Enemy in _sensor.enemies_within(global_position, data.attack_range):
 		if (enemy.global_position.x - global_position.x) * facing >= -MELEE_REACH_BEHIND:
@@ -360,7 +361,7 @@ func _shoot(data: WeaponData) -> void:
 		return
 	var projectile: Projectile = node
 	var origin: Vector2 = _doll.to_global(_doll.get_release_position())
-	projectile.damage = _damage_of(data)
+	projectile.damage = _damage_of(weapon)
 	projectile.launch(origin, _aim_direction(origin), data.attack_range, velocity)
 	projectile_released.emit(projectile)
 

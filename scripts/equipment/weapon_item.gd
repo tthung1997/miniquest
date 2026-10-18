@@ -40,16 +40,41 @@ func get_tooltip_text() -> String:
 	var weapon: WeaponData = data()
 	if weapon == null:
 		return get_display_name()
+	var rarity_data: RarityData = get_rarity()
 	var scaling: PackedStringArray = []
 	for stat_name: StringName in weapon.scaling:
 		var stat_text: String = String(stat_name).left(3).to_upper()
-		scaling.append("%s %s" % [String.num(weapon.scaling[stat_name]), stat_text])
-	var damage: String = String.num(weapon.base_damage)
+		var factor: float = rarity_data.scale_value(weapon.scaling[stat_name])
+		scaling.append("%s %s" % [_format(factor), stat_text])
+	var damage: String = _format(rarity_data.scale_value(weapon.base_damage))
 	if not scaling.is_empty():
 		damage += " + " + " + ".join(scaling)
-	return "%s\nDamage %s\nAttacks every %ss\nRange %d" % [
-		get_display_name(), damage, String.num(weapon.attack_interval), roundi(weapon.attack_range)
-	]
+	var lines: PackedStringArray = get_header_lines()
+	lines.append("Damage %s" % damage)
+	lines.append("Attacks every %ss" % String.num(weapon.attack_interval))
+	lines.append("Range %d" % roundi(weapon.attack_range))
+	return "\n".join(lines)
+
+
+## Damage of one hit when `wielder` swings this weapon: the template's damage
+## times this item's rarity.
+func damage_for(wielder: HeroData) -> float:
+	return damage_with(wielder.total_stats())
+
+
+## Damage of one hit for stat values `stats`, keyed like HeroData.STATS. Zero,
+## with an error from data(), when the template is missing.
+func damage_with(stats: Dictionary[StringName, int]) -> float:
+	var weapon: WeaponData = data()
+	if weapon == null:
+		return 0.0
+	return get_rarity().scale_value(weapon.damage_with(stats))
+
+
+## Damage of one hit with no stats at all, for a hero that has none.
+func base_damage() -> float:
+	var weapon: WeaponData = data()
+	return get_rarity().scale_value(weapon.base_damage) if weapon != null else 0.0
 
 
 func get_icon_layers() -> Array[Texture2D]:
@@ -64,3 +89,8 @@ func get_icon_layers() -> Array[Texture2D]:
 func frames() -> SpriteFrames:
 	var weapon: WeaponData = data()
 	return weapon.frames if weapon != null else null
+
+
+## Up to two decimals, dropping zeros: scaled numbers such as 0.3125 stay short.
+static func _format(value: float) -> String:
+	return String.num(snappedf(value, 0.01))

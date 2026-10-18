@@ -294,7 +294,22 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
     flies straight at where the target was.
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
-- **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
+- **Five rarities: Common, Uncommon, Rare, Epic, Legendary.** Each is a
+  `RarityData` in `resources/rarities/` and an item stores only its id (saves
+  from before rarities load as Common). A rarity sets a stat multiplier (x1.0,
+  1.25, 1.5, 1.8, 2.2), a drop weight (60, 25, 10, 4, 1) and how it looks; all
+  placeholders. The multiplier scales a weapon's damage and scaling, and a pair
+  of boots' speed and stat points (points round up, so a 1-point bonus still
+  improves). **Armour has no numbers yet, so its rarity is only its look**; it
+  will scale defence and VIT once those exist. Every item a run drops, armour or
+  boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
+  and starting weapons exist, all Common.
+- **Rarity is shown two ways.** Menus draw a frame and a faint wash in the
+  rarity's colour around the item (none for Common, so a full inventory is not a
+  wall of borders), and the tooltip names the rarity. The item's art, in cells
+  and on the hero, is shifted towards that colour by a palette shader
+  (`shaders/item_rarity.gdshader`), which leaves the dark outline alone. That is
+  one drawing, five tiers, with no new art.
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
@@ -431,7 +446,8 @@ drops more. All of these are starting values, to be tuned.
 
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
 rarely, an item (2%). Items are armour, rolled from the art pool of the hero's
-class, or boots (30% of them, section 5.6); weapons will drop once they have rarity. The hero collects a drop by
+class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
+weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
 banked, and any item that does not fit the 25-cell inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
@@ -736,7 +752,7 @@ Out until later:
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's
   assembled sets should be decided together.
-- How the 27 extra weapons are obtained (drops once they have rarity, packs, or
+- How the 27 extra weapons are obtained (drops, now that weapons have rarity, packs, or
   as run rewards), and whether weapons of one type should be restricted by
   hero level.
 

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RarityData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/rarity_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"common"
+display_name = "Common"
+order = 0
+color = Color(0.82, 0.8, 0.74, 1)
+stat_multiplier = 1.0
+drop_weight = 60.0
+tint_strength = 0.0
+framed = false
