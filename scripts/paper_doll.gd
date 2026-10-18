@@ -25,7 +25,7 @@ const WALK_CLIP: StringName = &"walk"
 const ATTACK_CLIP: StringName = &"attack"
 ## How much of the rarity's glow brightness the aura behind the hero shows. The
 ## aura is additive, so it needs to be softer than the glow behind an icon.
-const AURA_SHARE: float = 0.9
+const AURA_SHARE: float = 0.65
 
 ## Where the near hand is on each frame of each body clip, in pixels relative
 ## to the idle pose, facing right. Weapon idle and walk sheets already carry

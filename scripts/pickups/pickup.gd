@@ -93,8 +93,8 @@ func _draw_item(lift: float) -> void:
 	var rarity: RarityData = item.get_rarity()
 	if rarity != null and rarity.glow_strength > 0.0:
 		glow = rarity.color
-		glow.a = GLOW_COLOR.a + rarity.glow_at(_age / BOB_SPEED) * 0.4
-		radius *= 1.0 + rarity.glow_strength * 0.4
+		glow.a = GLOW_COLOR.a + rarity.glow_at(_age / BOB_SPEED) * 0.2
+		radius *= 1.0 + rarity.glow_strength * 0.25
 	draw_circle(origin + size * 0.5, radius, glow)
 	for layer: Texture2D in item.get_icon_layers():
 		draw_texture_rect(layer, Rect2(origin, size), false)

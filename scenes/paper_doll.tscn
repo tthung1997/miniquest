@@ -17,7 +17,7 @@ hand_offsets = Dictionary[StringName, PackedVector2Array]({
 visible = false
 material = SubResource("CanvasItemMaterial_aura")
 position = Vector2(0, -22)
-scale = Vector2(3, 3)
+scale = Vector2(2, 2)
 
 [node name="Body" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_body")
