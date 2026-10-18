@@ -13,9 +13,9 @@ extends EquipmentItem
 ## sheets as <nn>_icon.png, so two items differ wherever any piece does.
 ##
 ## Each item also rolls its stat points when acquired and keeps them: Vitality
-## on every one, plus a point or two of the stat its base class leans on. The
-## rolled points are the Common values; get_stat_bonuses() multiplies them by
-## the item's rarity.
+## on every one but Novice's plain clothes, plus a point or two of the stat its
+## base class leans on. The rolled points are the Common values;
+## get_stat_bonuses() multiplies them by the item's rarity.
 
 enum Piece { HAT, SHIRT, PANTS }
 
@@ -34,6 +34,9 @@ const NO_PIECE: int = 0
 ## Placeholders, like every number until the gear can be played.
 const VITALITY_ROLL: Vector2i = Vector2i(2, 4)
 const LEANING_ROLL: Vector2i = Vector2i(1, 3)
+## Novice armour is plain clothes: at most a point of Vitality, often none.
+const NOVICE_POOL: StringName = &"novice"
+const NOVICE_VITALITY_ROLL: Vector2i = Vector2i(0, 1)
 ## The stat each base class's armour leans on. Novice leans on none.
 const POOL_LEANINGS: Dictionary[StringName, StringName] = {
 	&"mage": &"intelligence",
@@ -47,8 +50,8 @@ const POOL_LEANINGS: Dictionary[StringName, StringName] = {
 @export_range(0, 99) var shirt_id: int = NO_PIECE
 @export_range(0, 99) var pants_id: int = NO_PIECE
 ## Stat points rolled when the item was acquired, keyed by HeroData stat name,
-## before its rarity multiplies them. Empty on an item from before armour had
-## stats; HeroData.upgrade() rolls those.
+## before its rarity multiplies them. Empty for Novice armour that rolled none,
+## and for an item from before armour had stats; HeroData.upgrade() rolls those.
 @export var stat_points: Dictionary[StringName, int] = {}
 
 var _icon_layers: Array[Texture2D] = []
@@ -108,10 +111,14 @@ func get_stat_bonuses() -> Dictionary[StringName, int]:
 
 
 ## Replace this item's stat points with a fresh roll: Vitality, and a point or
-## two of the stat its pool leans on, when it has one.
+## two of the stat its pool leans on, when it has one. Novice armour rolls at
+## most a point of Vitality, and may roll none.
 func roll_stats(rng: RandomNumberGenerator) -> void:
 	stat_points.clear()
-	stat_points[&"vitality"] = rng.randi_range(VITALITY_ROLL.x, VITALITY_ROLL.y)
+	var vitality_roll: Vector2i = NOVICE_VITALITY_ROLL if pool == NOVICE_POOL else VITALITY_ROLL
+	var vitality: int = rng.randi_range(vitality_roll.x, vitality_roll.y)
+	if vitality > 0:
+		stat_points[&"vitality"] = vitality
 	var leaning: StringName = POOL_LEANINGS.get(pool, &"")
 	if leaning != &"":
 		stat_points[leaning] = rng.randi_range(LEANING_ROLL.x, LEANING_ROLL.y)
