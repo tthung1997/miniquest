@@ -229,7 +229,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 | Slot | Carries |
 | --- | --- |
 | Weapon | Damage, scaling type, attack speed |
-| Armour | Defence, VIT |
+| Armour | VIT, plus a stat its class leans on (Defence is not built) |
 | Boots | Move speed, plus a few stat points |
 | Accessory | Cooldown reduction, crit, pickup radius |
 
@@ -238,12 +238,22 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   hat.
 - **Armour looks are rolled per piece.** Each base class has its own pool of hat,
   shirt and pants art. When an Armour item is acquired, each piece is rolled
-  separately from its class's pool, so two Mages rarely look the same. The roll is
-  cosmetic only: stats still come from the template and rarity. The rolled pieces
+  separately from its class's pool, so two Mages rarely look the same. The pieces
   are stored on the item, by piece id, so adding art to a pool never changes what
   an existing item looks like. Advanced classes wear their base class's armour.
   Mage, Ranger and Warrior each have ten variants of every piece (Novice has
   one, so far).
+- **Armour stats are rolled once per item.** Each Armour item rolls a few stat
+  points when acquired and keeps them: 2 to 4 VIT, plus 1 to 3 points of the stat
+  its base class leans on (Mage INT, Ranger DEX, Warrior STR). **Novice armour is
+  plain clothes:** exactly 1 VIT at Common and nothing else, but it has rarity like
+  any other armour. These are the Common values, saved on the item as
+  `stat_points`; rarity multiplies them when read, so an item keeps its roll if
+  its rarity changes. Armour gives no Defence: there is no such stat, and the
+  existing four are all it uses. The rolls are placeholders. This is the one place
+  an item has a random roll, because armour has no fixed template the way weapons
+  and boots do. Saves from before this get a roll for their armour on load
+  (`HeroData.upgrade()`).
 - **Armour, Boots and Weapon are drawn on the hero** (see 9.2): Armour as its
   three layers, Boots as a layer over the feet, and the Weapon in the near hand,
   in front of the body: the sword and wand are held low, pointing forward and
@@ -294,7 +304,24 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
     flies straight at where the target was.
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
-- **Rarity is a palette shader, not new art.** Draw a sword once, get five tiers.
+- **Five rarities: Common, Uncommon, Rare, Epic, Legendary.** Each is a
+  `RarityData` in `resources/rarities/` and an item stores only its id (saves
+  from before rarities load as Common). A rarity sets a stat multiplier (x1.0,
+  1.25, 1.5, 1.8, 2.2), a drop weight (60, 25, 10, 4, 1) and how it looks; all
+  placeholders. The multiplier scales a weapon's damage and scaling, a pair of
+  boots' speed and stat points, and an armour's rolled stat points (points round
+  up, so a 1-point bonus still improves). Every item a run drops, armour or
+  boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
+  and starting weapons exist, all Common.
+- **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
+  around the item (none for Common, so a full inventory is not a wall of
+  borders), and the tooltip names the rarity. Behind the item sits a glow in the
+  same colour, drawn in a few hard bands to suit the pixel art; on the hero, the
+  glow is an aura behind the doll in the colour of the best rarity worn, and the
+  held weapon gets a one-pixel outline (`shaders/item_outline.gdshader`). Epic
+  and Legendary pulse. Only the weapon is outlined, since it is the top layer and
+  cannot paint over another. Glow is brightness, not a recolour: a plain recolour
+  of the art was tried first and did not read as special. It needs no new art.
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
@@ -357,7 +384,9 @@ attack button.
 The first arena is a **meadow**: a grass field 48×27 tiles of 32px
 (1536×864, about 2.4 screens each way) with scattered dirt patches and
 decorative tufts and flowers that never collide, ringed by a tree line four
-tiles deep. The walls are one plain rectangle per side at the field's edge,
+tiles deep. It uses the pack's darker green grass, dirt and trees rather than the
+lime set, and a slightly dark, cool tint over every map layer (not the hero or
+enemies), so the field stays quiet and the characters stand out. The walls are one plain rectangle per side at the field's edge,
 not per-tree shapes, so kiting along an edge is predictable. Trees are y-sorted
 with the hero: the hero passes in front of the top row and behind the canopies
 of the bottom row, which stands a tile back so only the feet are covered. The
@@ -421,17 +450,22 @@ awarded for time survived directly.
 |---|---|---|
 | **Exp** | Banked | Banked |
 | **Gold and item drops picked up** | Banked | Lost |
-| **Win bonus** | Extra gold and exp, plus one or more extra item drop rolls | None |
+| **Win bonus** | Extra gold and exp, plus one extra item | None |
 
 Every run pays exp, so a fresh build is never a wasted session, but a win is
-clearly worth more. A win adds 60 exp and 40 gold, and rolls for item drops: one
-roll that always lands, plus one more roll for each 30 s of ramp the hero's level
-skipped (section 4), each landing half the time. So a higher-level hero's win
-drops more. All of these are starting values, to be tuned.
+clearly worth more. A win adds 60 exp, 40 gold and one item, the same for every
+hero. **The amount of loot never depends on the hero's level; its quality does**:
+a hero who starts further along the ramp (section 4) rolls higher rarities more
+often (`QuestData.start_difficulty`, 0 at level 1 up to 1 at the level shift's
+cap, and `RarityData.DIFFICULTY_GAIN`). All of these are starting values, to be
+tuned.
 
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
-rarely, an item (2%). Items are armour, rolled from the art pool of the hero's
-class, or boots (30% of them, section 5.6); weapons will drop once they have rarity. The hero collects a drop by
+rarely, an item (2%), though never more than 2 items a run (`max_item_drops` on
+the quest), however lucky the rolls. With the win bonus that is at most 3 items
+in a won run, for every hero. Items are armour, rolled from the art pool of the hero's
+class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
+weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
 banked, and any item that does not fit the 25-cell inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
@@ -730,13 +764,13 @@ Out until later:
 - Whether gold has sinks other than gacha.
 - What the final elite at the end of the run is, and whether it is worth a
   dedicated reward.
-- Whether the win bonus's drop-roll rule (section 6.5) rewards high-level heroes too
-  much, given that they also start further along the ramp.
+- Whether the way difficulty shifts loot rarity (section 6.5) rewards high-level
+  heroes too much, given that they also start further along the ramp.
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's
   assembled sets should be decided together.
-- How the 27 extra weapons are obtained (drops once they have rarity, packs, or
+- How the 27 extra weapons are obtained (drops, now that weapons have rarity, packs, or
   as run rewards), and whether weapons of one type should be restricted by
   hero level.
 

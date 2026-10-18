@@ -60,12 +60,16 @@ func get_stat_bonuses() -> Dictionary[StringName, int]:
 	var boots: BootsData = data()
 	if boots == null:
 		return {}
-	return boots.stat_bonuses
+	var rarity_data: RarityData = get_rarity()
+	var scaled: Dictionary[StringName, int] = {}
+	for stat_name: StringName in boots.stat_bonuses:
+		scaled[stat_name] = rarity_data.scale_points(boots.stat_bonuses[stat_name])
+	return scaled
 
 
 func get_move_speed_bonus() -> float:
 	var boots: BootsData = data()
-	return boots.move_speed if boots != null else 0.0
+	return get_rarity().scale_value(boots.move_speed) if boots != null else 0.0
 
 
 ## The frames to draw over the feet, or null when the template has none.

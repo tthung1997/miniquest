@@ -51,11 +51,14 @@ extends Resource
 ## What winning adds on top of what the hero collected (DESIGN.md section 6.5).
 @export_range(0, 10000) var win_bonus_experience: int = 60
 @export_range(0, 10000) var win_bonus_gold: int = 40
-## A win rolls for one item, which is always given, plus one more roll for each
-## this many seconds of ramp the hero skipped, each landing with the chance
-## below. So a higher-level hero's win drops more.
-@export_range(5.0, 300.0, 1.0, "suffix:s") var win_bonus_seconds_per_roll: float = 30.0
-@export_range(0.0, 1.0, 0.05) var win_bonus_drop_chance: float = 0.5
+## Items a win always adds. The same for every hero: a higher level changes how
+## good the loot is, not how much of it there is.
+@export_range(0, 10) var win_bonus_item_count: int = 1
+
+@export_group("Drops")
+## Most items a run's kills can leave on the ground, however lucky the rolls.
+## The win bonus is on top of these, so a win gives at most this plus the bonus.
+@export_range(0, 100) var max_item_drops: int = 2
 
 
 ## Where on the ramp, in seconds, a hero of `level` begins.
@@ -94,7 +97,10 @@ func run_exp_to_leave(level: int) -> int:
 	return roundi(run_level_exp_base * pow(maxi(level, 1), run_level_exp_exponent))
 
 
-## How many item rolls a win earns for a run that began `ramp_start` seconds
-## into the ramp: the guaranteed one, plus one per win_bonus_seconds_per_roll.
-func win_bonus_rolls(ramp_start: float) -> int:
-	return 1 + floori(ramp_start / win_bonus_seconds_per_roll)
+## How hard a run that began `ramp_start` seconds into the ramp is to start, from
+## 0.0 (a level 1 hero) to 1.0 (a hero skipping the whole level shift). Loot
+## quality follows it: the amount of loot never does.
+func start_difficulty(ramp_start: float) -> float:
+	if start_cap <= 0.0:
+		return 0.0
+	return clampf(ramp_start / start_cap, 0.0, 1.0)

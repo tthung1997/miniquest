@@ -17,6 +17,10 @@ signal context_requested(cell: ItemCell)
 ## `item` was dropped onto `cell` from another cell.
 signal item_dropped(cell: ItemCell, item: EquipmentItem)
 
+## Gap between the cell's edge and its rarity frame, and the frame's thickness.
+const FRAME_INSET: float = 2.0
+const FRAME_WIDTH: float = 2.0
+
 ## An equipment slot accepts inventory items for its slot. An inventory cell
 ## accepts items dragged off an equipment slot.
 @export var is_equipment_slot: bool = false
@@ -102,9 +106,23 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 
 
 func _draw() -> void:
+	_draw_rarity_frame()
 	if _drop_hint:
 		var inset: Vector2 = Vector2.ONE * get_theme_constant(&"drop_hint_inset")
 		draw_style_box(get_theme_stylebox(&"drop_hint"), Rect2(inset, size - inset * 2.0))
+
+
+## A frame in the item's rarity colour, drawn under the icon and its glow.
+## Plain items get none.
+func _draw_rarity_frame() -> void:
+	if item == null or locked:
+		return
+	var rarity: RarityData = item.get_rarity()
+	if rarity == null or not rarity.framed:
+		return
+	# A line is centred on its edge, so pull the rect in by half its width.
+	var line: Vector2 = Vector2.ONE * (FRAME_INSET + FRAME_WIDTH * 0.5)
+	draw_rect(Rect2(line, size - line * 2.0), rarity.color, false, FRAME_WIDTH)
 
 
 ## Whether `source`'s item may be dropped here. Inventory to inventory is not a
@@ -127,6 +145,7 @@ func _refresh() -> void:
 	disabled = locked
 	focus_mode = Control.FOCUS_NONE if locked else Control.FOCUS_ALL
 	tooltip_text = _tooltip()
+	queue_redraw()
 
 
 func _tooltip() -> String:

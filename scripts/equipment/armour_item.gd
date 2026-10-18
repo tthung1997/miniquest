@@ -11,6 +11,11 @@ extends EquipmentItem
 ##
 ## The inventory icon stacks each piece's own 16x16 icon, drawn beside its
 ## sheets as <nn>_icon.png, so two items differ wherever any piece does.
+##
+## Each item also rolls its stat points when acquired and keeps them: Vitality,
+## plus a point or two of the stat its base class leans on. Novice's plain
+## clothes are fixed at 1 Vitality instead. The points are the Common values;
+## get_stat_bonuses() multiplies them by the item's rarity.
 
 enum Piece { HAT, SHIRT, PANTS }
 
@@ -24,12 +29,31 @@ const ICON_SUFFIX: String = "_icon.png"
 ## the pants' waist.
 const ICON_ORDER: Array[Piece] = [Piece.PANTS, Piece.SHIRT, Piece.HAT]
 const NO_PIECE: int = 0
+## Stat points a new item rolls, lowest and highest, before its rarity
+## multiplies them: Vitality always, and the class's own stat where it has one.
+## Placeholders, like every number until the gear can be played.
+const VITALITY_ROLL: Vector2i = Vector2i(2, 4)
+const LEANING_ROLL: Vector2i = Vector2i(1, 3)
+## Novice armour is plain clothes: exactly one point of Vitality at Common, and
+## nothing else.
+const NOVICE_POOL: StringName = &"novice"
+const NOVICE_VITALITY: int = 1
+## The stat each base class's armour leans on. Novice leans on none.
+const POOL_LEANINGS: Dictionary[StringName, StringName] = {
+	&"mage": &"intelligence",
+	&"ranger": &"dexterity",
+	&"warrior": &"strength",
+}
 
 ## Base class whose art this item was rolled from, such as &"mage".
 @export var pool: StringName = &""
 @export_range(0, 99) var hat_id: int = NO_PIECE
 @export_range(0, 99) var shirt_id: int = NO_PIECE
 @export_range(0, 99) var pants_id: int = NO_PIECE
+## Stat points rolled when the item was acquired, keyed by HeroData stat name,
+## before its rarity multiplies them. Empty only on an item from before armour
+## had stats; HeroData.upgrade() rolls those.
+@export var stat_points: Dictionary[StringName, int] = {}
 
 var _icon_layers: Array[Texture2D] = []
 var _icon_loaded: bool = false
@@ -51,6 +75,7 @@ static func roll(pool_id: StringName, rng: RandomNumberGenerator = null) -> Armo
 	if item.hat_id == NO_PIECE and item.shirt_id == NO_PIECE and item.pants_id == NO_PIECE:
 		push_error("ArmourItem: pool '%s' has no armour art to roll from." % pool_id)
 		return null
+	item.roll_stats(rng)
 	return item
 
 
@@ -75,6 +100,29 @@ func get_slot() -> EquipmentItem.Slot:
 
 func get_display_name() -> String:
 	return "%s Armour" % String(pool).capitalize()
+
+
+## The rolled points, multiplied by this item's rarity.
+func get_stat_bonuses() -> Dictionary[StringName, int]:
+	var rarity_data: RarityData = get_rarity()
+	var scaled: Dictionary[StringName, int] = {}
+	for stat_name: StringName in stat_points:
+		scaled[stat_name] = rarity_data.scale_points(stat_points[stat_name])
+	return scaled
+
+
+## Replace this item's stat points with a fresh roll: Vitality, and a point or
+## two of the stat its pool leans on, when it has one. Novice armour is always
+## exactly 1 Vitality.
+func roll_stats(rng: RandomNumberGenerator) -> void:
+	stat_points.clear()
+	if pool == NOVICE_POOL:
+		stat_points[&"vitality"] = NOVICE_VITALITY
+		return
+	stat_points[&"vitality"] = rng.randi_range(VITALITY_ROLL.x, VITALITY_ROLL.y)
+	var leaning: StringName = POOL_LEANINGS.get(pool, &"")
+	if leaning != &"":
+		stat_points[leaning] = rng.randi_range(LEANING_ROLL.x, LEANING_ROLL.y)
 
 
 ## A piece whose icon is missing is left out with a warning, so the item still

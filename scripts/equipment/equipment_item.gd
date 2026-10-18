@@ -15,6 +15,11 @@ const SLOT_NAMES: PackedStringArray = ["Weapon", "Armour", "Boots", "Accessory"]
 ## Every icon layer is drawn on a canvas this size, so layers stack by position.
 const ICON_SIZE: Vector2i = Vector2i(16, 16)
 
+## Id of this item's RarityData. Saved by id, so a rarity's name and numbers can
+## change without touching any save, and an item saved before rarities existed
+## loads as Common.
+@export var rarity: StringName = RarityData.COMMON
+
 
 static func slot_name(slot: Slot) -> String:
 	return SLOT_NAMES[slot]
@@ -41,10 +46,19 @@ func get_move_speed_bonus() -> float:
 	return 0.0
 
 
-## What a cell shows on hover: the name, then whatever the item adds, with
-## the stat points together on one line.
+## This item's rarity. An id with no file is reported and read as Common, so a
+## stale save still shows its item.
+func get_rarity() -> RarityData:
+	var data: RarityData = RarityData.find(rarity)
+	if data == null:
+		data = RarityData.find(RarityData.COMMON)
+	return data
+
+
+## What a cell shows on hover: the name, its rarity unless it is the plain one,
+## then whatever the item adds, with the stat points together on one line.
 func get_tooltip_text() -> String:
-	var lines: PackedStringArray = [get_display_name()]
+	var lines: PackedStringArray = get_header_lines()
 	var speed: float = get_move_speed_bonus()
 	if not is_zero_approx(speed):
 		lines.append("Move speed %+d%%" % roundi(speed * 100.0))
@@ -55,3 +69,12 @@ func get_tooltip_text() -> String:
 	if not points.is_empty():
 		lines.append("  ".join(points))
 	return "\n".join(lines)
+
+
+## The first lines of a tooltip: the name, then the rarity when it is not Common.
+func get_header_lines() -> PackedStringArray:
+	var lines: PackedStringArray = [get_display_name()]
+	var data: RarityData = get_rarity()
+	if data != null and data.id != RarityData.COMMON:
+		lines.append(data.display_name)
+	return lines

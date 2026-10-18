@@ -37,6 +37,8 @@ var _kills: int = 0
 var _experience: int = 0
 var _gold: int = 0
 var _items: Array[EquipmentItem] = []
+## Items this run's kills have left on the ground, against the quest's cap.
+var _item_drops: int = 0
 var _hero_data: HeroData = null
 var _ending: bool = false
 var _result: RunResult = null
@@ -268,18 +270,23 @@ func _on_offer_chosen(offer: UpgradeOffer) -> void:
 		get_tree().paused = false
 
 
-## Leave whatever `enemy` drops where it fell.
+## Leave whatever `enemy` drops where it fell. Items stop once the quest's cap
+## for the run is reached.
 func _drop_loot(enemy: Enemy) -> void:
 	var gold: int = Drops.gold_for(enemy.data, _rng)
 	if gold > 0:
 		var coins: Pickup = _new_pickup(enemy.global_position)
 		if coins != null:
 			coins.set_gold(gold)
+	if _item_drops >= _director.quest.max_item_drops:
+		return
 	if Drops.item_dropped(enemy.data, _rng):
-		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng)
+		var difficulty: float = _director.quest.start_difficulty(_director.ramp_start)
+		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng, difficulty)
 		var loot: Pickup = _new_pickup(enemy.global_position) if item != null else null
 		if loot != null:
 			loot.set_item(item)
+			_item_drops += 1
 
 
 ## A pickup near `at`, on its way into the world. Adding waits for the end of

@@ -23,6 +23,9 @@ signal attack_released
 const IDLE_CLIP: StringName = &"idle"
 const WALK_CLIP: StringName = &"walk"
 const ATTACK_CLIP: StringName = &"attack"
+## How much of the rarity's glow brightness the aura behind the hero shows. The
+## aura is additive, so it needs to be softer than the glow behind an icon.
+const AURA_SHARE: float = 0.65
 
 ## Where the near hand is on each frame of each body clip, in pixels relative
 ## to the idle pose, facing right. Weapon idle and walk sheets already carry
@@ -37,7 +40,10 @@ var _weapon: WeaponItem = null
 var _attacking: bool = false
 var _released: bool = false
 var _weapon_base_offset: Vector2 = Vector2.ZERO
+var _glow_rarity: RarityData = null
+var _glow_seconds: float = 0.0
 
+@onready var _aura: Sprite2D = $Aura
 @onready var _body: AnimatedSprite2D = $Body
 @onready var _equipment: Node2D = $Equipment
 @onready var _hat: AnimatedSprite2D = $Equipment/Hat
@@ -50,6 +56,7 @@ var _weapon_base_offset: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	_collect_layers()
 	_weapon_base_offset = _weapon_layer.offset
+	_aura.texture = RarityData.glow_texture()
 	_body.play(IDLE_CLIP)
 
 	# Copy the body's frame on its own change signals rather than polling in
@@ -62,7 +69,14 @@ func _ready() -> void:
 	_apply_armour()
 	_apply_boots()
 	_apply_weapon()
+	_refresh_glow()
 	_sync_layers()
+
+
+# Runs only while a pulsing glow needs animating; layers never use it.
+func _process(delta: float) -> void:
+	_glow_seconds += delta
+	_update_aura()
 
 
 ## Show `item`'s rolled pieces, or clear all three armour layers when null.
@@ -71,6 +85,7 @@ func wear_armour(item: ArmourItem) -> void:
 	_armour = item
 	if is_node_ready():
 		_apply_armour()
+		_refresh_glow()
 		_sync_layers()
 
 
@@ -80,6 +95,7 @@ func wear_boots(item: BootsItem) -> void:
 	_boots = item
 	if is_node_ready():
 		_apply_boots()
+		_refresh_glow()
 		_sync_layers()
 
 
@@ -90,6 +106,7 @@ func wield(item: WeaponItem) -> void:
 	if is_node_ready():
 		_end_attack()
 		_apply_weapon()
+		_refresh_glow()
 		_sync_layers()
 
 
@@ -179,6 +196,36 @@ func _apply_boots() -> void:
 
 func _apply_weapon() -> void:
 	_weapon_layer.sprite_frames = _weapon.frames() if _weapon != null else null
+	var outline: Material = null
+	if _weapon != null:
+		outline = _weapon.get_rarity().get_outline_material()
+	# Only the weapon is outlined: it is the top layer, so its outline cannot
+	# paint over another layer's pixels.
+	_weapon_layer.material = outline
+
+
+## Glow behind the hero in the colour of the best rarity worn, pulsing when
+## that rarity does.
+func _refresh_glow() -> void:
+	var best: RarityData = null
+	for item: EquipmentItem in [_armour, _boots, _weapon]:
+		if item == null:
+			continue
+		var rarity: RarityData = item.get_rarity()
+		if best == null or rarity.order > best.order:
+			best = rarity
+	_glow_rarity = best
+	var glows: bool = best != null and best.glow_strength > 0.0
+	_aura.visible = glows
+	set_process(glows and best.glow_pulse)
+	if glows:
+		_update_aura()
+
+
+func _update_aura() -> void:
+	var glow: Color = _glow_rarity.color
+	glow.a = _glow_rarity.glow_at(_glow_seconds) * AURA_SHARE
+	_aura.modulate = glow
 
 
 func _sync_layers() -> void:

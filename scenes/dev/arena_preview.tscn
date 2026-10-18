@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/arena_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://scenes/quests/arena_run.tscn" id="2_run"]
+
+[node name="ArenaPreview" type="Node"]
+script = ExtResource("1_preview")
+
+[node name="ArenaRun" parent="." instance=ExtResource("2_run")]

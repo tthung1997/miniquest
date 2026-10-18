@@ -57,7 +57,19 @@ try {
 
 	foreach ($file in $scripts) {
 		$rel = $file.FullName.Substring($root.Length + 1) -replace '\\', '/'
-		$out = & $godot --headless --path . --check-only --script "res://$rel" 2>&1 | Out-String
+		# The engine intermittently crashes at exit after a script has loaded
+		# cleanly (an access violation, no script error in the output, also seen
+		# on a plain load()). That is not a parse error, so retry it; a real
+		# error prints a message and is never retried.
+		$out = ""
+		for ($attempt = 1; $attempt -le 3; $attempt++) {
+			$out = & $godot --headless --path . --check-only --script "res://$rel" 2>&1 | Out-String
+			$crashed = $LASTEXITCODE -notin 0, 1 -and $out -notmatch 'SCRIPT ERROR|Parse Error'
+			if (-not $crashed) {
+				break
+			}
+			Write-Host "retry $rel (engine crashed with exit code $LASTEXITCODE)" -ForegroundColor Yellow
+		}
 		if ($LASTEXITCODE -ne 0 -or $out -match 'SCRIPT ERROR|Parse Error') {
 			$failed += $rel
 			Write-Host "FAIL  $rel" -ForegroundColor Red

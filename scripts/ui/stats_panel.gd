@@ -164,8 +164,8 @@ func _refresh_readouts(
 		_show_readout(_speed_label, "SPD", "--", "--")
 		_show_readout(_range_label, "RNG", "--", "--")
 		return
-	var damage: String = _format(weapon.damage_with(current))
-	_show_readout(_damage_label, "DMG", damage, _format(weapon.damage_with(preview)))
+	var damage: String = _format(_hero.weapon.damage_with(current))
+	_show_readout(_damage_label, "DMG", damage, _format(_hero.weapon.damage_with(preview)))
 	var speed: String = _format(1.0 / weapon.attack_interval)
 	_show_readout(_speed_label, "SPD", speed, speed)
 	var reach: String = _format(weapon.attack_range)
