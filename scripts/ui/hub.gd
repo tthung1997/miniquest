@@ -10,7 +10,8 @@ extends Control
 ## with hero_changed; the hub never loads or saves, the screen owner does.
 ## The stats panel under the hero follows every change, and leaving the hub
 ## with free points still waiting to be applied asks what to do with them.
-## Advance opens a dialog of the classes the hero can become; the choice goes
+## Advancing is done from the class under the hero's name: it opens a dialog of
+## the classes the hero can become; the choice goes
 ## through HeroData.advance_to() and is reported with hero_changed like any
 ## other edit. Skills swaps the inventory for the skill tree, where skill points
 ## are spent and the skill a run starts with is chosen; Gacha is not built yet,
@@ -64,7 +65,6 @@ var _after_leave_choice: Callable = Callable()
 @onready var _quest_button: Button = %QuestButton
 @onready var _change_hero_button: Button = %ChangeHeroButton
 @onready var _store_button: Button = %StoreButton
-@onready var _advance_button: Button = %AdvanceButton
 @onready var _inventory_button: Button = %InventoryButton
 @onready var _skills_button: Button = %SkillsButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
@@ -81,9 +81,9 @@ func _ready() -> void:
 	_quest_button.pressed.connect(_on_quest_pressed)
 	_change_hero_button.pressed.connect(_on_change_hero_pressed)
 	_store_button.pressed.connect(_on_store_pressed)
-	_advance_button.pressed.connect(_on_advance_pressed)
+	_info_tag.pressed.connect(_on_advance_pressed)
 	_advance_dialog.class_chosen.connect(_on_class_chosen)
-	_advance_dialog.closed.connect(_advance_button.grab_focus)
+	_advance_dialog.closed.connect(_focus_class_tag)
 	_inventory_button.pressed.connect(_on_inventory_pressed)
 	_skills_button.pressed.connect(_on_skills_pressed)
 	_skills_view.hero_changed.connect(_on_hero_edited)
@@ -148,7 +148,7 @@ func _refresh() -> void:
 	_quest_button.disabled = _hero == null
 	_stats_panel.show_hero(_hero)
 	_refresh_items()
-	_refresh_advance_button()
+	_refresh_advance_cue()
 	_refresh_skills_button()
 	if _hero != null and _skills_view.visible:
 		_skills_view.show_hero(_hero)
@@ -176,21 +176,19 @@ func _refresh() -> void:
 	_doll.wield(_hero.weapon)
 
 
-## The button is disabled when there is nothing to advance into, and gets an
-## exclamation mark when the hero can take a class right now.
-func _refresh_advance_button() -> void:
+## The class tag is only a button when there is something to advance into, and
+## shows an exclamation mark when the hero can take a class right now.
+func _refresh_advance_cue() -> void:
 	var options: Array[ClassData] = _hero.advancement_options() if _hero != null else []
 	var ready_now: bool = false
 	for option: ClassData in options:
 		if _hero.can_advance_to(option):
 			ready_now = true
 			break
-	_advance_button.disabled = options.is_empty()
-	_advance_button.text = "ADVANCE!" if ready_now else "ADVANCE"
-	_advance_button.tooltip_text = (
-		"Choose a new class" if ready_now
-		else "Advance to a new class" if not options.is_empty()
-		else "No further classes yet"
+	_info_tag.show_action(
+		not options.is_empty(),
+		ready_now,
+		"Choose a new class" if ready_now else "Advance to a new class",
 	)
 
 
@@ -222,6 +220,13 @@ func _focus_default() -> void:
 		_change_hero_button.grab_focus()
 	else:
 		_quest_button.grab_focus()
+
+
+func _focus_class_tag() -> void:
+	if _info_tag.focus_mode == Control.FOCUS_NONE:
+		_focus_default()
+	else:
+		_info_tag.grab_focus()
 
 
 func _place_doll() -> void:

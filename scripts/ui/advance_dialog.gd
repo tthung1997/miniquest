@@ -10,6 +10,9 @@ extends Control
 signal class_chosen(class_id: StringName)
 signal closed
 
+## Seconds between one card starting to appear and the next.
+const INTRO_STAGGER: float = 0.08
+
 ## One AdvanceOption per class on offer.
 @export var option_scene: PackedScene
 
@@ -51,6 +54,7 @@ func open(hero: HeroData, note: String = "") -> void:
 		var option: AdvanceOption = node
 		_option_row.add_child(option)
 		option.show_option(hero, target)
+		option.play_intro(_options.size() * INTRO_STAGGER)
 		option.chosen.connect(_on_option_chosen)
 		_options.append(option)
 	_note_label.text = note
@@ -73,8 +77,8 @@ func _clear_options() -> void:
 ## The first class the hero can take, or else the close button.
 func _focus_first_choice() -> void:
 	for option: AdvanceOption in _options:
-		if not option.choose_button().disabled:
-			option.choose_button().grab_focus()
+		if option.is_available():
+			option.grab_focus()
 			return
 	_close_button.grab_focus()
 

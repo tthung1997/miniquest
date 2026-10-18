@@ -476,7 +476,9 @@ spending free points (on the hub's stats panel, section 8) work.
 
 **Class advancement is built** for tiers 0–2 (section 5.3). A hero's growth each
 level is the sum over their lineage, which is saved as `past_classes` plus the
-current `class_id`. The hub's Advance button lists what the hero can become
+current `class_id`. Advancing is done by clicking the class tag under the hero's
+name, which gains a cue (`!` when a class can be taken now) while there is
+somewhere to advance to; the dialog lists what the hero can become
 and what they still lack. Requirements count earned stats only, so gear cannot
 unlock a class, and staged points must be applied first. Skills are built
 (section 5.5), and tier 3 is not: it only needs new `ClassData` files naming the
