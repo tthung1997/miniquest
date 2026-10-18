@@ -8,6 +8,15 @@ extends RefCounted
 ## Share of rolled items that are boots rather than armour. A placeholder.
 const BOOTS_SHARE: float = 0.3
 
+## Test overrides, honoured in debug builds only. Pass them after `--` on the
+## command line, as in `godot --path . -- --rarity=epic --item-chance=1`, or
+## set them from a preview scene. `forced_rarity` makes every roll that
+## rarity; `item_chance_override` replaces each enemy's chance of leaving an
+## item. The command line is read on the first roll.
+static var forced_rarity: StringName = &""
+static var item_chance_override: float = -1.0
+static var _args_read: bool = false
+
 
 ## Gold left by a kill of `data`, or zero when this one drops none.
 static func gold_for(data: EnemyData, rng: RandomNumberGenerator) -> int:
@@ -18,7 +27,11 @@ static func gold_for(data: EnemyData, rng: RandomNumberGenerator) -> int:
 
 ## Whether a kill of `data` leaves an item.
 static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
-	return rng.randf() < data.item_chance
+	_read_args()
+	var chance: float = data.item_chance
+	if OS.is_debug_build() and item_chance_override >= 0.0:
+		chance = item_chance_override
+	return rng.randf() < chance
 
 
 ## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
@@ -32,7 +45,7 @@ static func roll_item(pool: StringName, rng: RandomNumberGenerator) -> Equipment
 		item = ArmourItem.roll(pool, rng)
 	if item == null:
 		return null
-	var rarity: RarityData = RarityData.roll(rng)
+	var rarity: RarityData = _roll_rarity(rng)
 	if rarity != null:
 		item.rarity = rarity.id
 	return item
@@ -52,3 +65,27 @@ static func win_bonus_items(
 		if item != null:
 			items.append(item)
 	return items
+
+
+## The rarity of a new item: the forced one when a debug build has it set,
+## otherwise a weighted roll.
+static func _roll_rarity(rng: RandomNumberGenerator) -> RarityData:
+	_read_args()
+	if OS.is_debug_build() and forced_rarity != &"":
+		var forced: RarityData = RarityData.find(forced_rarity)
+		if forced != null:
+			return forced
+	return RarityData.roll(rng)
+
+
+static func _read_args() -> void:
+	if _args_read:
+		return
+	_args_read = true
+	if not OS.is_debug_build():
+		return
+	for arg: String in OS.get_cmdline_user_args():
+		if arg.begins_with("--rarity="):
+			forced_rarity = StringName(arg.trim_prefix("--rarity="))
+		elif arg.begins_with("--item-chance="):
+			item_chance_override = clampf(arg.trim_prefix("--item-chance=").to_float(), 0.0, 1.0)

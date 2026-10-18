@@ -86,7 +86,15 @@ func _draw_item(lift: float) -> void:
 		return
 	var size: Vector2 = Vector2(EquipmentItem.ICON_SIZE) * ITEM_SCALE
 	var origin: Vector2 = Vector2(-size.x * 0.5, -size.y - 2.0 - lift).floor()
-	# A glow so an item stands out from the coins and the grass.
-	draw_circle(origin + size * 0.5, size.x * 0.6, GLOW_COLOR)
+	# A glow so an item stands out from the coins and the grass, in its rarity's
+	# colour and pulsing when the rarity does.
+	var glow: Color = GLOW_COLOR
+	var radius: float = size.x * 0.6
+	var rarity: RarityData = item.get_rarity()
+	if rarity != null and rarity.glow_strength > 0.0:
+		glow = rarity.color
+		glow.a = GLOW_COLOR.a + rarity.glow_at(_age / BOB_SPEED) * 0.4
+		radius *= 1.0 + rarity.glow_strength * 0.4
+	draw_circle(origin + size * 0.5, radius, glow)
 	for layer: Texture2D in item.get_icon_layers():
 		draw_texture_rect(layer, Rect2(origin, size), false)

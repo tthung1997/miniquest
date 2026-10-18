@@ -2,7 +2,8 @@ class_name HubPreview
 extends Node
 ## Opens the hub with a throwaway hero carrying rolled armour from every pool
 ## and every pair of boots, cycling through every rarity, so equipping and
-## rarity can be tried before item drops are tuned.
+## rarity can be tried before item drops are tuned. The hero wears gear of
+## `worn_rarity`.
 ##
 ## The hero is never saved: hero_changed is left unconnected. Raise
 ## `spare_armours` to 25 to try a full inventory, and `unspent_points` to try
@@ -18,6 +19,9 @@ const POOLS: Array[StringName] = [&"novice", &"mage", &"ranger", &"warrior"]
 ## class advance dialog, or to 15 with enough points spent for tier 2.
 @export_range(1, 30) var hero_level: int = 5
 @export var hero_name: String = "Tester"
+## Rarity of the hero's worn weapon, armour and boots, by id: common, uncommon,
+## rare, epic or legendary. Empty leaves the starting gear as it is.
+@export var worn_rarity: StringName = &"epic"
 
 @onready var _hub: Hub = $Hub
 
@@ -28,6 +32,11 @@ func _ready() -> void:
 		return
 	hero.gain_experience(Levelling.total_exp_for(hero_level))
 	hero.unspent_points = unspent_points
+	if worn_rarity != &"":
+		hero.boots = BootsItem.create(&"wind_walkers")
+		for worn: EquipmentItem in [hero.weapon, hero.armour, hero.boots]:
+			if worn != null:
+				worn.rarity = worn_rarity
 	var rarities: Array[RarityData] = RarityData.all()
 	for i in mini(spare_armours, HeroData.INVENTORY_SIZE):
 		var armour: ArmourItem = ArmourItem.roll(POOLS[i % POOLS.size()])
