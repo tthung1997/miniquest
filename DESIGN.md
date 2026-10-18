@@ -246,8 +246,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - **Armour stats are rolled once per item.** Each Armour item rolls a few stat
   points when acquired and keeps them: 2 to 4 VIT, plus 1 to 3 points of the stat
   its base class leans on (Mage INT, Ranger DEX, Warrior STR). **Novice armour is
-  plain clothes:** 0 or 1 VIT and nothing else, and always Common rarity. These
-  are the Common values, saved on the item as
+  plain clothes:** exactly 1 VIT at Common and nothing else, but it has rarity like
+  any other armour. These are the Common values, saved on the item as
   `stat_points`; rarity multiplies them when read, so an item keeps its roll if
   its rarity changes. Armour gives no Defence: there is no such stat, and the
   existing four are all it uses. The rolls are placeholders. This is the one place
