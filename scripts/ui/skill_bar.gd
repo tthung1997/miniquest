@@ -4,6 +4,10 @@ extends HBoxContainer
 ## hero carries in the order of the keys that cast them. Slots are rebuilt
 ## whenever it is shown a new set. The switch only asks; whoever owns the skills
 ## decides, and tells the bar the result with show_auto_cast().
+##
+## The switch's AUTO state has its own pressed style in the scene. The theme's
+## stretches the pack's top orange row into a fat band on a button this tall, so
+## the scene's holds three rows fixed at the top and bottom instead.
 
 ## The player pressed the auto-cast switch.
 signal auto_cast_toggle_requested
