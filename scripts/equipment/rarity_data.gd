@@ -4,19 +4,29 @@ extends Resource
 ## rarity, named after its id (DESIGN.md section 5.6).
 ##
 ## A higher rarity is strictly better: it scales what the item gives, turns up
-## less often, and is marked with a frame in menus and a recolour on the
-## item's art. Every number is a placeholder until the gear can be played.
+## less often, and is marked with a frame and a glow. Every number is a
+## placeholder until the gear can be played.
 
 const DIRECTORY: String = "res://resources/rarities"
 const FILE_SUFFIX: String = ".tres"
 const COMMON: StringName = &"common"
-const SHADER: Shader = preload("res://shaders/item_rarity.gdshader")
+const OUTLINE_SHADER_PATH: String = "res://shaders/item_outline.gdshader"
+## The glow texture's side in pixels, and how many bands it is drawn in. Few
+## bands keep it crisp against the pixel art.
+const GLOW_SIZE: int = 24
+const GLOW_BANDS: int = 4
+## Radians a second of a pulsing glow, and how far it dims at the bottom of the
+## pulse: 0.3 dips to 70%.
+const PULSE_SPEED: float = 3.0
+const PULSE_DEPTH: float = 0.3
+
+static var _glow_texture: ImageTexture = null
 
 @export var id: StringName = &""
 @export var display_name: String = ""
 ## Lowest first. Sorts rarities from worst to best.
 @export_range(0, 9) var order: int = 0
-## The frame's colour, and the colour the item's art is shifted towards.
+## The colour of the frame, the glow and the weapon's outline.
 @export var color: Color = Color.WHITE
 
 @export_group("Stats")
@@ -28,11 +38,13 @@ const SHADER: Shader = preload("res://shaders/item_rarity.gdshader")
 @export_range(0.0, 100.0, 0.5) var drop_weight: float = 1.0
 
 @export_group("Look")
-## How far the item's art is recoloured towards `color`; 0 leaves it as drawn.
-@export_range(0.0, 1.0, 0.05) var tint_strength: float = 0.0
 ## Whether menus draw a frame around the item. Off for the plain rarity, so a
 ## full inventory is not a wall of borders.
 @export var framed: bool = true
+## How bright the glow behind the item and the hero is; 0 has none.
+@export_range(0.0, 1.0, 0.05) var glow_strength: float = 0.0
+## Whether the glow slowly pulses.
+@export var glow_pulse: bool = false
 
 var _material: ShaderMaterial = null
 
@@ -101,17 +113,48 @@ func scale_value(value: float) -> float:
 	return value * stat_multiplier
 
 
-## The material that recolours an item's art, or null when this rarity leaves
-## it as drawn. Shared by everything of this rarity.
-func get_tint_material() -> ShaderMaterial:
-	if tint_strength <= 0.0:
+## The material that outlines an item's art in this rarity's colour, or null
+## when this rarity has no glow. Shared by everything of this rarity.
+func get_outline_material() -> ShaderMaterial:
+	if glow_strength <= 0.0:
 		return null
 	if _material == null:
+		var shader: Shader = load(OUTLINE_SHADER_PATH) as Shader
+		if shader == null:
+			push_error("RarityData: cannot load %s." % OUTLINE_SHADER_PATH)
+			return null
 		_material = ShaderMaterial.new()
-		_material.shader = SHADER
-		_material.set_shader_parameter(&"rarity_color", color)
-		_material.set_shader_parameter(&"strength", tint_strength)
+		_material.shader = shader
+		_material.set_shader_parameter(&"outline_color", color)
+		_material.set_shader_parameter(&"pulse_depth", PULSE_DEPTH if glow_pulse else 0.0)
+		_material.set_shader_parameter(&"pulse_speed", PULSE_SPEED)
 	return _material
+
+
+## The glow's brightness `seconds` into a pulse: steady unless this rarity
+## pulses.
+func glow_at(seconds: float) -> float:
+	if not glow_pulse:
+		return glow_strength
+	return glow_strength * (1.0 - PULSE_DEPTH * (0.5 + 0.5 * sin(seconds * PULSE_SPEED)))
+
+
+## A white disc fading outwards in a few hard bands, tinted by whoever draws it.
+## Shared by every glow.
+static func glow_texture() -> Texture2D:
+	if _glow_texture != null:
+		return _glow_texture
+	var image: Image = Image.create_empty(GLOW_SIZE, GLOW_SIZE, false, Image.FORMAT_RGBA8)
+	var centre: Vector2 = Vector2.ONE * (GLOW_SIZE - 1) * 0.5
+	for y: int in GLOW_SIZE:
+		for x: int in GLOW_SIZE:
+			var level: float = 1.0 - Vector2(x, y).distance_to(centre) / (GLOW_SIZE * 0.5)
+			if level <= 0.0:
+				continue
+			var band: float = ceilf(level * GLOW_BANDS) / GLOW_BANDS
+			image.set_pixel(x, y, Color(1.0, 1.0, 1.0, band))
+	_glow_texture = ImageTexture.create_from_image(image)
+	return _glow_texture
 
 
 static func _by_order(a: RarityData, b: RarityData) -> bool:

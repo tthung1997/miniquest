@@ -304,12 +304,15 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   will scale defence and VIT once those exist. Every item a run drops, armour or
   boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
   and starting weapons exist, all Common.
-- **Rarity is shown two ways.** Menus draw a frame and a faint wash in the
-  rarity's colour around the item (none for Common, so a full inventory is not a
-  wall of borders), and the tooltip names the rarity. The item's art, in cells
-  and on the hero, is shifted towards that colour by a palette shader
-  (`shaders/item_rarity.gdshader`), which leaves the dark outline alone. That is
-  one drawing, five tiers, with no new art.
+- **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
+  around the item (none for Common, so a full inventory is not a wall of
+  borders), and the tooltip names the rarity. Behind the item sits a glow in the
+  same colour, drawn in a few hard bands to suit the pixel art; on the hero, the
+  glow is an aura behind the doll in the colour of the best rarity worn, and the
+  held weapon gets a one-pixel outline (`shaders/item_outline.gdshader`). Epic
+  and Legendary pulse. Only the weapon is outlined, since it is the top layer and
+  cannot paint over another. Glow is brightness, not a recolour: a plain recolour
+  of the art was tried first and did not read as special. It needs no new art.
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.

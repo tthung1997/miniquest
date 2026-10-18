@@ -20,8 +20,6 @@ signal item_dropped(cell: ItemCell, item: EquipmentItem)
 ## Gap between the cell's edge and its rarity frame, and the frame's thickness.
 const FRAME_INSET: float = 2.0
 const FRAME_WIDTH: float = 2.0
-## Opacity of the wash of rarity colour behind the item.
-const FRAME_WASH: float = 0.15
 
 ## An equipment slot accepts inventory items for its slot. An inventory cell
 ## accepts items dragged off an equipment slot.
@@ -114,7 +112,7 @@ func _draw() -> void:
 		draw_style_box(get_theme_stylebox(&"drop_hint"), Rect2(inset, size - inset * 2.0))
 
 
-## A frame and a faint wash in the item's rarity colour, drawn under the icon.
+## A frame in the item's rarity colour, drawn under the icon and its glow.
 ## Plain items get none.
 func _draw_rarity_frame() -> void:
 	if item == null or locked:
@@ -122,10 +120,6 @@ func _draw_rarity_frame() -> void:
 	var rarity: RarityData = item.get_rarity()
 	if rarity == null or not rarity.framed:
 		return
-	var edge: Vector2 = Vector2.ONE * FRAME_INSET
-	var wash: Color = rarity.color
-	wash.a = FRAME_WASH
-	draw_rect(Rect2(edge, size - edge * 2.0), wash)
 	# A line is centred on its edge, so pull the rect in by half its width.
 	var line: Vector2 = Vector2.ONE * (FRAME_INSET + FRAME_WIDTH * 0.5)
 	draw_rect(Rect2(line, size - line * 2.0), rarity.color, false, FRAME_WIDTH)
