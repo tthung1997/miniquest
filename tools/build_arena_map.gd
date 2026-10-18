@@ -42,20 +42,25 @@ const BORDER: int = 4
 ## reach up over the hero's feet; this keeps them from hiding the whole hero.
 const BOTTOM_SETBACK: int = 1
 const SEED: int = 20261006
+## Multiplied onto every map layer, not the hero or enemies, so the field stays
+## quiet and the things that matter stand out against it. A touch cool as well
+## as dark, which pulls the grass's yellow back towards green.
+const MAP_TINT: Color = Color(0.78, 0.84, 0.9)
 
-## Plain grass, weighted so the unmarked tile dominates.
+## Plain grass, weighted so the unmarked tile dominates. The pack's darker green
+## set: its lime set at x 0..4 is far brighter than a long run can bear to look at.
 const GRASS: Array[Dictionary] = [
-	{"at": Vector2i(0, 12), "weight": 60},
-	{"at": Vector2i(1, 12), "weight": 2},
-	{"at": Vector2i(2, 12), "weight": 2},
-	{"at": Vector2i(3, 12), "weight": 2},
-	{"at": Vector2i(2, 11), "weight": 1},
-	{"at": Vector2i(3, 11), "weight": 1},
+	{"at": Vector2i(11, 12), "weight": 60},
+	{"at": Vector2i(12, 12), "weight": 2},
+	{"at": Vector2i(13, 12), "weight": 2},
+	{"at": Vector2i(14, 12), "weight": 2},
+	{"at": Vector2i(15, 12), "weight": 2},
 ]
 
-## Top-left of the pack's 3x3 dirt-in-grass blob. Its corners, edges and centre
-## are stretched over each patch, so a patch is never smaller than 2x2.
-const DIRT_BLOB: Vector2i = Vector2i(0, 7)
+## Top-left of the pack's 3x3 dirt-in-grass blob, in the dark green set. Its
+## corners, edges and centre are stretched over each patch, so a patch is never
+## smaller than 2x2.
+const DIRT_BLOB: Vector2i = Vector2i(11, 7)
 const DIRT_PATCHES: int = 7
 const DIRT_MIN: Vector2i = Vector2i(2, 2)
 const DIRT_MAX: Vector2i = Vector2i(6, 4)
@@ -64,14 +69,11 @@ const DIRT_MARGIN: int = 2
 
 ## `base` is the trunk's row in the tile's own pixels; the tile is drawn so that
 ## row sits on its cell. `radius` is how close, in cells, another trunk may be.
+## Only the darker greens: the lime trees clash with the dark grass.
 const TREES: Array[Dictionary] = [
-	{"at": Vector2i(0, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 6},
-	{"at": Vector2i(2, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 5},
-	{"at": Vector2i(16, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 6},
-	{"at": Vector2i(18, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 2},
-	{"at": Vector2i(0, 2), "size": Vector2i(4, 3), "base": 44, "radius": 1.1, "weight": 2},
-	{"at": Vector2i(4, 2), "size": Vector2i(4, 3), "base": 44, "radius": 1.1, "weight": 2},
-	{"at": Vector2i(16, 2), "size": Vector2i(4, 3), "base": 44, "radius": 1.1, "weight": 2},
+	{"at": Vector2i(2, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 6},
+	{"at": Vector2i(6, 0), "size": Vector2i(2, 2), "base": 28, "radius": 0.55, "weight": 5},
+	{"at": Vector2i(0, 2), "size": Vector2i(4, 3), "base": 44, "radius": 1.1, "weight": 3},
 ]
 
 ## Tufts, sprouts and flowers scattered over the grass. Decoration only: nothing
@@ -186,6 +188,7 @@ func _add_layer(
 	layer.tile_set = tile_set
 	layer.scale = Vector2(SCALE, SCALE)
 	layer.z_index = z
+	layer.modulate = MAP_TINT
 	arena.add_child(layer)
 	layer.owner = arena
 	return layer

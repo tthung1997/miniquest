@@ -375,7 +375,9 @@ attack button.
 The first arena is a **meadow**: a grass field 48×27 tiles of 32px
 (1536×864, about 2.4 screens each way) with scattered dirt patches and
 decorative tufts and flowers that never collide, ringed by a tree line four
-tiles deep. The walls are one plain rectangle per side at the field's edge,
+tiles deep. It uses the pack's darker green grass, dirt and trees rather than the
+lime set, and a slightly dark, cool tint over every map layer (not the hero or
+enemies), so the field stays quiet and the characters stand out. The walls are one plain rectangle per side at the field's edge,
 not per-tree shapes, so kiting along an edge is predictable. Trees are y-sorted
 with the hero: the hero passes in front of the top row and behind the canopies
 of the bottom row, which stands a tile back so only the feet are covered. The
