@@ -5,10 +5,12 @@
 [ext_resource type="PackedScene" path="res://scenes/quests/arena_run.tscn" id="3_arena_run"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hub.tscn" id="4_hub"]
 [ext_resource type="PackedScene" path="res://scenes/ui/store.tscn" id="5_store"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gacha.tscn" id="6_gacha"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
 character_select_scene = ExtResource("2_select")
 hub_scene = ExtResource("4_hub")
 store_scene = ExtResource("5_store")
+gacha_scene = ExtResource("6_gacha")
 arena_run_scene = ExtResource("3_arena_run")

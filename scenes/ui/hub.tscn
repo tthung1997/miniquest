@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/advance_dialog.tscn" id="19_advance"]
 [ext_resource type="PackedScene" path="res://scenes/ui/class_tag.tscn" id="20_tag"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_tree_panel.tscn" id="21_skills"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/exp_icon.png" id="11_exp"]
@@ -25,10 +24,6 @@
 [sub_resource type="ButtonGroup" id="ButtonGroup_view"]
 
 [sub_resource type="StyleBoxEmpty" id="GoldClear"]
-
-[sub_resource type="AtlasTexture" id="ClosedChest"]
-atlas = ExtResource("8_chest")
-region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="Gradient" id="StageGlow"]
 colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
@@ -123,16 +118,6 @@ button_group = SubResource("ButtonGroup_view")
 theme_type_variation = &"QuietButton"
 text = "SKILLS"
 icon = ExtResource("6_scroll")
-
-[node name="GachaButton" type="Button" parent="Margin/Column/TopBar"]
-custom_minimum_size = Vector2(0, 22)
-layout_mode = 2
-tooltip_text = "Gacha - coming soon"
-focus_mode = 0
-theme_type_variation = &"QuietButton"
-disabled = true
-text = "GACHA"
-icon = SubResource("ClosedChest")
 
 [node name="Spacer" type="Control" parent="Margin/Column/TopBar"]
 layout_mode = 2
@@ -315,7 +300,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="QuestGap" type="Control" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
-custom_minimum_size = Vector2(0, 4)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 mouse_filter = 2
 
@@ -346,10 +331,14 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="InventoryGrid" type="GridContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content"]
-unique_name_in_owner = true
+[node name="InventoryScroll" type="ScrollContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="InventoryGrid" type="GridContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content/InventoryScroll"]
+unique_name_in_owner = true
+layout_mode = 2
 mouse_filter = 2
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
@@ -385,5 +374,9 @@ unique_name_in_owner = true
 layout_mode = 1
 
 [node name="ResetDialog" parent="." instance=ExtResource("18_confirm")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="SellDialog" parent="." instance=ExtResource("18_confirm")]
 unique_name_in_owner = true
 layout_mode = 1

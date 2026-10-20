@@ -9,6 +9,7 @@ extends Node
 @export var character_select_scene: PackedScene
 @export var hub_scene: PackedScene
 @export var store_scene: PackedScene
+@export var gacha_scene: PackedScene
 @export var arena_run_scene: PackedScene
 
 var _current: Node = null
@@ -21,9 +22,10 @@ func _ready() -> void:
 		character_select_scene == null
 		or hub_scene == null
 		or store_scene == null
+		or gacha_scene == null
 		or arena_run_scene == null
 	):
-		push_error("Main: CharacterSelect, Hub, Store and ArenaRun scenes must be wired.")
+		push_error("Main: CharacterSelect, Hub, Store, Gacha and ArenaRun scenes must be wired.")
 		return
 	_show_character_select()
 
@@ -63,7 +65,7 @@ func _show_hub() -> void:
 	_swap_to(hub)
 
 
-## The store only lets the hero browse and try things on, so it needs no save.
+## The store saves the hero whenever they buy something.
 func _show_store() -> void:
 	var store: Node = store_scene.instantiate()
 	if store is not Store:
@@ -71,8 +73,23 @@ func _show_store() -> void:
 		store.free()
 		return
 	store.show_hero(_hero)
+	store.hero_changed.connect(_save_hero)
+	store.gacha_requested.connect(_show_gacha)
 	store.back_requested.connect(_show_hub)
 	_swap_to(store)
+
+
+## The gacha saves the hero after every pull and merge.
+func _show_gacha() -> void:
+	var gacha: Node = gacha_scene.instantiate()
+	if gacha is not Gacha:
+		push_error("Main: gacha_scene must have a Gacha root.")
+		gacha.free()
+		return
+	gacha.show_hero(_hero)
+	gacha.hero_changed.connect(_save_hero)
+	gacha.back_requested.connect(_show_store)
+	_swap_to(gacha)
 
 
 func _show_arena_run() -> void:

@@ -36,17 +36,15 @@ static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
 
 
 ## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
-## art of `pool`, at a rarity weighted by each rarity's drop weight at
-## `difficulty` (see QuestData.start_difficulty). Null, with an error, when
-## nothing could be rolled.
-static func roll_item(
-	pool: StringName, rng: RandomNumberGenerator, difficulty: float = 0.0
-) -> EquipmentItem:
+## art of a random class (see ItemRoller.roll_armour), at a rarity weighted by
+## each rarity's drop weight at `difficulty` (see QuestData.start_difficulty).
+## Null, with an error, when nothing could be rolled.
+static func roll_item(rng: RandomNumberGenerator, difficulty: float = 0.0) -> EquipmentItem:
 	var item: EquipmentItem = null
 	if rng.randf() < BOOTS_SHARE:
 		item = BootsItem.roll(rng)
 	if item == null:
-		item = ArmourItem.roll(pool, rng)
+		item = ItemRoller.roll_armour(rng)
 	if item == null:
 		return null
 	var rarity: RarityData = _roll_rarity(rng, difficulty)
@@ -58,12 +56,12 @@ static func roll_item(
 ## The items a win adds: the quest's fixed count, the same for every hero.
 ## `ramp_start` is where the run began, which sets how good they are.
 static func win_bonus_items(
-	quest: QuestData, ramp_start: float, pool: StringName, rng: RandomNumberGenerator
+	quest: QuestData, ramp_start: float, rng: RandomNumberGenerator
 ) -> Array[EquipmentItem]:
 	var items: Array[EquipmentItem] = []
 	var difficulty: float = quest.start_difficulty(ramp_start)
 	for i: int in quest.win_bonus_item_count:
-		var item: EquipmentItem = roll_item(pool, rng, difficulty)
+		var item: EquipmentItem = roll_item(rng, difficulty)
 		if item != null:
 			items.append(item)
 	return items

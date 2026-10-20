@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="PackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/gacha/pack_data.gd" id="1_pack"]
+
+[resource]
+script = ExtResource("1_pack")
+id = &"traveller"
+display_name = "Traveller"
+description = "Mostly plain gear, with the odd find."
+order = 0
+color = Color(0.85, 0.62, 0.35, 1)
+price = 200
+pity_limit = 100
+rarity_weights = Dictionary[StringName, float]({
+&"common": 60.0,
+&"epic": 2.5,
+&"legendary": 0.5,
+&"rare": 9.0,
+&"uncommon": 28.0
+})

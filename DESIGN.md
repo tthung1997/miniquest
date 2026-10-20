@@ -311,8 +311,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   placeholders. The multiplier scales a weapon's damage and scaling, a pair of
   boots' speed and stat points, and an armour's rolled stat points (points round
   up, so a 1-point bonus still improves). Every item a run drops, armour or
-  boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
-  and starting weapons exist, all Common.
+  boots, rolls its rarity by weight. Weapons do not drop in runs yet; they come
+  from the store (Common) and gacha packs and merges (any rarity).
 - **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
   around the item (none for Common, so a full inventory is not a wall of
   borders), and the tooltip names the rarity. Behind the item sits a glow in the
@@ -325,8 +325,9 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
-- **Each hero carries up to 25 items** in an inventory, all shown at once in the
-  hub. Unworn items live there.
+- **Each hero carries up to 25 items** in an inventory to begin with, and the
+  store sells upgrades that add more (see 5.7). Unworn items live there. The hub
+  shows them in a grid that scrolls once it is longer than the panel.
 - **An item's icon is stacked from its pieces.** Every Armour piece variant has
   a 16×16 icon, drawn on a shared canvas with a fixed zone per piece (hat on
   top, shirt, pants below), and the item's icon is its pieces' icons layered.
@@ -335,17 +336,73 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 ### 5.7 Acquisition
 
 - **Items drop during runs**, randomly, and must be physically picked up.
-- **Gold buys gacha packs** in the hub.
-- **The store lists everything.** Clicking the gold count in the hub opens a screen
-  with every weapon (30), every pair of boots (13) and every armour piece
-  (a class's art at a time), each with a price. Picking anything puts it on the
-  hero's doll in place of what they wear, with WALK and ATTACK buttons to see it
-  move, and RESET to dress the doll as the hero again. It never changes the
-  hero. **Buying is not wired yet**: the BUY button is disabled, and the prices
-  exist so gold can be spent later. Armour is priced by the piece and sold as a
-  set the player assembles from one class's pieces, which is a placeholder: it
-  lets a player choose an Armour item's look, which the rolled-look design above
-  and the open question in section 11 do not yet settle.
+- **Gold buys gear in two places.** The store sells chosen items, always Common;
+  gacha packs sell a random roll at any rarity. Both pay out into the
+  inventory, so both need free cells.
+- **The store is a shop with shelves.** Clicking the gold count in the hub opens it.
+  Weapons (30), Boots (13) and Armour (a class's art at a time) stand on wooden
+  shelves under a striped awning, each with a hanging price tag with a coin;
+  what the hero cannot afford is dimmed and its price shown in red. Picking
+  anything puts it on the hero's doll in place of what they wear, with WALK and
+  ATTACK buttons to see it move, and RESET to dress the doll as the hero again.
+  Beside the doll, rows set what the item gives against what the hero wears in
+  that slot, with the change in green or red: damage, attack speed and range for a
+  weapon (damage uses the hero's own stats), move speed and stat points for boots,
+  and the range of points an unbought armour can roll against the worn armour's
+  (`ItemCompare`). It also says how many of that weapon or boots the hero already
+  has. BUY pays the price and puts a new **Common** copy in the inventory
+  (disabled, with the reason on hover, when the hero lacks gold or room), with
+  coins flying from the gold count, the count running down, and SOLD on the tag.
+  Armour is priced by the piece and sold as a set the player assembles from one
+  class's pieces, with its stat points rolled on purchase, which is a
+  placeholder: it lets a player choose an Armour item's look, which the
+  rolled-look design above and the open question in section 11 do not yet settle.
+- **Selling happens in the store's Sell tab** (under a green awning), and from the
+  hub by right-clicking a carried item. The tab lists everything carried, each with
+  what it fetches on its tag. Tick any number of items (or ALL COMMON) and press
+  SELL; coins fly into the gold count. Hovering an item shows what it gives next
+  to what is worn, so a keeper is easy to spot. An item sells for its Common store
+  price times its rarity's `sell_fraction` (25%, 35%, 50%, 70%, 90% from Common to
+  Legendary), so selling rises with rarity yet always pays less than the store
+  charges for the same item. Rare and above ask first. Worn items must be taken
+  off to be sold.
+- **Inventory upgrades are sold by the store** too. A button in the store's top bar
+  buys the hero's next upgrade, which adds 5 slots, after a confirmation; each costs
+  more than the last (400, 800, 1,600, 3,200, 6,400 gold), up to 50 slots. They are
+  held in `resources/store/bag_upgrades.tres`, and the hero's count is saved
+  (`HeroData.bag_upgrades`). All placeholders: a gold sink for a hero with gold to
+  spare, and a way out of a full inventory besides selling.
+- **The gacha is advertised on a poster** under the shelves: a golden chest, some
+  sparks, and "Packs from 200 gold", or "A guaranteed Legendary awaits!" when some
+  pack's next pull is the guaranteed one. Pressing it opens the gacha, a slot
+  machine; Back returns to the store. The Slots tab has a shelf of three
+  packs on the left, each a chest recoloured in the pack's colour (`PackData.color`,
+  via `ChestArt`) with a gem per tier and its price, and the machine on the right: a
+  marquee of chasing light bulbs round the cabinet, the pack's odds as a stacked
+  colour bar, a grid of reels, and a meter for the guarantee. Every pull is a reel
+  that spins and stops, left to right, on its item, flashing in the item's rarity
+  colour; one pull is one big reel, ten are a grid of ten. SKIP stops them all at
+  once. An Epic or Legendary makes the marquee blink in its colour. The result is
+  decided and paid for the moment the button is pressed; the reels only reveal it.
+  The packs (`resources/packs/`, a `PackData` each) can all give weapons, armour and
+  boots of any rarity, a third each; they differ only in price, odds and
+  guarantee: Traveller (200 gold, 60/28/9/2.5/0.5% Common to Legendary, a
+  Legendary within 100 pulls), Adventurer (400, 25/40/22/10/3%, within 75) and
+  Champion (900, no Common, 0/15/45/30/10%, within 50). Pull one at a time, or
+  ten for 10% off. A pull needs a free inventory cell for each item, so a
+  ten-pull needs ten. **Each hero counts pulls since their last Legendary from each
+  pack** (`HeroData.pity`); the pull that reaches the pack's limit is a Legendary
+  whatever the dice say, and any Legendary resets the count. The meter fills as
+  pulls go by and its star lights when the next pull is the guaranteed one. Armour
+  pulled comes from a random class's art (mage, ranger or warrior, never Novice's
+  plain clothes), whoever pulls it, as do forge results. All numbers are placeholders;
+  selling pulls back less than a pack costs on average, so packs cannot be farmed
+  for gold.
+- **Merging happens in the Forge tab.** Tick five carried items of the same rarity,
+  of any kinds, in the stash; they sit in the five sockets, and Merge turns them
+  into one random item (a weapon, armour or boots, rolled like a pull) a rarity
+  higher, which stops on a reel of its own. Free; Legendary cannot be merged. It is
+  how gear the hero cannot use becomes something better.
 - **Starting prices** (a won run pays about 100 gold, so 100 is about one run):
   weapons run from 100 for the three originals up to 900 for the fanciest of
   each kind, with the secondary-scaling and special designs at the top; boots
@@ -463,11 +520,13 @@ tuned.
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
 rarely, an item (2%), though never more than 2 items a run (`max_item_drops` on
 the quest), however lucky the rolls. With the win bonus that is at most 3 items
-in a won run, for every hero. Items are armour, rolled from the art pool of the hero's
-class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
+in a won run, for every hero. Items are armour, rolled from the art pool of a
+random class (mage, ranger or warrior, equally; any hero can wear it, and what
+does not suit the build is for selling or forging), or boots (30% of them, section
+5.6), each at a rarity rolled by weight;
 weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
-banked, and any item that does not fit the 25-cell inventory is lost, which the
+banked, and any item that does not fit the inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
 
 This keeps greed a real mechanic: diving toward a drop while swarmed is a genuine
@@ -535,11 +594,12 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 **The hero stands on the left in a warm glow, between their four equipment
 slots, with their name and level above and their stats and Start Quest below;
-their inventory fills the right.** Inventory, Advance, Skills and Gacha sit in
+their inventory fills the right.** Inventory, Advance and Skills sit in
 the top bar. Inventory and Skills are two views of the same right-hand panel,
 and the panel keeps one size whichever is up (a view that runs long scrolls
 rather than resizing the screen). Skills is marked with an exclamation mark
-while the hero has points to spend. Gacha is still locked.
+while the hero has points to spend. The gold count opens the store, which leads
+on to the gacha (section 5.7).
 
 The skill tree shows only skills the hero can learn: a coloured box for each
 class on their path (each class has its own colour in its file), oldest first,
@@ -722,12 +782,12 @@ In:
   death, retreat, a fixed-length win, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
 - Item and gold drops with pickup.
+- Gacha packs, the store and selling (section 5.7).
 - Hub with hero, equipment and start-quest.
 - Save with three hero slots.
 
 Out until later:
 - Platformer quest type.
-- Gacha.
 - Tier-3 class advancements.
 - Hardcore heroes.
 - Audio.
@@ -760,8 +820,10 @@ Out until later:
   these exist yet. Difficulty tiers, which many games use here, are ruled out by
   pillar 2. Whether the cap should rise, and whether a post-cap track is needed,
   waits on seeing play.
-- Gacha pack contents and pricing.
-- Whether gold has sinks other than gacha.
+- Gacha pack prices, odds and guarantees are placeholders (section 5.7), as are
+  the sell fractions and the five-item merge. Whether packs should be split by
+  slot, or offer a rate-up on one item, is open.
+- Whether gold has sinks other than gacha, the store and skill resets.
 - What the final elite at the end of the run is, and whether it is worth a
   dedicated reward.
 - Whether the way difficulty shifts loot rarity (section 6.5) rewards high-level
@@ -770,9 +832,9 @@ Out until later:
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's
   assembled sets should be decided together.
-- How the 27 extra weapons are obtained (drops, now that weapons have rarity, packs, or
-  as run rewards), and whether weapons of one type should be restricted by
-  hero level.
+- Whether the 27 extra weapons should also drop in runs or be run rewards (they are
+  in the store, packs and merges now), and whether weapons of one type should be
+  restricted by hero level.
 
 **None of the balance numbers are anchored.** Enemy health and damage do not
 exist, so `design/skills.json` is internally consistent and validated against

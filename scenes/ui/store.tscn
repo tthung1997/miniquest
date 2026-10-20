@@ -8,6 +8,11 @@
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/arrow_left.png" id="6_arrow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="7_shadow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/hero_dais.png" id="8_dais"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/bag_icon.png" id="9_bag"]
+[ext_resource type="Script" path="res://scripts/ui/shop_awning.gd" id="10_awning"]
+[ext_resource type="Script" path="res://scripts/ui/gacha_poster.gd" id="11_poster"]
+[ext_resource type="Script" path="res://scripts/ui/coin_burst.gd" id="12_burst"]
+[ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="13_confirm"]
 
 [sub_resource type="Gradient" id="StageGlow"]
 colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
@@ -92,7 +97,42 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
+[node name="BagButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 12
+text = "+5 SLOTS"
+icon = ExtResource("5_coin")
+
+[node name="InventoryChip" type="PanelContainer" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Inventory"
+theme_type_variation = &"Chip"
+
+[node name="Row" type="HBoxContainer" parent="Margin/Column/TopBar/InventoryChip"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/InventoryChip/Row"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("9_bag")
+expand_mode = 1
+
+[node name="InventoryLabel" type="Label" parent="Margin/Column/TopBar/InventoryChip/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "--"
+
 [node name="GoldChip" type="PanelContainer" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 tooltip_text = "Gold"
@@ -166,7 +206,7 @@ unique_name_in_owner = true
 
 [node name="NameLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_type_variation = &"AccentLabel"
 theme_override_font_sizes/font_size = 16
@@ -178,12 +218,33 @@ max_lines_visible = 2
 
 [node name="DetailLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+max_lines_visible = 2
+
+[node name="CompareScroll" type="ScrollContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="CompareBox" type="VBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content/CompareScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="OwnedLabel" type="Label" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
 horizontal_alignment = 1
-autowrap_mode = 3
-max_lines_visible = 3
 
 [node name="PriceRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
 layout_mode = 2
@@ -218,7 +279,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(76, 24)
 layout_mode = 2
 size_flags_horizontal = 10
-disabled = true
 text = "BUY"
 
 [node name="ButtonRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]
@@ -253,70 +313,150 @@ tooltip_text = "Swing the weapon being tried"
 theme_type_variation = &"QuietButton"
 text = "ATTACK"
 
-[node name="CatalogPanel" type="PanelContainer" parent="Margin/Column/Main"]
+[node name="ShopPanel" type="PanelContainer" parent="Margin/Column/Main"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/CatalogPanel"]
+[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/ShopPanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"InteriorPanel"
 
-[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior"]
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/ShopPanel/Interior"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="TabRow" type="HBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+[node name="TabRow" type="HBoxContainer" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="WeaponsTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+[node name="WeaponsTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 14
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("TabGroup")
 text = "WEAPONS"
 
-[node name="BootsTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+[node name="BootsTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 14
 toggle_mode = true
 button_group = SubResource("TabGroup")
 text = "BOOTS"
 
-[node name="ArmourTab" type="Button" parent="Margin/Column/Main/CatalogPanel/Interior/Content/TabRow"]
+[node name="ArmourTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 14
 toggle_mode = true
 button_group = SubResource("TabGroup")
 text = "ARMOUR"
 
-[node name="ClassRow" type="HBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+[node name="SellTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Sell the items you carry"
+theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 14
+toggle_mode = true
+button_group = SubResource("TabGroup")
+text = "SELL"
+
+[node name="Awning" type="Control" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("10_awning")
+
+[node name="ClassRow" type="HBoxContainer" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Scroll" type="ScrollContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content"]
+[node name="Scroll" type="ScrollContainer" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="Sections" type="VBoxContainer" parent="Margin/Column/Main/CatalogPanel/Interior/Content/Scroll"]
+[node name="Sections" type="VBoxContainer" parent="Margin/Column/Main/ShopPanel/Interior/Content/Scroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
+
+[node name="Poster" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+tooltip_text = "Pull random gear from the gacha"
+theme_type_variation = &"QuietButton"
+script = ExtResource("11_poster")
+
+[node name="SellBar" type="HBoxContainer" parent="Margin/Column/Main/ShopPanel/Interior/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SelectCommonButton" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/SellBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+tooltip_text = "Tick every Common item"
+theme_type_variation = &"QuietButton"
+text = "ALL COMMON"
+
+[node name="ClearButton" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/SellBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_type_variation = &"QuietButton"
+text = "CLEAR"
+
+[node name="Spacer" type="Control" parent="Margin/Column/Main/ShopPanel/Interior/Content/SellBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="SellButton" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/SellBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 24)
+layout_mode = 2
+theme_override_constants/icon_max_width = 12
+disabled = true
+text = "SELL 0   +0"
+icon = ExtResource("5_coin")
+
+[node name="CoinBurst" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_burst")
+
+[node name="ConfirmDialog" parent="." instance=ExtResource("13_confirm")]
+unique_name_in_owner = true
+layout_mode = 1

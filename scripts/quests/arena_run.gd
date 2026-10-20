@@ -189,7 +189,7 @@ func _end(outcome: RunResult.Outcome) -> void:
 func _add_win_bonus(result: RunResult) -> void:
 	var quest: QuestData = _director.quest
 	var bonus_items: Array[EquipmentItem] = Drops.win_bonus_items(
-		quest, _director.ramp_start, _armour_pool(), _rng
+		quest, _director.ramp_start, _rng
 	)
 	result.bonus_experience = quest.win_bonus_experience
 	result.bonus_gold = quest.win_bonus_gold
@@ -198,11 +198,6 @@ func _add_win_bonus(result: RunResult) -> void:
 	result.gold = _gold + result.bonus_gold
 	result.items = _items.duplicate()
 	result.items.append_array(bonus_items)
-
-
-## The armour art pool drops are rolled from: the hero's class's.
-func _armour_pool() -> StringName:
-	return _hero_data.armour_pool() if _hero_data != null else HeroData.STARTING_CLASS
 
 
 func _on_hero_died() -> void:
@@ -282,7 +277,7 @@ func _drop_loot(enemy: Enemy) -> void:
 		return
 	if Drops.item_dropped(enemy.data, _rng):
 		var difficulty: float = _director.quest.start_difficulty(_director.ramp_start)
-		var item: EquipmentItem = Drops.roll_item(_armour_pool(), _rng, difficulty)
+		var item: EquipmentItem = Drops.roll_item(_rng, difficulty)
 		var loot: Pickup = _new_pickup(enemy.global_position) if item != null else null
 		if loot != null:
 			loot.set_item(item)

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="BagUpgrades" format=3]
+
+[ext_resource type="Script" path="res://scripts/store/bag_upgrades.gd" id="1_bag"]
+
+[resource]
+script = ExtResource("1_bag")
+prices = PackedInt32Array(400, 800, 1600, 3200, 6400)
