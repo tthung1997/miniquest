@@ -53,7 +53,7 @@ static func _stat_rows(item: EquipmentItem, worn: EquipmentItem) -> Array[Row]:
 	if absf(speed) > EPSILON or absf(worn_speed) > EPSILON:
 		found.append(_number_row("Speed", speed, worn_speed, "%+d%%", true))
 	var bonuses: Dictionary[StringName, int] = item.get_stat_bonuses()
-	var worn_bonuses: Dictionary[StringName, int] = worn.get_stat_bonuses() if worn != null else {}
+	var worn_bonuses: Dictionary[StringName, int] = _bonuses_of(worn)
 	for stat_name: StringName in HeroData.STATS:
 		var points: int = bonuses.get(stat_name, 0)
 		var worn_points: int = worn_bonuses.get(stat_name, 0)
@@ -67,7 +67,7 @@ static func _stat_rows(item: EquipmentItem, worn: EquipmentItem) -> Array[Row]:
 ## show the range each can roll, and what the hero's worn armour has.
 static func _unrolled_armour_rows(item: ArmourItem, worn: EquipmentItem) -> Array[Row]:
 	var found: Array[Row] = []
-	var worn_bonuses: Dictionary[StringName, int] = worn.get_stat_bonuses() if worn != null else {}
+	var worn_bonuses: Dictionary[StringName, int] = _bonuses_of(worn)
 	var ranges: Dictionary[StringName, Vector2i] = {}
 	if item.pool == ArmourItem.NOVICE_POOL:
 		ranges[&"vitality"] = Vector2i.ONE * ArmourItem.NOVICE_VITALITY
@@ -102,6 +102,14 @@ static func _number_row(
 
 static func _stat_label(stat_name: StringName) -> String:
 	return String(stat_name).left(3).to_upper()
+
+
+## `item`'s stat points, or none when there is no item.
+static func _bonuses_of(item: EquipmentItem) -> Dictionary[StringName, int]:
+	var bonuses: Dictionary[StringName, int] = {}
+	if item != null:
+		bonuses = item.get_stat_bonuses()
+	return bonuses
 
 
 ## One line of the comparison.

@@ -31,6 +31,9 @@ signal hero_changed
 enum Tab { WEAPONS, BOOTS, ARMOUR, SELL }
 
 const COLUMNS: int = 7
+## Gap between shelf entries, across and down. Tight enough that seven columns
+## fit the panel beside a scrollbar, so no tab is wider than the screen.
+const SHELF_GAP: Vector2i = Vector2i(3, 4)
 ## Gold of the throwaway hero this screen makes when run on its own.
 const TESTER_GOLD: int = 5000
 const BUY_TEXT: String = "BUY"
@@ -304,11 +307,17 @@ func _add_section(title: String) -> ShelfGrid:
 	header.text = title
 	header.theme_type_variation = &"MutedLabel"
 	_sections.add_child(header)
+	var grid: ShelfGrid = _new_shelf()
+	_sections.add_child(grid)
+	return grid
+
+
+## An empty shelf, COLUMNS wide.
+func _new_shelf() -> ShelfGrid:
 	var grid: ShelfGrid = ShelfGrid.new()
 	grid.columns = COLUMNS
-	grid.add_theme_constant_override(&"h_separation", 4)
-	grid.add_theme_constant_override(&"v_separation", 4)
-	_sections.add_child(grid)
+	grid.add_theme_constant_override(&"h_separation", SHELF_GAP.x)
+	grid.add_theme_constant_override(&"v_separation", SHELF_GAP.y)
 	return grid
 
 
@@ -574,10 +583,7 @@ func _build_sell_list() -> void:
 		empty.text = EMPTY_SELL
 		_sections.add_child(empty)
 		return
-	var grid: ShelfGrid = ShelfGrid.new()
-	grid.columns = COLUMNS
-	grid.add_theme_constant_override(&"h_separation", 4)
-	grid.add_theme_constant_override(&"v_separation", 4)
+	var grid: ShelfGrid = _new_shelf()
 	_sections.add_child(grid)
 	for item: EquipmentItem in _hero.inventory:
 		var tag: PriceTag = PriceTag.new()
