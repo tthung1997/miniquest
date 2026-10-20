@@ -10,5 +10,6 @@ order = 4
 color = Color(1, 0.72, 0.2, 1)
 stat_multiplier = 2.2
 drop_weight = 1.0
+sell_fraction = 0.9
 glow_strength = 0.7
 glow_pulse = true

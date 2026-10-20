@@ -64,6 +64,18 @@ static func price_of(item: EquipmentItem) -> int:
 	return 0
 
 
+## What the store pays for `item`: its Common store price times its rarity's
+## `sell_fraction`, at least 1 gold for anything the store would price. Always
+## less than the store's price for the same item, so buying to sell loses.
+static func sell_price_of(item: EquipmentItem) -> int:
+	var base: int = price_of(item)
+	if base <= 0:
+		return 0
+	var rarity: RarityData = item.get_rarity()
+	var fraction: float = rarity.sell_fraction if rarity != null else 0.0
+	return maxi(floori(base * fraction), 1)
+
+
 static func _armour_price(armour: ArmourItem) -> int:
 	var prices: ArmourPrices = ArmourPrices.load_default()
 	if prices == null:

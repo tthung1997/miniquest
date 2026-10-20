@@ -6,20 +6,28 @@ extends Control
 ## Picking something in the catalog puts it on the doll in place of what the
 ## hero wears, without touching the hero. RESET dresses the doll as the hero
 ## again. Weapons play their attack when picked, and WALK and ATTACK show how
-## a choice moves. Buying is not open yet: the price and the BUY button are
-## here so it can be wired to gold later. Armour is sold by the piece, picked
-## from one class's art at a time, and an Armour item is the pieces together.
+## a choice moves. BUY pays for what is picked and puts a new Common copy in the
+## hero's inventory; the store sells nothing rarer (gacha is where rarity comes
+## from). Armour is sold by the piece, picked from one class's art at a time,
+## and an Armour item is the pieces together, with its stat points rolled when
+## bought.
 ##
-## Never saves or changes the hero. Runs standalone with a throwaway hero.
+## Changes the hero only by buying, and reports that with hero_changed for the
+## screen owner to save. Runs standalone with a throwaway hero.
 
 signal back_requested
+## The hero bought something and should be saved.
+signal hero_changed
 
 enum Tab { WEAPONS, BOOTS, ARMOUR }
 
 const COLUMNS: int = 7
 ## Gold of the throwaway hero this screen makes when run on its own.
 const TESTER_GOLD: int = 5000
-const BUY_HINT: String = "Buying is not open yet"
+const BUY_TEXT: String = "BUY"
+const BOUGHT_TEXT: String = "BOUGHT"
+## Seconds the BUY button says BOUGHT.
+const BOUGHT_SECONDS: float = 0.8
 const NOTHING_PICKED: String = "Try it on"
 const NOTHING_PICKED_HINT: String = "Pick anything in the list to see it on your hero."
 const WEAPON_TITLES: Dictionary[StringName, String] = {
@@ -75,7 +83,7 @@ func _ready() -> void:
 	_reset_button.pressed.connect(_reset)
 	_walk_button.toggled.connect(_on_walk_toggled)
 	_attack_button.pressed.connect(_on_attack_pressed)
-	_buy_button.tooltip_text = BUY_HINT
+	_buy_button.pressed.connect(_on_buy_pressed)
 	_weapons_tab.toggled.connect(_on_tab_toggled.bind(Tab.WEAPONS))
 	_boots_tab.toggled.connect(_on_tab_toggled.bind(Tab.BOOTS))
 	_armour_tab.toggled.connect(_on_tab_toggled.bind(Tab.ARMOUR))
@@ -273,6 +281,7 @@ func _starting_armour(pool: StringName) -> ArmourItem:
 
 
 func _refresh_info() -> void:
+	_refresh_buy_button()
 	if _selected == null:
 		_name_label.text = NOTHING_PICKED
 		_detail_label.text = NOTHING_PICKED_HINT
@@ -288,6 +297,59 @@ func _refresh_info() -> void:
 	var lines: PackedStringArray = _selected.get_tooltip_text().split("\n")
 	_name_label.text = lines[0]
 	_detail_label.text = "\n".join(lines.slice(1))
+
+
+## Enabled when the hero can pay and has room; otherwise says why on hover.
+func _refresh_buy_button() -> void:
+	_buy_button.text = BUY_TEXT
+	if _selected == null:
+		_buy_button.disabled = true
+		_buy_button.tooltip_text = ""
+		return
+	var price: int = StoreCatalog.price_of(_selected)
+	if _hero.is_inventory_full():
+		_buy_button.tooltip_text = "Inventory full"
+	elif _hero.gold < price:
+		_buy_button.tooltip_text = "Not enough gold"
+	else:
+		_buy_button.tooltip_text = "Buy for %d gold" % price
+	_buy_button.disabled = not _hero.can_buy(price)
+
+
+## A new Common item to match what is picked, or null for nothing. The picked
+## item itself is only a listing, so it is never handed over.
+func _new_purchase() -> EquipmentItem:
+	if _selected is WeaponItem:
+		return WeaponItem.create((_selected as WeaponItem).weapon_id)
+	if _selected is BootsItem:
+		return BootsItem.create((_selected as BootsItem).boots_id)
+	if _selected is ArmourItem:
+		var picked: ArmourItem = _selected
+		var armour: ArmourItem = ArmourItem.new()
+		armour.pool = picked.pool
+		for piece: ArmourItem.Piece in StoreCatalog.ARMOUR_PIECES:
+			armour.set_piece_id(piece, picked.piece_id(piece))
+		var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+		rng.randomize()
+		armour.roll_stats(rng)
+		return armour
+	return null
+
+
+func _on_buy_pressed() -> void:
+	if _selected == null:
+		return
+	var price: int = StoreCatalog.price_of(_selected)
+	var purchase: EquipmentItem = _new_purchase()
+	if purchase == null or not _hero.buy_item(purchase, price):
+		return
+	_gold_label.text = str(_hero.gold)
+	hero_changed.emit()
+	_refresh_buy_button()
+	_buy_button.text = BOUGHT_TEXT
+	await get_tree().create_timer(BOUGHT_SECONDS).timeout
+	if is_instance_valid(self) and _buy_button.text == BOUGHT_TEXT:
+		_buy_button.text = BUY_TEXT
 
 
 func _describe_armour(armour: ArmourItem) -> void:

@@ -311,8 +311,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   placeholders. The multiplier scales a weapon's damage and scaling, a pair of
   boots' speed and stat points, and an armour's rolled stat points (points round
   up, so a 1-point bonus still improves). Every item a run drops, armour or
-  boots, rolls its rarity by weight. Weapons do not drop yet, so only the store
-  and starting weapons exist, all Common.
+  boots, rolls its rarity by weight. Weapons do not drop in runs yet; they come
+  from the store (Common) and gacha packs and merges (any rarity).
 - **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
   around the item (none for Common, so a full inventory is not a wall of
   borders), and the tooltip names the rarity. Behind the item sits a glow in the
@@ -335,17 +335,42 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 ### 5.7 Acquisition
 
 - **Items drop during runs**, randomly, and must be physically picked up.
-- **Gold buys gacha packs** in the hub.
-- **The store lists everything.** Clicking the gold count in the hub opens a screen
+- **Gold buys gear in two places.** The store sells chosen items, always Common;
+  gacha packs sell a random roll at any rarity. Both pay out into the
+  inventory, so both need free cells.
+- **The store lists everything, and sells it.** Clicking the gold count in the hub opens a screen
   with every weapon (30), every pair of boots (13) and every armour piece
   (a class's art at a time), each with a price. Picking anything puts it on the
   hero's doll in place of what they wear, with WALK and ATTACK buttons to see it
-  move, and RESET to dress the doll as the hero again. It never changes the
-  hero. **Buying is not wired yet**: the BUY button is disabled, and the prices
-  exist so gold can be spent later. Armour is priced by the piece and sold as a
-  set the player assembles from one class's pieces, which is a placeholder: it
+  move, and RESET to dress the doll as the hero again. BUY pays the price and puts
+  a new **Common** copy in the inventory (disabled, with the reason on hover, when
+  the hero lacks gold or room). Armour is priced by the piece and sold as a
+  set the player assembles from one class's pieces, with its stat points rolled on
+  purchase, which is a placeholder: it
   lets a player choose an Armour item's look, which the rolled-look design above
   and the open question in section 11 do not yet settle.
+- **Selling.** Right-click a carried item in the hub and choose Sell. It pays the
+  item's Common store price times its rarity's `sell_fraction` (25%, 35%, 50%, 70%,
+  90% from Common to Legendary), so selling rises with rarity yet always pays less
+  than the store charges for the same item. Rare and above ask first. Worn items
+  must be taken off to be sold.
+- **Gacha.** The hub's Gacha button opens a screen with three packs
+  (`resources/packs/`, a `PackData` each). Every pack can give weapons, armour and
+  boots of any rarity, a third each; packs differ only in price, odds and
+  guarantee: Traveller (200 gold, 60/28/9/2.5/0.5% Common to Legendary, a
+  Legendary within 100 pulls), Adventurer (400, 25/40/22/10/3%, within 75) and
+  Champion (900, no Common, 0/15/45/30/10%, within 50). Pull one at a time, or
+  ten for 10% off. A pull needs a free inventory cell for each item, so a
+  ten-pull needs ten. **Each hero counts pulls since their last Legendary from each
+  pack** (`HeroData.pity`); the pull that reaches the pack's limit is a Legendary
+  whatever the dice say, and any Legendary resets the count. The screen says how
+  many pulls are left. Armour pulled comes from the hero's own class's art. All
+  numbers are placeholders; selling pulls back less than a pack costs on average,
+  so packs cannot be farmed for gold.
+- **Merging.** The Gacha screen's Merge tab turns five carried items of the same
+  rarity, of any kinds, into one random item (a weapon, armour or boots, rolled
+  like a pull) a rarity higher. Free; Legendary cannot be merged. It is how
+  gear the hero cannot use becomes something better.
 - **Starting prices** (a won run pays about 100 gold, so 100 is about one run):
   weapons run from 100 for the three originals up to 900 for the fanciest of
   each kind, with the secondary-scaling and special designs at the top; boots
@@ -539,7 +564,7 @@ their inventory fills the right.** Inventory, Advance, Skills and Gacha sit in
 the top bar. Inventory and Skills are two views of the same right-hand panel,
 and the panel keeps one size whichever is up (a view that runs long scrolls
 rather than resizing the screen). Skills is marked with an exclamation mark
-while the hero has points to spend. Gacha is still locked.
+while the hero has points to spend. Gacha opens the pack screen (section 5.7).
 
 The skill tree shows only skills the hero can learn: a coloured box for each
 class on their path (each class has its own colour in its file), oldest first,
@@ -722,12 +747,12 @@ In:
   death, retreat, a fixed-length win, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
 - Item and gold drops with pickup.
+- Gacha packs, the store and selling (section 5.7).
 - Hub with hero, equipment and start-quest.
 - Save with three hero slots.
 
 Out until later:
 - Platformer quest type.
-- Gacha.
 - Tier-3 class advancements.
 - Hardcore heroes.
 - Audio.
@@ -760,8 +785,10 @@ Out until later:
   these exist yet. Difficulty tiers, which many games use here, are ruled out by
   pillar 2. Whether the cap should rise, and whether a post-cap track is needed,
   waits on seeing play.
-- Gacha pack contents and pricing.
-- Whether gold has sinks other than gacha.
+- Gacha pack prices, odds and guarantees are placeholders (section 5.7), as are
+  the sell fractions and the five-item merge. Whether packs should be split by
+  slot, or offer a rate-up on one item, is open.
+- Whether gold has sinks other than gacha, the store and skill resets.
 - What the final elite at the end of the run is, and whether it is worth a
   dedicated reward.
 - Whether the way difficulty shifts loot rarity (section 6.5) rewards high-level
@@ -770,9 +797,9 @@ Out until later:
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's
   assembled sets should be decided together.
-- How the 27 extra weapons are obtained (drops, now that weapons have rarity, packs, or
-  as run rewards), and whether weapons of one type should be restricted by
-  hero level.
+- Whether the 27 extra weapons should also drop in runs or be run rewards (they are
+  in the store, packs and merges now), and whether weapons of one type should be
+  restricted by hero level.
 
 **None of the balance numbers are anchored.** Enemy health and damage do not
 exist, so `design/skills.json` is internally consistent and validated against

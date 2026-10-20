@@ -125,12 +125,11 @@ text = "SKILLS"
 icon = ExtResource("6_scroll")
 
 [node name="GachaButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
-tooltip_text = "Gacha - coming soon"
-focus_mode = 0
+tooltip_text = "Pull gear from packs, and merge spare items"
 theme_type_variation = &"QuietButton"
-disabled = true
 text = "GACHA"
 icon = SubResource("ClosedChest")
 
@@ -385,5 +384,9 @@ unique_name_in_owner = true
 layout_mode = 1
 
 [node name="ResetDialog" parent="." instance=ExtResource("18_confirm")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="SellDialog" parent="." instance=ExtResource("18_confirm")]
 unique_name_in_owner = true
 layout_mode = 1

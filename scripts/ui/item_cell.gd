@@ -10,16 +10,23 @@ extends Button
 ## the two cells involved, so that is answered here.
 ##
 ## Mouse clicks do not press the button (button_mask is empty), so a single
-## click only focuses the cell and a drag can start cleanly.
+## click only focuses the cell and a drag can start cleanly. A selectable cell
+## is the exception: a click ticks it.
 
 signal activated(cell: ItemCell)
 signal context_requested(cell: ItemCell)
 ## `item` was dropped onto `cell` from another cell.
 signal item_dropped(cell: ItemCell, item: EquipmentItem)
+## A selectable cell was ticked or unticked by the player. Read `selected`.
+signal selection_toggled(cell: ItemCell)
 
 ## Gap between the cell's edge and its rarity frame, and the frame's thickness.
 const FRAME_INSET: float = 2.0
 const FRAME_WIDTH: float = 2.0
+## The mark on a selected cell: a wash over the item and an outline on its edge.
+const SELECTED_WASH: Color = Color(1.0, 1.0, 1.0, 0.22)
+const SELECTED_OUTLINE: Color = Color(1.0, 0.95, 0.75, 1.0)
+const SELECTED_OUTLINE_WIDTH: float = 2.0
 
 ## An equipment slot accepts inventory items for its slot. An inventory cell
 ## accepts items dragged off an equipment slot.
@@ -37,12 +44,20 @@ var center_icon: bool = false
 ## Whether the cell's item can be dragged to another cell. Off where there is
 ## nothing to drop it on, such as the store's listing.
 var draggable: bool = true
+## Whether the cell can be ticked, as when picking items to merge. A selectable
+## cell is ticked by a click, Enter or Space, which then do not activate it.
+var selectable: bool = false
 
 var item: EquipmentItem = null:
 	set(value):
 		item = value
 		if is_node_ready():
 			_refresh()
+## Whether the cell is ticked. Set by the owner or by the player's toggle.
+var selected: bool = false:
+	set(value):
+		selected = value
+		queue_redraw()
 ## A locked cell shows its placeholder but takes no focus, drags or drops.
 var locked: bool = false:
 	set(value):
@@ -84,6 +99,10 @@ func _gui_input(event: InputEvent) -> void:
 		accept_event()
 		grab_focus()
 		context_requested.emit(self)
+	elif click.button_index == MOUSE_BUTTON_LEFT and selectable:
+		accept_event()
+		grab_focus()
+		_toggle_selected()
 	elif click.button_index == MOUSE_BUTTON_LEFT and click.double_click:
 		accept_event()
 		activated.emit(self)
@@ -107,6 +126,12 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 
 func _draw() -> void:
 	_draw_rarity_frame()
+	if selected and item != null:
+		draw_rect(Rect2(Vector2.ZERO, size), SELECTED_WASH)
+		var line: Vector2 = Vector2.ONE * SELECTED_OUTLINE_WIDTH * 0.5
+		draw_rect(
+			Rect2(line, size - line * 2.0), SELECTED_OUTLINE, false, SELECTED_OUTLINE_WIDTH
+		)
 	if _drop_hint:
 		var inset: Vector2 = Vector2.ONE * get_theme_constant(&"drop_hint_inset")
 		draw_style_box(get_theme_stylebox(&"drop_hint"), Rect2(inset, size - inset * 2.0))
@@ -179,5 +204,14 @@ func _set_drop_hint(show_hint: bool) -> void:
 
 
 func _on_pressed() -> void:
-	if item != null and not locked:
+	if item == null or locked:
+		return
+	if selectable:
+		_toggle_selected()
+	else:
 		activated.emit(self)
+
+
+func _toggle_selected() -> void:
+	selected = not selected
+	selection_toggled.emit(self)

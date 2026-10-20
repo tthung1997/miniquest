@@ -218,7 +218,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(76, 24)
 layout_mode = 2
 size_flags_horizontal = 10
-disabled = true
 text = "BUY"
 
 [node name="ButtonRow" type="HBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior/Content"]

@@ -14,17 +14,23 @@ extends Control
 ## the classes the hero can become; the choice goes
 ## through HeroData.advance_to() and is reported with hero_changed like any
 ## other edit. Skills swaps the inventory for the skill tree, where skill points
-## are spent and the skill a run starts with is chosen; Gacha is not built yet,
-## so its tile is locked. The gold count is a button too: it opens the store.
-## Runs standalone with an unselected portrait.
+## are spent and the skill a run starts with is chosen. Gacha opens the pack
+## screen. The gold count is a button too: it opens the store. Carried items
+## can be sold from their right-click menu, with a confirmation for the
+## rarer ones. Runs standalone with an unselected portrait.
 
 signal quest_requested
 signal change_hero_requested
 signal store_requested
+signal gacha_requested
 ## The shown hero's equipment, inventory or stats changed and should be saved.
 signal hero_changed
 
-enum MenuAction { EQUIP, UNEQUIP }
+enum MenuAction { EQUIP, UNEQUIP, SELL }
+
+## Selling an item of this rarity or a rarer one asks first. By order, so it
+## follows RarityData.order: 2 is Rare.
+const CONFIRM_SELL_FROM_ORDER: int = 2
 
 ## Stage height in unscaled doll pixels: the full 64px frame, since a hat can
 ## reach its top row, plus the dais below the feet.
@@ -46,6 +52,8 @@ var _hero: HeroData = null
 var _equipment_cells: Array[ItemCell] = []
 var _inventory_cells: Array[ItemCell] = []
 var _menu_cell: ItemCell = null
+## The item the sell confirmation is about.
+var _sale_item: EquipmentItem = null
 ## What to do once the player has said what happens to waiting stat points.
 var _after_leave_choice: Callable = Callable()
 
@@ -70,7 +78,9 @@ var _after_leave_choice: Callable = Callable()
 @onready var _change_hero_button: Button = %ChangeHeroButton
 @onready var _inventory_button: Button = %InventoryButton
 @onready var _skills_button: Button = %SkillsButton
+@onready var _gacha_button: Button = %GachaButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
+@onready var _sell_dialog: ConfirmDialog = %SellDialog
 @onready var _advance_dialog: AdvanceDialog = %AdvanceDialog
 @onready var _skills_view: SkillTreePanel = %SkillsView
 @onready var _reset_dialog: ConfirmDialog = %ResetDialog
@@ -91,6 +101,9 @@ func _ready() -> void:
 	_advance_dialog.closed.connect(_focus_class_tag)
 	_inventory_button.pressed.connect(_on_inventory_pressed)
 	_skills_button.pressed.connect(_on_skills_pressed)
+	_gacha_button.pressed.connect(_on_gacha_pressed)
+	_sell_dialog.confirmed.connect(_on_sale_confirmed)
+	_sell_dialog.cancelled.connect(_on_sale_cancelled)
 	_skills_view.hero_changed.connect(_on_hero_edited)
 	_skills_view.reset_requested.connect(_on_reset_requested)
 	_reset_dialog.confirmed.connect(_skills_view.reset_confirmed)
@@ -203,6 +216,7 @@ func _refresh_advance_cue() -> void:
 func _refresh_skills_button() -> void:
 	var points: int = _hero.unspent_skill_points if _hero != null else 0
 	_skills_button.disabled = _hero == null
+	_gacha_button.disabled = _hero == null
 	_inventory_button.disabled = _hero == null
 	_skills_button.text = "SKILLS!" if points > 0 else "SKILLS"
 
@@ -293,6 +307,9 @@ func _on_cell_context_requested(cell: ItemCell) -> void:
 	else:
 		_item_menu.add_item("Equip", MenuAction.EQUIP)
 		_item_menu.set_item_disabled(0, not _hero.can_equip(cell.item))
+		_item_menu.add_item(
+			"Sell for %d gold" % StoreCatalog.sell_price_of(cell.item), MenuAction.SELL
+		)
 	_item_menu.reset_size()
 	_item_menu.popup(Rect2i(Vector2i(get_global_mouse_position()), Vector2i.ZERO))
 
@@ -307,6 +324,42 @@ func _on_menu_id_pressed(id: int) -> void:
 			_equip(cell.item)
 		MenuAction.UNEQUIP:
 			_unequip(cell.slot)
+		MenuAction.SELL:
+			_ask_to_sell(cell.item)
+
+
+## Sell `item` at once, or after asking when it is a rare one.
+func _ask_to_sell(item: EquipmentItem) -> void:
+	if _hero == null or not _hero.can_sell(item):
+		return
+	var rarity: RarityData = item.get_rarity()
+	if rarity == null or rarity.order < CONFIRM_SELL_FROM_ORDER:
+		_sell(item)
+		return
+	_sale_item = item
+	_sell_dialog.open(
+		"Sell %s %s for %d gold?" % [
+			rarity.display_name, item.get_display_name(), StoreCatalog.sell_price_of(item)
+		],
+		"SELL",
+		"KEEP",
+	)
+
+
+func _sell(item: EquipmentItem) -> void:
+	if _hero.sell_item(item) > 0:
+		_on_hero_edited()
+
+
+func _on_sale_confirmed() -> void:
+	var item: EquipmentItem = _sale_item
+	_sale_item = null
+	if item != null and _hero != null and _hero.can_sell(item):
+		_sell(item)
+
+
+func _on_sale_cancelled() -> void:
+	_sale_item = null
 
 
 ## A drop onto a slot wears the item. A drop onto an inventory cell takes the
@@ -330,6 +383,10 @@ func _on_change_hero_pressed() -> void:
 
 func _on_store_pressed() -> void:
 	_leave(_request_store)
+
+
+func _on_gacha_pressed() -> void:
+	_leave(_request_gacha)
 
 
 func _on_advance_pressed() -> void:
@@ -377,6 +434,10 @@ func _on_class_chosen(class_id: StringName) -> void:
 
 func _request_store() -> void:
 	store_requested.emit()
+
+
+func _request_gacha() -> void:
+	gacha_requested.emit()
 
 
 func _request_quest() -> void:

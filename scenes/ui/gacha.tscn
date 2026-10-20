@@ -1,0 +1,308 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/gacha.gd" id="1_gacha"]
+[ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/item_cell.tscn" id="3_cell"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="4_coin"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/arrow_left.png" id="5_arrow"]
+
+[sub_resource type="ButtonGroup" id="TabGroup"]
+
+[node name="Gacha" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_gacha")
+item_cell_scene = ExtResource("3_cell")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.408, 0.392, 0.337, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 6
+
+[node name="Column" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="BackButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Back to the hub"
+theme_type_variation = &"QuietButton"
+text = "HUB"
+icon = ExtResource("5_arrow")
+
+[node name="Divider" type="ColorRect" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(1, 12)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.804, 0.776, 0.69, 0.35)
+
+[node name="TitleLabel" type="Label" parent="Margin/Column/TopBar"]
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "GACHA"
+
+[node name="Spacer" type="Control" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="GoldChip" type="PanelContainer" parent="Margin/Column/TopBar"]
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Gold"
+theme_type_variation = &"Chip"
+
+[node name="Row" type="HBoxContainer" parent="Margin/Column/TopBar/GoldChip"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Icon" type="TextureRect" parent="Margin/Column/TopBar/GoldChip/Row"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("4_coin")
+expand_mode = 1
+
+[node name="GoldLabel" type="Label" parent="Margin/Column/TopBar/GoldChip/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "--"
+
+[node name="Main" type="HBoxContainer" parent="Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LeftPanel" type="PanelContainer" parent="Margin/Column/Main"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/LeftPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="TabRow" type="HBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PacksTab" type="Button" parent="Margin/Column/Main/LeftPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("TabGroup")
+text = "PACKS"
+
+[node name="MergeTab" type="Button" parent="Margin/Column/Main/LeftPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Merge spare items into a better one"
+theme_type_variation = &"QuietButton"
+toggle_mode = true
+button_group = SubResource("TabGroup")
+text = "MERGE"
+
+[node name="PacksView" type="VBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="PackRow" type="HBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PackTitle" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+theme_override_font_sizes/font_size = 16
+text = "Pack"
+
+[node name="PackDescription" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="OddsBox" type="VBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="PityLabel" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+autowrap_mode = 3
+
+[node name="MessageLabel" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+horizontal_alignment = 1
+
+[node name="PullRow" type="HBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PullOneButton" type="Button" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView/PullRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 12
+text = "1 PULL"
+icon = ExtResource("4_coin")
+
+[node name="PullTenButton" type="Button" parent="Margin/Column/Main/LeftPanel/Interior/Content/PacksView/PullRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/icon_max_width = 12
+text = "10 PULLS"
+icon = ExtResource("4_coin")
+
+[node name="MergeView" type="VBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="MergeHint" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+autowrap_mode = 3
+
+[node name="MergeScroll" type="ScrollContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="MergeGrid" type="GridContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView/MergeScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="MergeRow" type="HBoxContainer" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MergeCountLabel" type="Label" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView/MergeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0/5"
+
+[node name="MergeButton" type="Button" parent="Margin/Column/Main/LeftPanel/Interior/Content/MergeView/MergeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 24)
+layout_mode = 2
+disabled = true
+text = "MERGE"
+
+[node name="RightPanel" type="PanelContainer" parent="Margin/Column/Main"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Interior" type="PanelContainer" parent="Margin/Column/Main/RightPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"InteriorPanel"
+
+[node name="Content" type="VBoxContainer" parent="Margin/Column/Main/RightPanel/Interior"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="ResultTitle" type="Label" parent="Margin/Column/Main/RightPanel/Interior/Content"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "RESULT"
+
+[node name="ResultSummary" type="Label" parent="Margin/Column/Main/RightPanel/Interior/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="ResultGrid" type="GridContainer" parent="Margin/Column/Main/RightPanel/Interior/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="Spacer" type="Control" parent="Margin/Column/Main/RightPanel/Interior/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="InventoryLabel" type="Label" parent="Margin/Column/Main/RightPanel/Interior/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Inventory"
+horizontal_alignment = 2

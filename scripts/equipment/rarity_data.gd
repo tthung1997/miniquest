@@ -40,6 +40,12 @@ static var _glow_texture: ImageTexture = null
 ## This rarity's share of drops. Only the ratio to the other rarities counts.
 @export_range(0.0, 100.0, 0.5) var drop_weight: float = 1.0
 
+@export_group("Selling")
+## What fraction of the store's price for the item an inventory sells it for.
+## Below 1.0 at every rarity, so selling never beats buying, and higher for a
+## higher rarity.
+@export_range(0.0, 1.0, 0.05) var sell_fraction: float = 0.25
+
 @export_group("Look")
 ## Whether menus draw a frame around the item. Off for the plain rarity, so a
 ## full inventory is not a wall of borders.
@@ -77,6 +83,25 @@ static func find(rarity_id: StringName) -> RarityData:
 	if data == null:
 		push_error("RarityData: %s is not a RarityData." % path)
 	return data
+
+
+## The best rarity there is, or null with an error when there are none.
+static func highest() -> RarityData:
+	var rarities: Array[RarityData] = all()
+	if rarities.is_empty():
+		push_error("RarityData: there are no rarities.")
+		return null
+	return rarities[rarities.size() - 1]
+
+
+## The rarity one step above `rarity_id`, or null when it is already the best
+## (or unknown).
+static func next_above(rarity_id: StringName) -> RarityData:
+	var rarities: Array[RarityData] = all()
+	for i: int in rarities.size() - 1:
+		if rarities[i].id == rarity_id:
+			return rarities[i + 1]
+	return null
 
 
 ## Pick a rarity at random, weighted by each one's `drop_weight_at(difficulty)`.
