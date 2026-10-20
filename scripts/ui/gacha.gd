@@ -163,7 +163,7 @@ func _build_fillers() -> void:
 	rng.randomize()
 	var common: RarityData = RarityData.find(RarityData.COMMON)
 	for _i: int in FILLER_COUNT:
-		var item: EquipmentItem = ItemRoller.roll(_hero.armour_pool(), common, rng)
+		var item: EquipmentItem = ItemRoller.roll(common, rng)
 		if item != null:
 			_fillers.append(item)
 

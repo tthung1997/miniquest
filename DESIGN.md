@@ -374,7 +374,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   pack** (`HeroData.pity`); the pull that reaches the pack's limit is a Legendary
   whatever the dice say, and any Legendary resets the count. The meter fills as
   pulls go by and its star lights when the next pull is the guaranteed one. Armour
-  pulled comes from the hero's own class's art. All numbers are placeholders;
+  pulled comes from a random class's art (mage, ranger or warrior, never Novice's
+  plain clothes), whoever pulls it, as do forge results. All numbers are placeholders;
   selling pulls back less than a pack costs on average, so packs cannot be farmed
   for gold.
 - **Merging happens in the Forge tab.** Tick five carried items of the same rarity,
@@ -499,8 +500,10 @@ tuned.
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
 rarely, an item (2%), though never more than 2 items a run (`max_item_drops` on
 the quest), however lucky the rolls. With the win bonus that is at most 3 items
-in a won run, for every hero. Items are armour, rolled from the art pool of the hero's
-class, or boots (30% of them, section 5.6), each at a rarity rolled by weight;
+in a won run, for every hero. Items are armour, rolled from the art pool of a
+random class (mage, ranger or warrior, equally; any hero can wear it, and what
+does not suit the build is for selling or forging), or boots (30% of them, section
+5.6), each at a rarity rolled by weight;
 weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
 banked, and any item that does not fit the 25-cell inventory is lost, which the

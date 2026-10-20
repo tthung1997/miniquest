@@ -47,9 +47,7 @@ static func merge(
 		rng = RandomNumberGenerator.new()
 		rng.randomize()
 
-	var result: EquipmentItem = ItemRoller.roll(
-		hero.armour_pool(), RarityData.next_above(items[0].rarity), rng
-	)
+	var result: EquipmentItem = ItemRoller.roll(RarityData.next_above(items[0].rarity), rng)
 	if result == null:
 		return null
 	for item: EquipmentItem in items:

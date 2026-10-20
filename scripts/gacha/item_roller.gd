@@ -11,13 +11,16 @@ const SLOT_WEIGHTS: Dictionary[EquipmentItem.Slot, float] = {
 	EquipmentItem.Slot.ARMOUR: 1.0,
 	EquipmentItem.Slot.BOOTS: 1.0,
 }
+## The art pools rolled armour comes from, each equally likely. Any hero can
+## wear any of it (a class never restricts anything); its stats lean towards
+## its own class, so armour for another class is worth selling or forging.
+## Novice is left out: its plain clothes are the starting set and the store's.
+const ARMOUR_POOLS: Array[StringName] = [&"mage", &"ranger", &"warrior"]
 
 
-## A new item of `rarity`: a random weapon, armour from the art of `pool`, or a
+## A new item of `rarity`: a random weapon, random armour (see roll_armour) or a
 ## random pair of boots. Null, with an error, when nothing could be rolled.
-static func roll(
-	pool: StringName, rarity: RarityData, rng: RandomNumberGenerator
-) -> EquipmentItem:
+static func roll(rarity: RarityData, rng: RandomNumberGenerator) -> EquipmentItem:
 	if rarity == null:
 		push_error("ItemRoller: cannot roll an item without a rarity.")
 		return null
@@ -26,12 +29,17 @@ static func roll(
 		EquipmentItem.Slot.WEAPON:
 			item = _roll_weapon(rng)
 		EquipmentItem.Slot.ARMOUR:
-			item = ArmourItem.roll(pool, rng)
+			item = roll_armour(rng)
 		EquipmentItem.Slot.BOOTS:
 			item = BootsItem.roll(rng)
 	if item != null:
 		item.rarity = rarity.id
 	return item
+
+
+## New Common armour from a random pool in ARMOUR_POOLS.
+static func roll_armour(rng: RandomNumberGenerator) -> ArmourItem:
+	return ArmourItem.roll(ARMOUR_POOLS[rng.randi_range(0, ARMOUR_POOLS.size() - 1)], rng)
 
 
 static func _roll_slot(rng: RandomNumberGenerator) -> EquipmentItem.Slot:

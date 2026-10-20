@@ -53,7 +53,6 @@ static func pull(
 	# Rolled first and paid for after, so a failed roll costs nothing.
 	var result: GachaResult = GachaResult.new()
 	var streak: int = hero.pulls_since_legendary(pack.id)
-	var pool: StringName = hero.armour_pool()
 	for _pull: int in count:
 		streak += 1
 		var rarity: RarityData = pack.roll_rarity(rng)
@@ -62,7 +61,7 @@ static func pull(
 		if pack.pity_limit > 0 and streak >= pack.pity_limit and rarity != top:
 			rarity = top
 			result.guarantee_triggered = true
-		var item: EquipmentItem = ItemRoller.roll(pool, rarity, rng)
+		var item: EquipmentItem = ItemRoller.roll(rarity, rng)
 		if item == null:
 			return null
 		result.items.append(item)
