@@ -88,6 +88,8 @@ var _entries: Array[Dictionary] = []
 var _tags: Dictionary[EquipmentItem, PriceTag] = {}
 var _sell_cells: Array[ItemCell] = []
 var _pending_sale: Array[EquipmentItem] = []
+## Whether the confirmation open is for an inventory upgrade, not a sale.
+var _pending_bag: bool = false
 var _gold_shown: int = 0
 var _gold_tween: Tween = null
 
@@ -96,6 +98,7 @@ var _gold_tween: Tween = null
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _back_button: Button = %BackButton
 @onready var _gold_chip: Control = %GoldChip
+@onready var _bag_button: Button = %BagButton
 @onready var _gold_label: Label = %GoldLabel
 @onready var _inventory_label: Label = %InventoryLabel
 @onready var _name_label: Label = %NameLabel
@@ -135,6 +138,7 @@ func _ready() -> void:
 	_walk_button.toggled.connect(_on_walk_toggled)
 	_attack_button.pressed.connect(_on_attack_pressed)
 	_buy_button.pressed.connect(_on_buy_pressed)
+	_bag_button.pressed.connect(_on_bag_pressed)
 	_weapons_tab.toggled.connect(_on_tab_toggled.bind(Tab.WEAPONS))
 	_boots_tab.toggled.connect(_on_tab_toggled.bind(Tab.BOOTS))
 	_armour_tab.toggled.connect(_on_tab_toggled.bind(Tab.ARMOUR))
@@ -186,10 +190,51 @@ func _refresh_hero() -> void:
 
 
 func _refresh_inventory_count() -> void:
-	_inventory_label.text = "%d/%d" % [_hero.inventory.size(), HeroData.INVENTORY_SIZE]
+	_inventory_label.text = "%d/%d" % [_hero.inventory.size(), _hero.inventory_capacity()]
 	_inventory_label.theme_type_variation = (
 		&"AccentLabel" if _hero.is_inventory_full() else &""
 	)
+	_refresh_bag_button()
+
+
+## Shows the next inventory upgrade and what it costs. Gone once the hero has
+## bought them all.
+func _refresh_bag_button() -> void:
+	var price: int = _hero.next_bag_upgrade_price()
+	_bag_button.visible = price >= 0
+	if price < 0:
+		return
+	_bag_button.text = "+%d SLOTS   %d" % [_hero.next_bag_upgrade_slots(), price]
+	_bag_button.disabled = _hero.gold < price
+	_bag_button.tooltip_text = (
+		"Not enough gold" if _hero.gold < price
+		else "Make room for %d more items" % _hero.next_bag_upgrade_slots()
+	)
+
+
+func _on_bag_pressed() -> void:
+	if not _hero.can_upgrade_bag():
+		return
+	_pending_bag = true
+	_confirm_dialog.open(
+		"Add %d inventory slots for %d gold?" % [
+			_hero.next_bag_upgrade_slots(), _hero.next_bag_upgrade_price()
+		],
+		"EXPAND",
+		"CANCEL",
+	)
+
+
+func _upgrade_bag() -> void:
+	if not _hero.upgrade_bag():
+		return
+	_burst.fly(_centre_of(_gold_chip), _centre_of(_bag_button), BUY_COINS)
+	_set_gold(_hero.gold, true)
+	_refresh_inventory_count()
+	_refresh_affordability()
+	_refresh_buy_button()
+	hero_changed.emit()
+	_bag_button.grab_focus()
 
 
 ## Run the gold count to `target`, or jump there.
@@ -521,7 +566,7 @@ func _refresh_buy_button() -> void:
 	var price: int = StoreCatalog.price_of(_selected)
 	_price_label.theme_type_variation = &"" if _hero.gold >= price else &"AccentLabel"
 	if _hero.is_inventory_full():
-		_buy_button.tooltip_text = "Inventory full"
+		_buy_button.tooltip_text = "Inventory full. Sell something or add slots."
 	elif _hero.gold < price:
 		_buy_button.tooltip_text = "Not enough gold"
 	else:
@@ -662,12 +707,20 @@ func _on_sell_pressed() -> void:
 
 
 func _on_sale_confirmed() -> void:
+	if _pending_bag:
+		_pending_bag = false
+		_upgrade_bag()
+		return
 	var picked: Array[EquipmentItem] = _pending_sale
 	_pending_sale = []
 	_sell(picked)
 
 
 func _on_sale_cancelled() -> void:
+	if _pending_bag:
+		_pending_bag = false
+		_bag_button.grab_focus()
+		return
 	_pending_sale = []
 	_sell_button.grab_focus()
 

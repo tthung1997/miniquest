@@ -331,10 +331,14 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="InventoryGrid" type="GridContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content"]
-unique_name_in_owner = true
+[node name="InventoryScroll" type="ScrollContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="InventoryGrid" type="GridContainer" parent="Margin/Column/Main/InventoryPanel/Interior/Content/InventoryScroll"]
+unique_name_in_owner = true
+layout_mode = 2
 mouse_filter = 2
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4

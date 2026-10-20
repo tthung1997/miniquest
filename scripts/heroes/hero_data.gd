@@ -29,8 +29,9 @@ const NAME_MAX_LENGTH: int = 12
 ## Gold charged for each skill point taken back by a skill reset. A placeholder
 ## until the economy is tuned: a run is worth roughly 50 to 100 gold.
 const SKILL_RESET_COST_PER_POINT: int = 5
-## Inventory cells per hero, shown all at once in the hub.
-const INVENTORY_SIZE: int = 25
+## Inventory cells every hero starts with. The store sells more (BagUpgrades);
+## see inventory_capacity().
+const BASE_INVENTORY_SIZE: int = 25
 
 ## Zero (the default) means the file predates versioning. Left at a non-default
 ## on purpose: Godot omits default-valued fields when saving, which would drop
@@ -70,9 +71,11 @@ const INVENTORY_SIZE: int = 25
 @export var weapon: WeaponItem
 @export var armour: ArmourItem
 @export var boots: BootsItem
-## Items carried but not worn, at most INVENTORY_SIZE. Kept packed: an item
+## Items carried but not worn, at most inventory_capacity(). Kept packed: an item
 ## leaving the inventory closes its gap, and a new one goes on the end.
 @export var inventory: Array[EquipmentItem] = []
+## How many inventory upgrades the hero has bought from the store.
+@export var bag_upgrades: int = 0
 
 @export_group("Gacha")
 ## Pulls made from each pack since it last gave a Legendary, keyed by pack id.
@@ -463,7 +466,7 @@ func bank_run(result: RunResult) -> int:
 
 
 func free_inventory_cells() -> int:
-	return INVENTORY_SIZE - inventory.size()
+	return inventory_capacity() - inventory.size()
 
 
 ## Add `amount` experience, up to the level cap, and level up as far as it
@@ -523,8 +526,45 @@ func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
 	return null
 
 
+## How many items the hero can carry: the starting cells plus those bought.
+func inventory_capacity() -> int:
+	var upgrades: BagUpgrades = BagUpgrades.load_default()
+	return BASE_INVENTORY_SIZE + (upgrades.slots_for(bag_upgrades) if upgrades != null else 0)
+
+
 func is_inventory_full() -> bool:
-	return inventory.size() >= INVENTORY_SIZE
+	return inventory.size() >= inventory_capacity()
+
+
+## Gold for the hero's next inventory upgrade, or -1 when they have every one.
+func next_bag_upgrade_price() -> int:
+	var upgrades: BagUpgrades = BagUpgrades.load_default()
+	return upgrades.price_after(bag_upgrades) if upgrades != null else -1
+
+
+## Slots the next inventory upgrade adds, or zero when there is none.
+func next_bag_upgrade_slots() -> int:
+	var upgrades: BagUpgrades = BagUpgrades.load_default()
+	if upgrades == null or next_bag_upgrade_price() < 0:
+		return 0
+	return upgrades.slots_per_upgrade
+
+
+func can_upgrade_bag() -> bool:
+	var price: int = next_bag_upgrade_price()
+	return price >= 0 and gold >= price
+
+
+## Pay for the next inventory upgrade, which adds cells. Fails with an error,
+## changing nothing, when there is none left or the hero cannot pay.
+func upgrade_bag() -> bool:
+	if not can_upgrade_bag():
+		push_error("HeroData: %s cannot upgrade their inventory." % hero_name)
+		return false
+	gold -= next_bag_upgrade_price()
+	bag_upgrades += 1
+	emit_changed()
+	return true
 
 
 ## Put `item` on the end of the inventory. Fails with an error when the

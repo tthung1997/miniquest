@@ -44,7 +44,7 @@ const GOLD_HOVER_TINT: Color = Color(1.3, 1.25, 1.15)
 ## Whole-number scale keeps the pixel art crisp. 3x leaves no room for the
 ## stats panel under the hero on 360 lines.
 @export_range(1, 3) var doll_scale: int = 2
-## One inventory cell, instanced HeroData.INVENTORY_SIZE times into the grid.
+## One inventory cell, instanced once for every item the hero can carry.
 @export var item_cell_scene: PackedScene
 
 var _hero: HeroData = null
@@ -113,7 +113,6 @@ func _ready() -> void:
 	for cell: ItemCell in _equipment_cells:
 		cell.locked = not HeroData.supports_slot(cell.slot)
 		_connect_cell(cell)
-	_build_inventory()
 
 	_place_doll()
 	_refresh()
@@ -137,11 +136,18 @@ func show_hero(hero: HeroData) -> void:
 		_focus_default()
 
 
-func _build_inventory() -> void:
+## Make the grid hold exactly as many cells as the hero can carry, which grows
+## when they buy inventory upgrades.
+func _sync_inventory_cells() -> void:
 	if item_cell_scene == null:
 		push_error("Hub: item_cell_scene must be wired to show the inventory.")
 		return
-	for i in HeroData.INVENTORY_SIZE:
+	var wanted: int = _hero.inventory_capacity() if _hero != null else HeroData.BASE_INVENTORY_SIZE
+	while _inventory_cells.size() > wanted:
+		var extra: ItemCell = _inventory_cells.pop_back()
+		_inventory_grid.remove_child(extra)
+		extra.queue_free()
+	while _inventory_cells.size() < wanted:
 		var node: Node = item_cell_scene.instantiate()
 		if node is not ItemCell:
 			push_error("Hub: item_cell_scene must have an ItemCell root.")
@@ -218,6 +224,7 @@ func _refresh_skills_button() -> void:
 
 
 func _refresh_items() -> void:
+	_sync_inventory_cells()
 	for cell: ItemCell in _equipment_cells:
 		cell.item = _hero.equipped(cell.slot) if _hero != null else null
 
@@ -227,8 +234,8 @@ func _refresh_items() -> void:
 	for i in _inventory_cells.size():
 		_inventory_cells[i].item = carried[i] if i < carried.size() else null
 
-	_count_label.text = "%d/%d" % [carried.size(), HeroData.INVENTORY_SIZE]
-	var full: bool = carried.size() >= HeroData.INVENTORY_SIZE
+	_count_label.text = "%d/%d" % [carried.size(), _inventory_cells.size()]
+	var full: bool = carried.size() >= _inventory_cells.size()
 	_count_label.theme_type_variation = &"AccentLabel" if full else &"MutedLabel"
 
 

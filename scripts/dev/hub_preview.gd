@@ -49,7 +49,7 @@ func _ready() -> void:
 			if worn != null:
 				worn.rarity = worn_rarity
 	var rarities: Array[RarityData] = RarityData.all()
-	for i in mini(spare_armours, HeroData.INVENTORY_SIZE):
+	for i in mini(spare_armours, HeroData.BASE_INVENTORY_SIZE):
 		var armour: ArmourItem = ArmourItem.roll(POOLS[i % POOLS.size()])
 		if armour == null:
 			return

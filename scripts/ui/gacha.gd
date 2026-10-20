@@ -140,7 +140,7 @@ func show_hero(hero: HeroData) -> void:
 
 func _refresh_hero() -> void:
 	_gold_label.text = str(_hero.gold)
-	_inventory_label.text = "%d/%d" % [_hero.inventory.size(), HeroData.INVENTORY_SIZE]
+	_inventory_label.text = "%d/%d" % [_hero.inventory.size(), _hero.inventory_capacity()]
 	_inventory_label.theme_type_variation = (
 		&"AccentLabel" if _hero.is_inventory_full() else &""
 	)

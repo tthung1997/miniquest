@@ -325,8 +325,9 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - One weapon slot only. Weapon proficiency lives in the scaling numbers.
 - **Rejected:** a secondary weapon slot. Alternating auto-attacks between two
   weapons felt fussy and the fantasy doesn't hold up.
-- **Each hero carries up to 25 items** in an inventory, all shown at once in the
-  hub. Unworn items live there.
+- **Each hero carries up to 25 items** in an inventory to begin with, and the
+  store sells upgrades that add more (see 5.7). Unworn items live there. The hub
+  shows them in a grid that scrolls once it is longer than the panel.
 - **An item's icon is stacked from its pieces.** Every Armour piece variant has
   a 16×16 icon, drawn on a shared canvas with a fixed zone per piece (hat on
   top, shirt, pants below), and the item's icon is its pieces' icons layered.
@@ -365,9 +366,16 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   Legendary), so selling rises with rarity yet always pays less than the store
   charges for the same item. Rare and above ask first. Worn items must be taken
   off to be sold.
+- **Inventory upgrades are sold by the store** too. A button in the store's top bar
+  buys the hero's next upgrade, which adds 5 slots, after a confirmation; each costs
+  more than the last (400, 800, 1,600, 3,200, 6,400 gold), up to 50 slots. They are
+  held in `resources/store/bag_upgrades.tres`, and the hero's count is saved
+  (`HeroData.bag_upgrades`). All placeholders: a gold sink for a hero with gold to
+  spare, and a way out of a full inventory besides selling.
 - **The gacha is advertised on a poster** under the shelves: a golden chest, some
   sparks, and "Packs from 200 gold", or "A guaranteed Legendary awaits!" when some
-  pack's next pull is the guaranteed one. Pressing it opens the gacha. The Slots tab has a shelf of three
+  pack's next pull is the guaranteed one. Pressing it opens the gacha, a slot
+  machine; Back returns to the store. The Slots tab has a shelf of three
   packs on the left, each a chest recoloured in the pack's colour (`PackData.color`,
   via `ChestArt`) with a gem per tier and its price, and the machine on the right: a
   marquee of chasing light bulbs round the cabinet, the pack's odds as a stacked
@@ -518,7 +526,7 @@ does not suit the build is for selling or forging), or boots (30% of them, secti
 5.6), each at a rarity rolled by weight;
 weapons do not drop yet, though they have rarity now. The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
-banked, and any item that does not fit the 25-cell inventory is lost, which the
+banked, and any item that does not fit the inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
 
 This keeps greed a real mechanic: diving toward a drop while swarmed is a genuine
