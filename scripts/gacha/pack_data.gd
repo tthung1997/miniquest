@@ -17,6 +17,8 @@ const MULTI_PULL: int = 10
 @export_multiline var description: String = ""
 ## Lowest first. Sorts packs from the cheapest.
 @export_range(0, 9) var order: int = 0
+## The pack's colour: its chest, its glow and its card are tinted with it.
+@export var color: Color = Color.WHITE
 @export_range(1, 100000, 1, "suffix:gold") var price: int = 100
 ## Fraction taken off when pulling MULTI_PULL at once: 0.1 makes ten pulls cost
 ## nine pulls' worth.

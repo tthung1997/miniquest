@@ -8,6 +8,7 @@ id = &"champion"
 display_name = "Champion"
 description = "Nothing plain, and the soonest guaranteed Legendary."
 order = 2
+color = Color(1, 0.78, 0.25, 1)
 price = 900
 pity_limit = 50
 rarity_weights = Dictionary[StringName, float]({

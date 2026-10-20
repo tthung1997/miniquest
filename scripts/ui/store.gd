@@ -13,9 +13,12 @@ extends Control
 ## bought.
 ##
 ## Changes the hero only by buying, and reports that with hero_changed for the
-## screen owner to save. Runs standalone with a throwaway hero.
+## screen owner to save. The GACHA button in the top bar leads on to the gacha.
+## Runs standalone with a throwaway hero.
 
 signal back_requested
+## The player asked for the gacha, which is reached from the store.
+signal gacha_requested
 ## The hero bought something and should be saved.
 signal hero_changed
 
@@ -58,6 +61,7 @@ var _selected: EquipmentItem = null
 @onready var _doll_anchor: Node2D = %DollAnchor
 @onready var _doll: PaperDoll = %PaperDoll
 @onready var _back_button: Button = %BackButton
+@onready var _gacha_button: Button = %GachaButton
 @onready var _gold_label: Label = %GoldLabel
 @onready var _name_label: Label = %NameLabel
 @onready var _detail_label: Label = %DetailLabel
@@ -80,6 +84,7 @@ func _ready() -> void:
 	_stage.custom_minimum_size.y = STAGE_HEIGHT * doll_scale
 	_stage.resized.connect(_place_doll)
 	_back_button.pressed.connect(back_requested.emit)
+	_gacha_button.pressed.connect(gacha_requested.emit)
 	_reset_button.pressed.connect(_reset)
 	_walk_button.toggled.connect(_on_walk_toggled)
 	_attack_button.pressed.connect(_on_attack_pressed)

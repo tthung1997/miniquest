@@ -3,9 +3,9 @@ extends Node
 ## Opens the hub with a throwaway hero carrying rolled armour from every pool
 ## and some pairs of boots, cycling through every rarity, so equipping and
 ## rarity can be tried before item drops are tuned. The hero wears gear of
-## `worn_rarity` and has `gold` to spend. The gold count opens the store and
-## Gacha opens the gacha, each returning to the hub, so buying, selling (right-click
-## an item), pulling and merging can all be tried.
+## `worn_rarity` and has `gold` to spend. The gold count opens the store, and the
+## store's GACHA button opens the gacha, each going back a step, so buying,
+## selling (right-click an item), pulling and merging can all be tried.
 ##
 ## The hero is never saved: hero_changed is left unconnected, and every change
 ## is lost when the scene stops. Raise `spare_armours` and `spare_boots` to
@@ -66,11 +66,11 @@ func _ready() -> void:
 		if not hero.add_to_inventory(boots):
 			break
 	_hub.store_requested.connect(_open_screen.bind(store_scene))
-	_hub.gacha_requested.connect(_open_screen.bind(gacha_scene))
 	_hub.show_hero(hero)
 
 
-## Swap the hub for `scene`, a Store or Gacha, until it asks to go back.
+## Swap what is on show for `scene`, a Store or Gacha. The store leads on to the
+## gacha and the gacha back to the store; the store goes back to the hub.
 func _open_screen(scene: PackedScene) -> void:
 	if scene == null:
 		push_error("HubPreview: store_scene and gacha_scene must be wired.")
@@ -82,11 +82,24 @@ func _open_screen(scene: PackedScene) -> void:
 		return
 	screen.show_hero(_hero)
 	screen.back_requested.connect(_close_screen.bind(screen))
-	remove_child(_hub)
+	if screen is Store:
+		screen.gacha_requested.connect(_replace_screen.bind(screen, gacha_scene))
+	if _hub.is_inside_tree():
+		remove_child(_hub)
 	add_child(screen)
+
+
+func _replace_screen(old: Node, scene: PackedScene) -> void:
+	old.queue_free()
+	remove_child(old)
+	_open_screen(scene)
 
 
 func _close_screen(screen: Node) -> void:
 	screen.queue_free()
+	remove_child(screen)
+	if screen is Gacha:
+		_open_screen(store_scene)
+		return
 	add_child(_hub)
 	_hub.show_hero(_hero)

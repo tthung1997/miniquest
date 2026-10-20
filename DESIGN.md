@@ -354,23 +354,34 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   90% from Common to Legendary), so selling rises with rarity yet always pays less
   than the store charges for the same item. Rare and above ask first. Worn items
   must be taken off to be sold.
-- **Gacha.** The hub's Gacha button opens a screen with three packs
-  (`resources/packs/`, a `PackData` each). Every pack can give weapons, armour and
-  boots of any rarity, a third each; packs differ only in price, odds and
+- **Gacha is a slot machine, reached from the store.** The store's GACHA button
+  (top bar) opens it; Back returns to the store. The Slots tab has a shelf of three
+  packs on the left, each a chest recoloured in the pack's colour (`PackData.color`,
+  via `ChestArt`) with a gem per tier and its price, and the machine on the right: a
+  marquee of chasing light bulbs round the cabinet, the pack's odds as a stacked
+  colour bar, a grid of reels, and a meter for the guarantee. Every pull is a reel
+  that spins and stops, left to right, on its item, flashing in the item's rarity
+  colour; one pull is one big reel, ten are a grid of ten. SKIP stops them all at
+  once. An Epic or Legendary makes the marquee blink in its colour. The result is
+  decided and paid for the moment the button is pressed; the reels only reveal it.
+  The packs (`resources/packs/`, a `PackData` each) can all give weapons, armour and
+  boots of any rarity, a third each; they differ only in price, odds and
   guarantee: Traveller (200 gold, 60/28/9/2.5/0.5% Common to Legendary, a
   Legendary within 100 pulls), Adventurer (400, 25/40/22/10/3%, within 75) and
   Champion (900, no Common, 0/15/45/30/10%, within 50). Pull one at a time, or
   ten for 10% off. A pull needs a free inventory cell for each item, so a
   ten-pull needs ten. **Each hero counts pulls since their last Legendary from each
   pack** (`HeroData.pity`); the pull that reaches the pack's limit is a Legendary
-  whatever the dice say, and any Legendary resets the count. The screen says how
-  many pulls are left. Armour pulled comes from the hero's own class's art. All
-  numbers are placeholders; selling pulls back less than a pack costs on average,
-  so packs cannot be farmed for gold.
-- **Merging.** The Gacha screen's Merge tab turns five carried items of the same
-  rarity, of any kinds, into one random item (a weapon, armour or boots, rolled
-  like a pull) a rarity higher. Free; Legendary cannot be merged. It is how
-  gear the hero cannot use becomes something better.
+  whatever the dice say, and any Legendary resets the count. The meter fills as
+  pulls go by and its star lights when the next pull is the guaranteed one. Armour
+  pulled comes from the hero's own class's art. All numbers are placeholders;
+  selling pulls back less than a pack costs on average, so packs cannot be farmed
+  for gold.
+- **Merging happens in the Forge tab.** Tick five carried items of the same rarity,
+  of any kinds, in the stash; they sit in the five sockets, and Merge turns them
+  into one random item (a weapon, armour or boots, rolled like a pull) a rarity
+  higher, which stops on a reel of its own. Free; Legendary cannot be merged. It is
+  how gear the hero cannot use becomes something better.
 - **Starting prices** (a won run pays about 100 gold, so 100 is about one run):
   weapons run from 100 for the three originals up to 900 for the fanciest of
   each kind, with the secondary-scaling and special designs at the top; boots
@@ -560,11 +571,12 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 
 **The hero stands on the left in a warm glow, between their four equipment
 slots, with their name and level above and their stats and Start Quest below;
-their inventory fills the right.** Inventory, Advance, Skills and Gacha sit in
+their inventory fills the right.** Inventory, Advance and Skills sit in
 the top bar. Inventory and Skills are two views of the same right-hand panel,
 and the panel keeps one size whichever is up (a view that runs long scrolls
 rather than resizing the screen). Skills is marked with an exclamation mark
-while the hero has points to spend. Gacha opens the pack screen (section 5.7).
+while the hero has points to spend. The gold count opens the store, which leads
+on to the gacha (section 5.7).
 
 The skill tree shows only skills the hero can learn: a coloured box for each
 class on their path (each class has its own colour in its file), oldest first,

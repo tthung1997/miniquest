@@ -61,7 +61,6 @@ func _show_hub() -> void:
 	hub.hero_changed.connect(_save_hero)
 	hub.quest_requested.connect(_show_arena_run)
 	hub.store_requested.connect(_show_store)
-	hub.gacha_requested.connect(_show_gacha)
 	hub.change_hero_requested.connect(_show_character_select)
 	_swap_to(hub)
 
@@ -75,6 +74,7 @@ func _show_store() -> void:
 		return
 	store.show_hero(_hero)
 	store.hero_changed.connect(_save_hero)
+	store.gacha_requested.connect(_show_gacha)
 	store.back_requested.connect(_show_hub)
 	_swap_to(store)
 
@@ -88,7 +88,7 @@ func _show_gacha() -> void:
 		return
 	gacha.show_hero(_hero)
 	gacha.hero_changed.connect(_save_hero)
-	gacha.back_requested.connect(_show_hub)
+	gacha.back_requested.connect(_show_store)
 	_swap_to(gacha)
 
 

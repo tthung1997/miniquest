@@ -8,6 +8,11 @@
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/ui/arrow_left.png" id="6_arrow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="7_shadow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/props/hero_dais.png" id="8_dais"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="9_chest"]
+
+[sub_resource type="AtlasTexture" id="ClosedChest"]
+atlas = ExtResource("9_chest")
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="Gradient" id="StageGlow"]
 colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
@@ -91,6 +96,15 @@ text = "STORE"
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
+
+[node name="GachaButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Pull random gear from packs, and merge spare items"
+theme_type_variation = &"QuietButton"
+text = "GACHA"
+icon = SubResource("ClosedChest")
 
 [node name="GoldChip" type="PanelContainer" parent="Margin/Column/TopBar"]
 layout_mode = 2

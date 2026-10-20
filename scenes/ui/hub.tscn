@@ -10,7 +10,6 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/advance_dialog.tscn" id="19_advance"]
 [ext_resource type="PackedScene" path="res://scenes/ui/class_tag.tscn" id="20_tag"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_tree_panel.tscn" id="21_skills"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/treasure_chest.png" id="8_chest"]
 [ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="9_coin"]
 [ext_resource type="Texture2D" path="res://assets/sprites/effects/hero_shadow.png" id="10_shadow"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/exp_icon.png" id="11_exp"]
@@ -25,10 +24,6 @@
 [sub_resource type="ButtonGroup" id="ButtonGroup_view"]
 
 [sub_resource type="StyleBoxEmpty" id="GoldClear"]
-
-[sub_resource type="AtlasTexture" id="ClosedChest"]
-atlas = ExtResource("8_chest")
-region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="Gradient" id="StageGlow"]
 colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
@@ -123,15 +118,6 @@ button_group = SubResource("ButtonGroup_view")
 theme_type_variation = &"QuietButton"
 text = "SKILLS"
 icon = ExtResource("6_scroll")
-
-[node name="GachaButton" type="Button" parent="Margin/Column/TopBar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 22)
-layout_mode = 2
-tooltip_text = "Pull gear from packs, and merge spare items"
-theme_type_variation = &"QuietButton"
-text = "GACHA"
-icon = SubResource("ClosedChest")
 
 [node name="Spacer" type="Control" parent="Margin/Column/TopBar"]
 layout_mode = 2

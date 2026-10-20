@@ -8,6 +8,7 @@ id = &"adventurer"
 display_name = "Adventurer"
 description = "Better odds all round, and a Legendary sooner."
 order = 1
+color = Color(0.5, 0.72, 1, 1)
 price = 400
 pity_limit = 75
 rarity_weights = Dictionary[StringName, float]({

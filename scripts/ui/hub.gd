@@ -14,15 +14,14 @@ extends Control
 ## the classes the hero can become; the choice goes
 ## through HeroData.advance_to() and is reported with hero_changed like any
 ## other edit. Skills swaps the inventory for the skill tree, where skill points
-## are spent and the skill a run starts with is chosen. Gacha opens the pack
-## screen. The gold count is a button too: it opens the store. Carried items
+## are spent and the skill a run starts with is chosen. The gold count is a
+## button too: it opens the store, which leads on to the gacha. Carried items
 ## can be sold from their right-click menu, with a confirmation for the
 ## rarer ones. Runs standalone with an unselected portrait.
 
 signal quest_requested
 signal change_hero_requested
 signal store_requested
-signal gacha_requested
 ## The shown hero's equipment, inventory or stats changed and should be saved.
 signal hero_changed
 
@@ -78,7 +77,6 @@ var _after_leave_choice: Callable = Callable()
 @onready var _change_hero_button: Button = %ChangeHeroButton
 @onready var _inventory_button: Button = %InventoryButton
 @onready var _skills_button: Button = %SkillsButton
-@onready var _gacha_button: Button = %GachaButton
 @onready var _confirm_dialog: ConfirmDialog = %ConfirmDialog
 @onready var _sell_dialog: ConfirmDialog = %SellDialog
 @onready var _advance_dialog: AdvanceDialog = %AdvanceDialog
@@ -101,7 +99,6 @@ func _ready() -> void:
 	_advance_dialog.closed.connect(_focus_class_tag)
 	_inventory_button.pressed.connect(_on_inventory_pressed)
 	_skills_button.pressed.connect(_on_skills_pressed)
-	_gacha_button.pressed.connect(_on_gacha_pressed)
 	_sell_dialog.confirmed.connect(_on_sale_confirmed)
 	_sell_dialog.cancelled.connect(_on_sale_cancelled)
 	_skills_view.hero_changed.connect(_on_hero_edited)
@@ -216,7 +213,6 @@ func _refresh_advance_cue() -> void:
 func _refresh_skills_button() -> void:
 	var points: int = _hero.unspent_skill_points if _hero != null else 0
 	_skills_button.disabled = _hero == null
-	_gacha_button.disabled = _hero == null
 	_inventory_button.disabled = _hero == null
 	_skills_button.text = "SKILLS!" if points > 0 else "SKILLS"
 
@@ -385,10 +381,6 @@ func _on_store_pressed() -> void:
 	_leave(_request_store)
 
 
-func _on_gacha_pressed() -> void:
-	_leave(_request_gacha)
-
-
 func _on_advance_pressed() -> void:
 	if _hero == null:
 		return
@@ -434,10 +426,6 @@ func _on_class_chosen(class_id: StringName) -> void:
 
 func _request_store() -> void:
 	store_requested.emit()
-
-
-func _request_gacha() -> void:
-	gacha_requested.emit()
 
 
 func _request_quest() -> void:
