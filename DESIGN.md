@@ -338,24 +338,36 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
 - **Gold buys gear in two places.** The store sells chosen items, always Common;
   gacha packs sell a random roll at any rarity. Both pay out into the
   inventory, so both need free cells.
-- **The store lists everything, and sells it.** Clicking the gold count in the hub opens a screen
-  with every weapon (30), every pair of boots (13) and every armour piece
-  (a class's art at a time), each with a price. Picking anything puts it on the
-  hero's doll in place of what they wear, with WALK and ATTACK buttons to see it
-  move, and RESET to dress the doll as the hero again. BUY pays the price and puts
-  a new **Common** copy in the inventory (disabled, with the reason on hover, when
-  the hero lacks gold or room). Armour is priced by the piece and sold as a
-  set the player assembles from one class's pieces, with its stat points rolled on
-  purchase, which is a placeholder: it
-  lets a player choose an Armour item's look, which the rolled-look design above
-  and the open question in section 11 do not yet settle.
-- **Selling.** Right-click a carried item in the hub and choose Sell. It pays the
-  item's Common store price times its rarity's `sell_fraction` (25%, 35%, 50%, 70%,
-  90% from Common to Legendary), so selling rises with rarity yet always pays less
-  than the store charges for the same item. Rare and above ask first. Worn items
-  must be taken off to be sold.
-- **Gacha is a slot machine, reached from the store.** The store's GACHA button
-  (top bar) opens it; Back returns to the store. The Slots tab has a shelf of three
+- **The store is a shop with shelves.** Clicking the gold count in the hub opens it.
+  Weapons (30), Boots (13) and Armour (a class's art at a time) stand on wooden
+  shelves under a striped awning, each with a hanging price tag with a coin;
+  what the hero cannot afford is dimmed and its price shown in red. Picking
+  anything puts it on the hero's doll in place of what they wear, with WALK and
+  ATTACK buttons to see it move, and RESET to dress the doll as the hero again.
+  Beside the doll, rows set what the item gives against what the hero wears in
+  that slot, with the change in green or red: damage, attack speed and range for a
+  weapon (damage uses the hero's own stats), move speed and stat points for boots,
+  and the range of points an unbought armour can roll against the worn armour's
+  (`ItemCompare`). It also says how many of that weapon or boots the hero already
+  has. BUY pays the price and puts a new **Common** copy in the inventory
+  (disabled, with the reason on hover, when the hero lacks gold or room), with
+  coins flying from the gold count, the count running down, and SOLD on the tag.
+  Armour is priced by the piece and sold as a set the player assembles from one
+  class's pieces, with its stat points rolled on purchase, which is a
+  placeholder: it lets a player choose an Armour item's look, which the
+  rolled-look design above and the open question in section 11 do not yet settle.
+- **Selling happens in the store's Sell tab** (under a green awning), and from the
+  hub by right-clicking a carried item. The tab lists everything carried, each with
+  what it fetches on its tag. Tick any number of items (or ALL COMMON) and press
+  SELL; coins fly into the gold count. Hovering an item shows what it gives next
+  to what is worn, so a keeper is easy to spot. An item sells for its Common store
+  price times its rarity's `sell_fraction` (25%, 35%, 50%, 70%, 90% from Common to
+  Legendary), so selling rises with rarity yet always pays less than the store
+  charges for the same item. Rare and above ask first. Worn items must be taken
+  off to be sold.
+- **The gacha is advertised on a poster** under the shelves: a golden chest, some
+  sparks, and "Packs from 200 gold", or "A guaranteed Legendary awaits!" when some
+  pack's next pull is the guaranteed one. Pressing it opens the gacha. The Slots tab has a shelf of three
   packs on the left, each a chest recoloured in the pack's colour (`PackData.color`,
   via `ChestArt`) with a gem per tier and its price, and the machine on the right: a
   marquee of chasing light bulbs round the cabinet, the pack's odds as a stacked
