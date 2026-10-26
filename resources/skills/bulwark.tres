@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/bulwark.png" id="1_3fht2"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_3mrpr"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/bulwark_aura.tscn" id="1_e33tg"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/bulwark.tscn" id="2_8sjwm"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/bulwark.png" id="3_q8k52"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="4_nr5y8"]
 
 [resource]
-script = ExtResource("2_3mrpr")
+script = ExtResource("4_nr5y8")
 id = &"bulwark"
 display_name = "Bulwark"
-icon = ExtResource("1_3fht2")
+icon = ExtResource("3_q8k52")
 class_id = &"warrior"
 description = "Set your feet and take far less damage for a few seconds."
 effect_note = "Power is read as percent damage reduction, capped at 70%, lasting 4s."
@@ -21,5 +23,8 @@ power_per_level = 6.0
 cooldown = 16.0
 cooldown_reduction_per_level = 0.8
 tint = Color(0.4, 0.55, 1, 0.7)
+cast_effect = ExtResource("2_8sjwm")
+cast_effect_offset = Vector2(0, -12)
+aura_effect = ExtResource("1_e33tg")
 buff = &"bulwark"
 buff_duration = 4.0

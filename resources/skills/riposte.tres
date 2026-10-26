@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/riposte.png" id="1_ks0dd"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_smfgm"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/riposte_aura.tscn" id="1_im25j"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/riposte.tscn" id="2_q8jyj"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/riposte.png" id="3_1y5un"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="4_pu0ke"]
 
 [resource]
-script = ExtResource("2_smfgm")
+script = ExtResource("4_pu0ke")
 id = &"riposte"
 display_name = "Riposte"
-icon = ExtResource("1_ks0dd")
+icon = ExtResource("3_1y5un")
 class_id = &"duelist"
 description = "Turn the next blow you take into one of your own."
 effect_note = "Negates the next hit taken within 4s and reflects power as damage. Manual only: automated on cooldown it would almost always be spent on a hit that was not going to land."
@@ -23,5 +25,8 @@ cooldown = 12.0
 cooldown_reduction_per_level = 0.6
 supports_auto_cast = false
 tint = Color(0.95, 0.95, 0.95, 0.7)
+cast_effect = ExtResource("2_q8jyj")
+cast_effect_offset = Vector2(0, -12)
+aura_effect = ExtResource("1_im25j")
 buff = &"riposte"
 buff_duration = 4.0

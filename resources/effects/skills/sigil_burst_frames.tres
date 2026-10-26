@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/sigil_burst.png" id="1_6g1ae"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuubj"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5p8d"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nlb5s"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7wtwb"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kjmnk"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_srqtj"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(480, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r4pj4"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(576, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0vkc"]
+atlas = ExtResource("1_6g1ae")
+region = Rect2(672, 0, 96, 96)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uuubj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p5p8d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nlb5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7wtwb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kjmnk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_srqtj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r4pj4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b0vkc")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

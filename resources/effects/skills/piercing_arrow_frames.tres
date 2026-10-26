@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/piercing_arrow.png" id="1_sspb1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iy3yv"]
+atlas = ExtResource("1_sspb1")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5o1k"]
+atlas = ExtResource("1_sspb1")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mydct"]
+atlas = ExtResource("1_sspb1")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xibes"]
+atlas = ExtResource("1_sspb1")
+region = Rect2(96, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iy3yv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p5o1k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mydct")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xibes")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]

@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/frost_nova.png" id="1_5wxqi"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_lqmse"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/frost_nova.tscn" id="1_lqmse"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/frost_nova.png" id="2_ga7kc"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_nl6lp"]
 
 [resource]
-script = ExtResource("2_lqmse")
+script = ExtResource("3_nl6lp")
 id = &"frost_nova"
 display_name = "Frost Nova"
-icon = ExtResource("1_5wxqi")
+icon = ExtResource("2_ga7kc")
 class_id = &"mage"
 description = "A ring of ice that hurts a little and slows a lot."
 effect_note = "Slows everything hit by 50% for 3s. The Mage's answer to being surrounded."
@@ -21,5 +22,8 @@ cooldown = 8.0
 cooldown_reduction_per_level = 0.4
 radius = 64.0
 tint = Color(0.5, 0.9, 1, 0.7)
+cast_effect = ExtResource("1_lqmse")
+cast_effect_offset = Vector2(0, -4)
+cast_effect_anchored = true
 slow = 0.5
 slow_duration = 3.0

@@ -1,9 +1,17 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/effects/sigil_trap.gd" id="1_trap"]
+[ext_resource type="SpriteFrames" path="res://resources/effects/skills/sigil_rune_frames.tres" id="2_frames"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/sigil_burst.tscn" id="3_burst"]
 
 [node name="SigilTrap" type="Node2D"]
 script = ExtResource("1_trap")
+burst_effect = ExtResource("3_burst")
+
+[node name="Rune" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_frames")
+animation = &"default"
+autoplay = "default"
 
 [node name="Trigger" type="Area2D" parent="."]
 collision_layer = 0

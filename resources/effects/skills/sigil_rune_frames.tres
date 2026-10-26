@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/sigil_rune.png" id="1_nkg66"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ni8q8"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(0, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v7nlt"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(80, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hqs11"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(160, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1st1"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(240, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_64h8q"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(320, 0, 80, 80)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjson"]
+atlas = ExtResource("1_nkg66")
+region = Rect2(400, 0, 80, 80)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ni8q8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v7nlt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hqs11")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1st1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_64h8q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjson")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}]

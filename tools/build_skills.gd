@@ -10,8 +10,14 @@ const JSON_PATH: String = "res://design/skills.json"
 const OUTPUT: String = "res://resources/skills"
 ## Drawn by tools/build_skill_icons.gd; run that first.
 const ICON_DIRECTORY: String = "res://assets/sprites/ui/skill_icons"
-const MAGIC_BOLT: String = "res://scenes/effects/magic_bolt.tscn"
-const CROSSBOW_BOLT: String = "res://scenes/effects/crossbow_bolt.tscn"
+const EFFECTS: String = "res://scenes/effects/skills"
+const FIREBOLT: String = EFFECTS + "/firebolt_bolt.tscn"
+const PIERCING_ARROW: String = EFFECTS + "/piercing_arrow.tscn"
+const ENCHANTED_ARROW: String = EFFECTS + "/enchanted_arrow.tscn"
+## Where a hero's body centre is from their feet; art drawn around the body sits here.
+const BODY: Vector2 = Vector2(0.0, -12.0)
+## Art drawn on the ground, whose centre is a little above the feet.
+const GROUND: Vector2 = Vector2(0.0, -4.0)
 
 const WHITE: Color = Color(0.95, 0.95, 0.95, 0.7)
 const GREEN: Color = Color(0.4, 1.0, 0.5, 0.7)
@@ -23,45 +29,96 @@ const PURPLE: Color = Color(0.7, 0.45, 1.0, 0.7)
 const YELLOW: Color = Color(1.0, 0.9, 0.4, 0.7)
 
 ## How each skill is carried out, keyed by skill id. `kind` is a SkillData.Kind
-## name; everything else is a SkillData property.
+## name; everything else is a SkillData property. The effect scenes are named by
+## path, and an effect's art is drawn for the skill's radius, so change the two
+## together. Each is in scenes/effects/skills/, drawn by tools/build_skill_effects.gd.
 const DELIVERY: Dictionary = {
-	"whirl": {"kind": "AREA", "radius": 44.0, "tint": WHITE},
-	"second_wind": {"kind": "HEAL", "tint": GREEN},
-	"cleave": {"kind": "AREA", "radius": 52.0, "frontal": true, "tint": ORANGE},
-	"bulwark": {"kind": "BUFF", "buff": "bulwark", "buff_duration": 4.0, "tint": BLUE},
+	"whirl": {
+		"kind": "AREA", "radius": 44.0, "tint": WHITE,
+		"cast_effect": EFFECTS + "/whirl.tscn", "cast_effect_offset": BODY,
+	},
+	"second_wind": {
+		"kind": "HEAL", "tint": GREEN,
+		"cast_effect": EFFECTS + "/second_wind.tscn", "cast_effect_offset": BODY,
+	},
+	"cleave": {
+		"kind": "AREA", "radius": 52.0, "frontal": true, "tint": ORANGE,
+		"cast_effect": EFFECTS + "/cleave.tscn", "cast_effect_offset": BODY,
+	},
+	"bulwark": {
+		"kind": "BUFF", "buff": "bulwark", "buff_duration": 4.0, "tint": BLUE,
+		"cast_effect": EFFECTS + "/bulwark.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/bulwark_aura.tscn",
+	},
 	"firebolt": {
-		"kind": "PROJECTILE", "projectile": MAGIC_BOLT, "cast_range": 180.0, "tint": ORANGE,
+		"kind": "PROJECTILE", "projectile": FIREBOLT, "cast_range": 180.0, "tint": ORANGE,
 	},
 	"frost_nova": {
 		"kind": "AREA", "radius": 64.0, "slow": 0.5, "slow_duration": 3.0, "tint": CYAN,
+		"cast_effect": EFFECTS + "/frost_nova.tscn", "cast_effect_offset": GROUND,
+		"cast_effect_anchored": true,
 	},
 	"piercing_shot": {
-		"kind": "PROJECTILE", "projectile": CROSSBOW_BOLT, "pierces": true,
+		"kind": "PROJECTILE", "projectile": PIERCING_ARROW, "pierces": true,
 		"cast_range": 200.0, "tint": YELLOW,
 	},
-	"swift_step": {"kind": "BUFF", "buff": "swift_step", "buff_duration": 3.0, "tint": YELLOW},
-	"whirlwind": {"kind": "AREA", "radius": 56.0, "hits": 4, "duration": 2.0, "tint": RED},
-	"blood_frenzy": {"kind": "BUFF", "buff": "blood_frenzy", "buff_duration": 6.0, "tint": RED},
+	"swift_step": {
+		"kind": "BUFF", "buff": "swift_step", "buff_duration": 3.0, "tint": YELLOW,
+		"cast_effect": EFFECTS + "/swift_step.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/swift_step_aura.tscn",
+	},
+	"whirlwind": {
+		"kind": "AREA", "radius": 56.0, "hits": 4, "duration": 2.0, "tint": RED,
+		"cast_effect": EFFECTS + "/whirlwind.tscn", "cast_effect_offset": BODY,
+	},
+	"blood_frenzy": {
+		"kind": "BUFF", "buff": "blood_frenzy", "buff_duration": 6.0, "tint": RED,
+		"cast_effect": EFFECTS + "/blood_frenzy.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/blood_frenzy_aura.tscn",
+	},
 	"meteor": {
 		"kind": "DELAYED_AREA", "radius": 48.0, "delay": 1.0, "cast_range": 180.0,
-		"tint": ORANGE,
+		"tint": ORANGE, "target_effect": EFFECTS + "/meteor.tscn",
 	},
 	"arcane_surge": {
 		"kind": "BUFF", "buff": "arcane_surge", "buff_duration": 6.0, "tint": PURPLE,
+		"cast_effect": EFFECTS + "/arcane_surge.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/arcane_surge_aura.tscn",
 	},
-	"shadow_strike": {"kind": "STRIKE", "teleports": true, "cast_range": 140.0, "tint": PURPLE},
-	"vanish": {"kind": "BUFF", "buff": "vanish", "tint": PURPLE},
-	"flame_brand": {"kind": "BUFF", "buff": "flame_brand", "buff_duration": 8.0, "tint": ORANGE},
-	"rune_slash": {"kind": "AREA", "radius": 56.0, "tint": ORANGE},
+	"shadow_strike": {
+		"kind": "STRIKE", "teleports": true, "cast_range": 140.0, "tint": PURPLE,
+		"cast_effect": EFFECTS + "/shadow_depart.tscn", "cast_effect_offset": BODY,
+		"cast_effect_anchored": true, "target_effect": EFFECTS + "/shadow_hit.tscn",
+	},
+	"vanish": {
+		"kind": "BUFF", "buff": "vanish", "tint": PURPLE,
+		"cast_effect": EFFECTS + "/vanish.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/vanish_aura.tscn",
+	},
+	"flame_brand": {
+		"kind": "BUFF", "buff": "flame_brand", "buff_duration": 8.0, "tint": ORANGE,
+		"cast_effect": EFFECTS + "/flame_brand.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/flame_brand_aura.tscn",
+	},
+	"rune_slash": {
+		"kind": "AREA", "radius": 56.0, "tint": ORANGE,
+		"cast_effect": EFFECTS + "/rune_slash.tscn", "cast_effect_offset": BODY,
+	},
 	"enchanted_volley": {
-		"kind": "PROJECTILE", "projectile": MAGIC_BOLT, "projectile_count": 3, "spread": 0.22,
-		"cast_range": 190.0, "tint": PURPLE,
+		"kind": "PROJECTILE", "projectile": ENCHANTED_ARROW, "projectile_count": 3,
+		"spread": 0.22, "cast_range": 190.0, "tint": PURPLE,
 	},
+	# The rune and its burst belong to scenes/effects/sigil_trap.tscn.
 	"sigil_trap": {"kind": "TRAP", "radius": 32.0, "tint": PURPLE},
 	"flurry": {
 		"kind": "STRIKE", "hits": 5, "duration": 0.6, "cast_range": 48.0, "tint": WHITE,
+		"target_effect": EFFECTS + "/flurry.tscn",
 	},
-	"riposte": {"kind": "BUFF", "buff": "riposte", "buff_duration": 4.0, "tint": WHITE},
+	"riposte": {
+		"kind": "BUFF", "buff": "riposte", "buff_duration": 4.0, "tint": WHITE,
+		"cast_effect": EFFECTS + "/riposte.tscn", "cast_effect_offset": BODY,
+		"aura_effect": EFFECTS + "/riposte_aura.tscn",
+	},
 }
 
 const TARGETS: Dictionary = {
@@ -130,8 +187,8 @@ func _build(entry: Dictionary) -> SkillData:
 		match property:
 			"kind":
 				skill.kind = SkillData.Kind[value]
-			"projectile":
-				skill.projectile = load(value)
+			"projectile", "cast_effect", "target_effect", "aura_effect":
+				skill.set(property, load(value))
 			"buff":
 				skill.buff = StringName(value)
 			_:

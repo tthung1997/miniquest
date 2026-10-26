@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/volley_burst.png" id="1_h7yy2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kittf"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sycat"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(40, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_knhcr"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(80, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0kpe1"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(120, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vwx53"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(160, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dyuxe"]
+atlas = ExtResource("1_h7yy2")
+region = Rect2(200, 0, 40, 40)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kittf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sycat")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_knhcr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0kpe1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vwx53")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dyuxe")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

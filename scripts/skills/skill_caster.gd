@@ -40,6 +40,10 @@ const FLASH_SECONDS: float = 0.35
 const SELF_FLASH_RADIUS: float = 20.0
 ## Vanish's power is tenths of a second.
 const VANISH_UNIT: float = 0.1
+## An aura flickers for this long before its buff ends, and fades out over
+## AURA_FADE when it does.
+const AURA_WARNING: float = 1.0
+const AURA_FADE: float = 0.2
 
 ## Whose skills these are.
 @export var hero: Hero
@@ -52,6 +56,23 @@ var held: Array[HeldSkill] = []
 var auto_cast: bool = true
 
 var _query_circle: CircleShape2D = CircleShape2D.new()
+## The aura of each running buff, by status id.
+var _auras: Dictionary[StringName, Node2D] = {}
+
+
+func _ready() -> void:
+	if hero != null:
+		hero.buffs.ended.connect(_on_buff_ended)
+
+
+func _process(_delta: float) -> void:
+	for id: StringName in _auras:
+		var aura: Node2D = _auras[id]
+		if not is_instance_valid(aura):
+			continue
+		var left: float = hero.buffs.remaining(id)
+		var blink: bool = left < AURA_WARNING and int(left * 8.0) % 2 == 0
+		aura.modulate.a = 0.35 if blink else 1.0
 
 
 func _physics_process(delta: float) -> void:
@@ -91,6 +112,14 @@ func set_auto_cast(enabled: bool) -> void:
 		return
 	auto_cast = enabled
 	auto_cast_changed.emit(enabled)
+
+
+## Cast `skill` now, whether or not it is carried, ready, or has anything to hit.
+## For previews and tests; play goes through the skill keys and auto-cast.
+func cast_now(skill: HeldSkill) -> void:
+	if hero == null or hero.is_dead():
+		return
+	_cast(skill)
 
 
 ## Carry exactly `skills`, replacing whatever was carried.
@@ -173,6 +202,7 @@ func _cast(skill: HeldSkill) -> void:
 	var data: SkillData = skill.data
 	var power: float = power_of(skill)
 	skill.cooldown_left = skill.cooldown()
+	_play_cast_effect(data)
 	match data.kind:
 		SkillData.Kind.AREA:
 			_cast_area(data, power)
@@ -218,18 +248,22 @@ func _cast_strike(data: SkillData, power: float) -> void:
 		return
 	if data.teleports:
 		_blink_behind(enemy)
+	_play_target_effect(data, enemy.center())
 	var per_hit: float = power / data.hits
+	var enemy_id: int = enemy.get_instance_id()
 	for i: int in data.hits:
 		var wait: float = data.duration * i / data.hits
 		if is_zero_approx(wait):
-			_strike_hit(enemy, per_hit)
+			_strike_hit(enemy_id, per_hit)
 		else:
-			get_tree().create_timer(wait, false).timeout.connect(_strike_hit.bind(enemy, per_hit))
+			var strike: Callable = _strike_hit.bind(enemy_id, per_hit)
+			get_tree().create_timer(wait, false).timeout.connect(strike)
 
 
-## `target` is untyped because the enemy may have been freed by the time a
-## delayed hit lands, and a freed object cannot be passed as an Enemy.
-func _strike_hit(target: Object, damage: float) -> void:
+## The enemy is passed as an instance id because it may have been freed by the
+## time a delayed hit lands, and a freed object cannot be bound to a callable.
+func _strike_hit(enemy_id: int, damage: float) -> void:
+	var target: Object = instance_from_id(enemy_id)
 	if not is_instance_valid(target) or target is not Enemy or hero.is_dead():
 		return
 	var enemy: Enemy = target
@@ -278,6 +312,7 @@ func _cast_delayed_area(data: SkillData, power: float) -> void:
 		return
 	var spot: Vector2 = enemy.global_position
 	_mark(data.tint, spot, data.radius, data.delay, true)
+	_play_target_effect(data, spot)
 	get_tree().create_timer(data.delay, false).timeout.connect(_land.bind(data, spot, power))
 
 
@@ -297,7 +332,37 @@ func _cast_buff(data: SkillData, power: float) -> void:
 			magnitude = 1.0
 			seconds = power * VANISH_UNIT
 	hero.buffs.apply(data.buff, magnitude, seconds)
+	if seconds > 0.0:
+		_show_aura(data)
 	_flash(data, hero.global_position, SELF_FLASH_RADIUS)
+
+
+## Keep the skill's aura on the hero until its buff ends, replacing the last one.
+func _show_aura(data: SkillData) -> void:
+	_remove_aura(data.buff)
+	var aura: Node2D = _make_effect(data.aura_effect, data)
+	if aura == null:
+		return
+	aura.position = data.cast_effect_offset
+	add_child(aura)
+	_auras[data.buff] = aura
+
+
+func _remove_aura(id: StringName) -> void:
+	var aura: Node2D = _auras.get(id)
+	if aura == null:
+		return
+	_auras.erase(id)
+	if not is_instance_valid(aura):
+		return
+	aura.modulate.a = 1.0
+	var fade: Tween = aura.create_tween()
+	fade.tween_property(aura, "modulate:a", 0.0, AURA_FADE)
+	fade.tween_callback(aura.queue_free)
+
+
+func _on_buff_ended(id: StringName) -> void:
+	_remove_aura(id)
 
 
 func _cast_trap(data: SkillData, power: float) -> void:
@@ -316,9 +381,54 @@ func _cast_trap(data: SkillData, power: float) -> void:
 	effect_spawned.emit(trap, hero.global_position)
 
 
-## A ring that fades, to show a skill went off.
+## A ring that fades, to show a skill went off. A skill with art of its own has no
+## need of it.
 func _flash(data: SkillData, at: Vector2, ring_radius: float) -> void:
+	if data.cast_effect != null or data.target_effect != null:
+		return
 	_mark(data.tint, at, maxf(ring_radius, SELF_FLASH_RADIUS), FLASH_SECONDS, false)
+
+
+## Play the skill's cast effect on the hero, or where the hero stands if it is
+## anchored.
+func _play_cast_effect(data: SkillData) -> void:
+	var effect: Node2D = _make_effect(data.cast_effect, data)
+	if effect == null:
+		return
+	var offset: Vector2 = data.cast_effect_offset
+	if not hero.is_facing_right():
+		offset.x = -offset.x
+		effect.scale.x = -1.0
+	if data.cast_effect_anchored:
+		effect_spawned.emit(effect, hero.global_position + offset)
+		return
+	effect.position = offset
+	add_child(effect)
+
+
+## Play the skill's target effect at `at`, in global space.
+func _play_target_effect(data: SkillData, at: Vector2) -> void:
+	var effect: Node2D = _make_effect(data.target_effect, data)
+	if effect == null:
+		return
+	if not hero.is_facing_right():
+		effect.scale.x = -1.0
+	effect_spawned.emit(effect, at)
+
+
+## A new instance of `scene`, or null if the skill has none or it is not a Node2D.
+func _make_effect(scene: PackedScene, data: SkillData) -> Node2D:
+	if scene == null:
+		return null
+	var node: Node = scene.instantiate()
+	if node is not Node2D:
+		push_error("SkillCaster: an effect of skill '%s' is not a Node2D." % data.id)
+		node.free()
+		return null
+	var effect: Node2D = node
+	# Above the y-sorted crowd, as the world's other effects are.
+	effect.z_index = 1
+	return effect
 
 
 func _mark(tint: Color, at: Vector2, ring_radius: float, seconds: float, filling: bool) -> void:

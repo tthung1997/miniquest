@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/riposte_aura.png" id="1_6c03b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vbsy"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_11frp"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ql2b"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aoggd"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ur6m5"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1us5r"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_454s8"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a3lp2"]
+atlas = ExtResource("1_6c03b")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vbsy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11frp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ql2b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aoggd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ur6m5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1us5r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_454s8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a3lp2")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 10.0
+}]

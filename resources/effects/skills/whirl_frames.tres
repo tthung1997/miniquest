@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/whirl.png" id="1_jhen3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kcpki"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nb4b1"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ov1mi"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ukswk"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4843"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vtrg"]
+atlas = ExtResource("1_jhen3")
+region = Rect2(480, 0, 96, 96)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kcpki")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nb4b1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ov1mi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ukswk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4843")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vtrg")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

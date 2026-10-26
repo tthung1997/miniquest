@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/second_wind.png" id="1_1tuqr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6o8uk"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6hv4t"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgjh5"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tllpc"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rwlss"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4md76"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_af4qi"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rw76w"]
+atlas = ExtResource("1_1tuqr")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6o8uk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6hv4t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sgjh5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tllpc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rwlss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4md76")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_af4qi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rw76w")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 12.0
+}]

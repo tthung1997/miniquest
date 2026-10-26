@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/bulwark_aura.png" id="1_hpsg5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5yyf7"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_feanh"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iu7vy"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rd428"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i1h2w"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d67c6"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lc3vh"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_payt7"]
+atlas = ExtResource("1_hpsg5")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5yyf7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_feanh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iu7vy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rd428")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i1h2w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d67c6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lc3vh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_payt7")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 10.0
+}]

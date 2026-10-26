@@ -100,6 +100,25 @@ static var _everything: Array[SkillData] = []
 ## Colour of the area marker the skill draws.
 @export var tint: Color = Color(1.0, 1.0, 1.0, 0.5)
 
+@export_group("Effects")
+## Played once as the skill is cast, on the hero. Its root must be a OneShotEffect,
+## drawn facing right; it is mirrored for a hero facing left. A skill with its own
+## cast or target effect draws no flash ring.
+@export var cast_effect: PackedScene
+## Where the cast effect sits, from the hero's feet, before mirroring. Art drawn
+## around the body wants (0, -12), the body's centre.
+@export var cast_effect_offset: Vector2 = Vector2.ZERO
+## Leave the cast effect where it was cast rather than carrying it with the hero.
+@export var cast_effect_anchored: bool = false
+## Played once at the target when the skill is cast: on the enemy a STRIKE hits,
+## and on the spot a DELAYED_AREA marks. Its art must run for as long as the skill
+## takes to land, and show the landing itself, since nothing else does.
+@export var target_effect: PackedScene
+## For BUFF: a looping scene kept on the hero, at the cast effect's offset, from the
+## cast until the status ends, and flickering for its last second. A recast
+## replaces it. Its art must loop.
+@export var aura_effect: PackedScene
+
 @export_group("Status")
 ## For BUFF: which status the hero gains (see HeroBuffs for what each means).
 @export var buff: StringName = &""

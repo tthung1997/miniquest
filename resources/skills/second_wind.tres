@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/second_wind.png" id="1_rg6x2"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_tt32j"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/second_wind.tscn" id="1_tt32j"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/second_wind.png" id="2_5cbnf"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_r7tgd"]
 
 [resource]
-script = ExtResource("2_tt32j")
+script = ExtResource("3_r7tgd")
 id = &"second_wind"
 display_name = "Second Wind"
-icon = ExtResource("1_rg6x2")
+icon = ExtResource("2_5cbnf")
 class_id = &"novice"
 description = "Catch your breath and recover a chunk of health."
 effect_note = "Heals for its power value."
@@ -21,3 +22,5 @@ power_per_level = 5.0
 cooldown = 20.0
 cooldown_reduction_per_level = 1.0
 tint = Color(0.4, 1, 0.5, 0.7)
+cast_effect = ExtResource("1_tt32j")
+cast_effect_offset = Vector2(0, -12)

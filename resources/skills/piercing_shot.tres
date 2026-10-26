@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/piercing_shot.png" id="1_lkxm6"]
-[ext_resource type="PackedScene" path="res://scenes/effects/crossbow_bolt.tscn" id="2_4src0"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/piercing_arrow.tscn" id="2_4src0"]
 [ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_moeo4"]
 
 [resource]

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/arcane_surge.png" id="1_pus02"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_jbg6i"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/arcane_surge_aura.tscn" id="1_vlijl"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/arcane_surge.tscn" id="2_kfvvh"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/arcane_surge.png" id="3_2v48f"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="4_y3fp2"]
 
 [resource]
-script = ExtResource("2_jbg6i")
+script = ExtResource("4_y3fp2")
 id = &"arcane_surge"
 display_name = "Arcane Surge"
-icon = ExtResource("1_pus02")
+icon = ExtResource("3_2v48f")
 class_id = &"archmage"
 description = "Everything comes off cooldown faster for a short window."
 effect_note = "Power is read as percent cooldown rate, lasting 6s."
@@ -21,5 +23,8 @@ power_per_level = 6.0
 cooldown = 25.0
 cooldown_reduction_per_level = 1.0
 tint = Color(0.7, 0.45, 1, 0.7)
+cast_effect = ExtResource("2_kfvvh")
+cast_effect_offset = Vector2(0, -12)
+aura_effect = ExtResource("1_vlijl")
 buff = &"arcane_surge"
 buff_duration = 6.0

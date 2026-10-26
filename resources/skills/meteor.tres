@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/meteor.png" id="1_m2av2"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_ewkif"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/meteor.png" id="1_ewkif"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_r5723"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/meteor.tscn" id="3_6jlyy"]
 
 [resource]
-script = ExtResource("2_ewkif")
+script = ExtResource("2_r5723")
 id = &"meteor"
 display_name = "Meteor"
-icon = ExtResource("1_m2av2")
+icon = ExtResource("1_ewkif")
 class_id = &"archmage"
 description = "Call down a rock. It lands late and it lands hard."
 effect_note = "1s delay before impact, large radius. Enemies can walk out of it."
@@ -23,3 +24,4 @@ cast_range = 180.0
 radius = 48.0
 delay = 1.0
 tint = Color(1, 0.6, 0.2, 0.7)
+target_effect = ExtResource("3_6jlyy")

@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/vanish_aura.png" id="1_vbjl3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3a1p"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o7vtq"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b6be1"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r4e03"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1t2e"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3wg0w"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8mnty"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uswwu"]
+atlas = ExtResource("1_vbjl3")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3a1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o7vtq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b6be1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r4e03")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1t2e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3wg0w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8mnty")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uswwu")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 10.0
+}]

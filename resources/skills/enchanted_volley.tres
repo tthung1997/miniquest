@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/enchanted_volley.png" id="1_jp604"]
-[ext_resource type="PackedScene" path="res://scenes/effects/magic_bolt.tscn" id="2_ko7s5"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/enchanted_arrow.tscn" id="2_ko7s5"]
 [ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_jo2pa"]
 
 [resource]

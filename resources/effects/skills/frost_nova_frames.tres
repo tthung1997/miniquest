@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/frost_nova.png" id="1_2le1p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbnwf"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(0, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5b4sx"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(144, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xhtag"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(288, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_25e75"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(432, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0wvp4"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(576, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7mly"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(720, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rn44"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(864, 0, 144, 144)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrgpw"]
+atlas = ExtResource("1_2le1p")
+region = Rect2(1008, 0, 144, 144)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kbnwf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5b4sx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xhtag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_25e75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0wvp4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7mly")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rn44")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xrgpw")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

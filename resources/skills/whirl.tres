@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirl.png" id="1_qfo8r"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_qud7b"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/whirl.tscn" id="1_qud7b"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirl.png" id="2_whlcs"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_4jsmf"]
 
 [resource]
-script = ExtResource("2_qud7b")
+script = ExtResource("3_4jsmf")
 id = &"whirl"
 display_name = "Whirl"
-icon = ExtResource("1_qfo8r")
+icon = ExtResource("2_whlcs")
 class_id = &"novice"
 description = "A clumsy spin that clips anything standing too close. Draws on all three offensive stats equally, so it stays usable whichever class you become."
 target = 1
@@ -21,3 +22,5 @@ power_per_level = 4.0
 cooldown_reduction_per_level = 0.2
 radius = 44.0
 tint = Color(0.95, 0.95, 0.95, 0.7)
+cast_effect = ExtResource("1_qud7b")
+cast_effect_offset = Vector2(0, -12)

@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/rune_slash.png" id="1_knjxw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldsv3"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ur0g"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1osoo"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rilxw"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c0egp"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_20hfi"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i1i4p"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r07eh"]
+atlas = ExtResource("1_knjxw")
+region = Rect2(896, 0, 128, 128)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ldsv3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ur0g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1osoo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rilxw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c0egp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_20hfi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i1i4p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r07eh")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

@@ -6,6 +6,10 @@ extends RefCounted
 ## running replaces it, so recasting refreshes rather than stacks. What a
 ## magnitude means belongs to whoever reads it; the readers are in Hero.
 
+## Status `id` is over: it ran out, was consumed, or was cleared. Not emitted when
+## applying replaces a running one.
+signal ended(id: StringName)
+
 const BULWARK: StringName = &"bulwark"
 const SWIFT_STEP: StringName = &"swift_step"
 const BLOOD_FRENZY: StringName = &"blood_frenzy"
@@ -31,8 +35,7 @@ func tick(delta: float) -> void:
 	for id: StringName in _left.keys():
 		_left[id] -= delta
 		if _left[id] <= 0.0:
-			_left.erase(id)
-			_magnitude.erase(id)
+			_end(id)
 
 
 func is_active(id: StringName) -> bool:
@@ -52,11 +55,18 @@ func remaining(id: StringName) -> float:
 ## End status `id` now and return its magnitude, or zero if it was not running.
 func consume(id: StringName) -> float:
 	var value: float = magnitude(id)
-	_left.erase(id)
-	_magnitude.erase(id)
+	_end(id)
 	return value
 
 
 func clear() -> void:
-	_left.clear()
-	_magnitude.clear()
+	for id: StringName in _left.keys():
+		_end(id)
+
+
+func _end(id: StringName) -> void:
+	if not _left.has(id):
+		return
+	_left.erase(id)
+	_magnitude.erase(id)
+	ended.emit(id)

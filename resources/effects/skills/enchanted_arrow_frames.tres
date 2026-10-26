@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/enchanted_arrow.png" id="1_uyk2h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s7bkc"]
+atlas = ExtResource("1_uyk2h")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yilef"]
+atlas = ExtResource("1_uyk2h")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k1fgd"]
+atlas = ExtResource("1_uyk2h")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7q1qj"]
+atlas = ExtResource("1_uyk2h")
+region = Rect2(96, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s7bkc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yilef")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k1fgd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7q1qj")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]
