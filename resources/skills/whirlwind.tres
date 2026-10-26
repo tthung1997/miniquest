@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirlwind.png" id="1_wligq"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_rkypn"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/whirlwind.tscn" id="1_rkypn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/whirlwind.png" id="2_x3hxr"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_s53s6"]
 
 [resource]
-script = ExtResource("2_rkypn")
+script = ExtResource("3_s53s6")
 id = &"whirlwind"
 display_name = "Whirlwind"
-icon = ExtResource("1_wligq")
+icon = ExtResource("2_x3hxr")
 class_id = &"berserker"
 description = "Spin continuously, hitting everything around you again and again."
 effect_note = "Hits four times over 2s. Power is the total across all four, not per hit."
@@ -23,3 +24,5 @@ radius = 56.0
 hits = 4
 duration = 2.0
 tint = Color(1, 0.3, 0.25, 0.7)
+cast_effect = ExtResource("1_rkypn")
+cast_effect_offset = Vector2(0, -12)

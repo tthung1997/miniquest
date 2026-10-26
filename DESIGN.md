@@ -222,6 +222,23 @@ not stop chasing. Shadow Strike blinks behind its target but has no critical
 hit, because the game has no crit system yet. Skill cast ranges, area radii,
 projectile counts and the buff durations are placeholders in the tool.
 
+**Every skill has cast art.** The sheets are pixel-art effects drawn by
+`tools/build_skill_effects.gd` into `assets/sprites/effects/skills/` (each with
+an `.ase` beside it), built into `SpriteFrames` by `tools/build_sprite_frames.gd`
+and wrapped in scenes under `scenes/effects/skills/`. A skill names them in its
+`SkillData`: a `cast_effect` played on the hero (it follows them unless
+`cast_effect_anchored`), a `target_effect` played on the enemy a strike hits or
+the spot a delayed area marks, and a `projectile` scene for the aimed skills,
+whose bursts are its `end_effect`. Sigil Trap's rune and burst belong to its own
+scene. A skill with its own art draws no stand-in flash ring. Two sheets are
+timed to the skill and need redrawing if it changes: Whirlwind's 2 s of spin and
+Flurry's five thrusts, 0.12 s apart, and Meteor's blast lands 1 s after its fall
+begins, so they must match `duration`, `hits` and `delay`. Sheets are scaled to
+the skill's radius too. The timed buffs also keep a looping `aura_effect` on the
+hero from the cast until the status ends (`HeroBuffs.ended`, which a consumed
+Riposte and a reset fire too); it flickers for its last second, and a recast
+replaces it.
+
 ### 5.6 Equipment
 
 Four slots, each with a distinct job so no two ever compete for the same stat:

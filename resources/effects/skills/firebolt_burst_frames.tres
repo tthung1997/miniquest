@@ -1,0 +1,60 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/firebolt_burst.png" id="1_cnla2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jtfil"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7e600"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icrov"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_naq5y"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvhpw"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lt4xy"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kdpj0"]
+atlas = ExtResource("1_cnla2")
+region = Rect2(288, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jtfil")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7e600")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_icrov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_naq5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvhpw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lt4xy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kdpj0")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 14.0
+}]

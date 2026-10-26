@@ -1,0 +1,60 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/shadow_hit.png" id="1_dreqg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g511t"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(0, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uf0ib"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(56, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wb0sy"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(112, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tj15"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(168, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88bov"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(224, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6s2c"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(280, 0, 56, 56)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ylo5m"]
+atlas = ExtResource("1_dreqg")
+region = Rect2(336, 0, 56, 56)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g511t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uf0ib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wb0sy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tj15")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_88bov")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e6s2c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ylo5m")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 16.0
+}]

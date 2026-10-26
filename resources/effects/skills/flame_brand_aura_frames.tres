@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/flame_brand_aura.png" id="1_irrna"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8kot5"]
+atlas = ExtResource("1_irrna")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q3ej5"]
+atlas = ExtResource("1_irrna")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0fc6"]
+atlas = ExtResource("1_irrna")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qog3b"]
+atlas = ExtResource("1_irrna")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7cb5d"]
+atlas = ExtResource("1_irrna")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4oypx"]
+atlas = ExtResource("1_irrna")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h38ot"]
+atlas = ExtResource("1_irrna")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjso1"]
+atlas = ExtResource("1_irrna")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8kot5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q3ej5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a0fc6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qog3b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7cb5d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4oypx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h38ot")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjso1")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]

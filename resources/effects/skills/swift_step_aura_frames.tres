@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/swift_step_aura.png" id="1_ludt0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g3jjr"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_udxb7"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8mj65"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_14ajb"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bj2n1"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q2htd"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_joxyk"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3bmdu"]
+atlas = ExtResource("1_ludt0")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g3jjr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_udxb7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8mj65")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_14ajb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bj2n1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q2htd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_joxyk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3bmdu")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 12.0
+}]

@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/rune_slash.png" id="1_jvui1"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_l1bfr"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/rune_slash.tscn" id="1_l1bfr"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/rune_slash.png" id="2_fscg7"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="3_sq06k"]
 
 [resource]
-script = ExtResource("2_l1bfr")
+script = ExtResource("3_sq06k")
 id = &"rune_slash"
 display_name = "Rune Slash"
-icon = ExtResource("1_jvui1")
+icon = ExtResource("2_fscg7")
 class_id = &"spellblade"
 description = "A cut that leaves a burning sigil hanging in the air."
 target = 1
@@ -20,3 +21,5 @@ power_per_level = 10.0
 cooldown_reduction_per_level = 0.25
 radius = 56.0
 tint = Color(1, 0.6, 0.2, 0.7)
+cast_effect = ExtResource("1_l1bfr")
+cast_effect_offset = Vector2(0, -12)

@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/vanish.png" id="1_uqbaw"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_54667"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/vanish_aura.tscn" id="1_hjyt6"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/vanish.tscn" id="2_w5ja8"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/vanish.png" id="3_rox3f"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="4_l5biu"]
 
 [resource]
-script = ExtResource("2_54667")
+script = ExtResource("4_l5biu")
 id = &"vanish"
 display_name = "Vanish"
-icon = ExtResource("1_uqbaw")
+icon = ExtResource("3_rox3f")
 class_id = &"assassin"
 description = "Drop out of sight. Nothing can target you while you are gone."
 effect_note = "Power is read as tenths of a second of untargetability. Manual only: a panic button that fires itself is not a panic button."
@@ -22,4 +24,7 @@ cooldown = 22.0
 cooldown_reduction_per_level = 1.0
 supports_auto_cast = false
 tint = Color(0.7, 0.45, 1, 0.7)
+cast_effect = ExtResource("2_w5ja8")
+cast_effect_offset = Vector2(0, -12)
+aura_effect = ExtResource("1_hjyt6")
 buff = &"vanish"

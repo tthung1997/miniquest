@@ -18,7 +18,9 @@ extends SceneTree
 ##
 ## Each listed effect, assets/sprites/effects/<name>.png, becomes
 ## resources/effects/<name>_frames.tres with one clip, "default". Effect
-## frames are square, so a sheet's height is its frame size.
+## frames are square, so a sheet's height is its frame size. A name may carry a
+## folder, such as skills/whirl; the output mirrors it. The skills' sheets are
+## drawn by tools/build_skill_effects.gd.
 ##
 ## Safe to re-run: each resource is rebuilt from scratch and keeps its uid.
 ## Re-run after adding or changing a sheet, rather than hand-editing a .tres
@@ -51,6 +53,42 @@ const EFFECTS: Array[Dictionary] = [
 	{"name": "crossbow_bolt", "fps": 1.0, "loop": true},
 	{"name": "magic_bolt", "fps": 12.0, "loop": true},
 	{"name": "magic_burst", "fps": 14.0, "loop": false},
+	{"name": "skills/whirl", "fps": 14.0, "loop": false},
+	{"name": "skills/second_wind", "fps": 12.0, "loop": false},
+	{"name": "skills/cleave", "fps": 15.0, "loop": false},
+	{"name": "skills/bulwark", "fps": 12.0, "loop": false},
+	{"name": "skills/firebolt", "fps": 12.0, "loop": true},
+	{"name": "skills/firebolt_burst", "fps": 14.0, "loop": false},
+	{"name": "skills/frost_nova", "fps": 14.0, "loop": false},
+	{"name": "skills/piercing_arrow", "fps": 12.0, "loop": true},
+	{"name": "skills/piercing_spark", "fps": 14.0, "loop": false},
+	{"name": "skills/swift_step", "fps": 12.0, "loop": false},
+	# 32 frames at 16 fps: the 2 seconds Whirlwind's four hits are spread over.
+	{"name": "skills/whirlwind", "fps": 16.0, "loop": false},
+	{"name": "skills/blood_frenzy", "fps": 12.0, "loop": false},
+	# 12 frames of falling at 12 fps, then the blast: it lands after Meteor's 1 s delay.
+	{"name": "skills/meteor", "fps": 12.0, "loop": false},
+	{"name": "skills/arcane_surge", "fps": 12.0, "loop": false},
+	{"name": "skills/shadow_depart", "fps": 14.0, "loop": false},
+	{"name": "skills/shadow_hit", "fps": 16.0, "loop": false},
+	{"name": "skills/vanish", "fps": 12.0, "loop": false},
+	{"name": "skills/flame_brand", "fps": 12.0, "loop": false},
+	{"name": "skills/rune_slash", "fps": 14.0, "loop": false},
+	{"name": "skills/enchanted_arrow", "fps": 12.0, "loop": true},
+	{"name": "skills/volley_burst", "fps": 14.0, "loop": false},
+	{"name": "skills/sigil_rune", "fps": 8.0, "loop": true},
+	{"name": "skills/sigil_burst", "fps": 14.0, "loop": false},
+	# 12 frames at 20 fps: Flurry's five thrusts, one every 0.12 s.
+	{"name": "skills/flurry", "fps": 20.0, "loop": false},
+	{"name": "skills/riposte", "fps": 12.0, "loop": false},
+	# Auras stay on the hero while a buff lasts.
+	{"name": "skills/bulwark_aura", "fps": 10.0, "loop": true},
+	{"name": "skills/swift_step_aura", "fps": 12.0, "loop": true},
+	{"name": "skills/blood_frenzy_aura", "fps": 10.0, "loop": true},
+	{"name": "skills/arcane_surge_aura", "fps": 12.0, "loop": true},
+	{"name": "skills/flame_brand_aura", "fps": 12.0, "loop": true},
+	{"name": "skills/riposte_aura", "fps": 10.0, "loop": true},
+	{"name": "skills/vanish_aura", "fps": 10.0, "loop": true},
 ]
 
 

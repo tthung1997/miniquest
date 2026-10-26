@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/swift_step.png" id="1_0f63x"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a2c4p"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yv2t5"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vtu7m"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7j7fx"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_klf27"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w5jhs"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gy4fa"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tpwxp"]
+atlas = ExtResource("1_0f63x")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a2c4p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yv2t5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vtu7m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7j7fx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_klf27")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w5jhs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gy4fa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tpwxp")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 12.0
+}]

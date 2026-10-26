@@ -1,0 +1,53 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/cleave.png" id="1_xpjbe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y6gdh"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(0, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6xqto"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(112, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7w7h"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(224, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rwpbq"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(336, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1mwti"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(448, 0, 112, 112)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvu1q"]
+atlas = ExtResource("1_xpjbe")
+region = Rect2(560, 0, 112, 112)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y6gdh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6xqto")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7w7h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rwpbq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1mwti")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvu1q")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 15.0
+}]

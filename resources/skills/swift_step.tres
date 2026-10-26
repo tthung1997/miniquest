@@ -1,13 +1,15 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/swift_step.png" id="1_bsm4s"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_rwv5v"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/swift_step_aura.tscn" id="1_cjt87"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/swift_step.tscn" id="2_ljl8y"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/swift_step.png" id="3_d0m10"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="4_6y3ks"]
 
 [resource]
-script = ExtResource("2_rwv5v")
+script = ExtResource("4_6y3ks")
 id = &"swift_step"
 display_name = "Swift Step"
-icon = ExtResource("1_bsm4s")
+icon = ExtResource("3_d0m10")
 class_id = &"ranger"
 description = "A burst of speed to get out of a closing circle."
 effect_note = "Power is read as percent move speed, lasting 3s."
@@ -21,5 +23,8 @@ power_per_level = 5.0
 cooldown = 12.0
 cooldown_reduction_per_level = 0.6
 tint = Color(1, 0.9, 0.4, 0.7)
+cast_effect = ExtResource("2_ljl8y")
+cast_effect_offset = Vector2(0, -12)
+aura_effect = ExtResource("1_cjt87")
 buff = &"swift_step"
 buff_duration = 3.0

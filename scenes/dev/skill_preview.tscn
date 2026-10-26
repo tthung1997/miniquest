@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/skill_preview.gd" id="1_preview"]
+[ext_resource type="PackedScene" path="res://scenes/arena/meadow.tscn" id="2_meadow"]
+[ext_resource type="PackedScene" path="res://scenes/hero.tscn" id="3_hero"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="4_enemy"]
+[ext_resource type="Resource" path="res://resources/enemies/bamboo.tres" id="5_bamboo"]
+[ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="6_theme"]
+
+[node name="SkillPreview" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_preview")
+enemy_scene = ExtResource("4_enemy")
+enemy_data = ExtResource("5_bamboo")
+
+[node name="Meadow" parent="." instance=ExtResource("2_meadow")]
+
+[node name="Hero" parent="." instance=ExtResource("3_hero")]
+
+[node name="Camera" type="Camera2D" parent="Hero"]
+limit_smoothed = true
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+
+[node name="Projectiles" type="Node2D" parent="."]
+z_index = 1
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Root" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("6_theme")
+
+[node name="Panel" type="PanelContainer" parent="HUD/Root"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 160.0
+offset_bottom = 10.0
+theme_type_variation = &"InteriorPanel"
+
+[node name="Column" type="VBoxContainer" parent="HUD/Root/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="SkillList" type="ItemList" parent="HUD/Root/Panel/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 170)
+layout_mode = 2
+focus_mode = 0
+fixed_icon_size = Vector2i(16, 16)
+
+[node name="Info" type="Label" parent="HUD/Root/Panel/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "Pick a skill"
+
+[node name="TargetsRow" type="HBoxContainer" parent="HUD/Root/Panel/Column"]
+layout_mode = 2
+
+[node name="TargetsLabel" type="Label" parent="HUD/Root/Panel/Column/TargetsRow"]
+layout_mode = 2
+text = "Targets"
+
+[node name="LayoutButton" type="OptionButton" parent="HUD/Root/Panel/Column/TargetsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="ChaseCheck" type="CheckBox" parent="HUD/Root/Panel/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Dummies chase"
+
+[node name="ButtonRow" type="HBoxContainer" parent="HUD/Root/Panel/Column"]
+layout_mode = 2
+
+[node name="SpeedButton" type="Button" parent="HUD/Root/Panel/Column/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+
+[node name="ResetButton" type="Button" parent="HUD/Root/Panel/Column/ButtonRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Reset"
+
+[node name="Hint" type="Label" parent="HUD/Root/Panel/Column"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Space recast, Q/E step\nR reset, T speed"

@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/bulwark.png" id="1_nanxa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fgdc"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pb5di"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhafi"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r5pbe"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mr3jw"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_12qoo"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sv2t6"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c44un"]
+atlas = ExtResource("1_nanxa")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0fgdc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pb5di")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mhafi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r5pbe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mr3jw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_12qoo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sv2t6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c44un")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 12.0
+}]

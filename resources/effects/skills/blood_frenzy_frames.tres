@@ -1,0 +1,67 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/effects/skills/blood_frenzy.png" id="1_daty7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rtwl1"]
+atlas = ExtResource("1_daty7")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_panl0"]
+atlas = ExtResource("1_daty7")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5sia1"]
+atlas = ExtResource("1_daty7")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4y25j"]
+atlas = ExtResource("1_daty7")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y5005"]
+atlas = ExtResource("1_daty7")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c4jqh"]
+atlas = ExtResource("1_daty7")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogf5n"]
+atlas = ExtResource("1_daty7")
+region = Rect2(288, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gqubn"]
+atlas = ExtResource("1_daty7")
+region = Rect2(336, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rtwl1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_panl0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5sia1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4y25j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y5005")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c4jqh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogf5n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gqubn")
+}],
+"loop": 0,
+"name": &"default",
+"speed": 12.0
+}]

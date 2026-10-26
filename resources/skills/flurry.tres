@@ -1,13 +1,14 @@
 [gd_resource type="Resource" script_class="SkillData" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/flurry.png" id="1_qllhy"]
-[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_ca56r"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/skill_icons/flurry.png" id="1_ca56r"]
+[ext_resource type="Script" path="res://scripts/skills/skill_data.gd" id="2_aeixv"]
+[ext_resource type="PackedScene" path="res://scenes/effects/skills/flurry.tscn" id="3_w1k3d"]
 
 [resource]
-script = ExtResource("2_ca56r")
+script = ExtResource("2_aeixv")
 id = &"flurry"
 display_name = "Flurry"
-icon = ExtResource("1_qllhy")
+icon = ExtResource("1_ca56r")
 class_id = &"duelist"
 description = "A rapid sequence of thrusts at whatever is nearest."
 kind = 1
@@ -23,3 +24,4 @@ cast_range = 48.0
 hits = 5
 duration = 0.6
 tint = Color(0.95, 0.95, 0.95, 0.7)
+target_effect = ExtResource("3_w1k3d")
