@@ -313,7 +313,10 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   - **Sword:** a broad greatsword whose slash hits every enemy on the facing side
     within its range. That pays for having to close in. (The slash art is
     a tall arc; the hit area is a half circle of `attack_range` rather than the
-    arc's exact shape.)
+    arc's exact shape.) Swords carry a **melee premium**: their damage and
+    scaling run about 1.3x what they were, and their range 8px longer (still
+    inside the slash art), since the wielder must close in and eat contact hits
+    that crossbows and wands avoid.
   - **Crossbow:** a fast bolt, aimed at the target, that pierces, hitting every
     enemy in a line.
   - **Wand:** a slower bolt that bursts in a small area where it first hits an
