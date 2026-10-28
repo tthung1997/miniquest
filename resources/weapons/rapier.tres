@@ -13,13 +13,13 @@ family = &"sword"
 price = 450
 icon = ExtResource("2_icon")
 frames = ExtResource("3_frames")
-base_damage = 1.5
+base_damage = 2.0
 scaling = Dictionary[StringName, float]({
-&"strength": 0.2,
-&"dexterity": 0.3
+&"strength": 0.26,
+&"dexterity": 0.39
 })
 attack_interval = 0.45
-attack_range = 54.0
+attack_range = 62.0
 release_frame = 1
 release_point = Vector2(36, -16)
 attack_effect = ExtResource("4_effect")
