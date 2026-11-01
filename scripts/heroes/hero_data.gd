@@ -25,6 +25,8 @@ const STATS: Array[StringName] = [&"strength", &"dexterity", &"intelligence", &"
 ## Maximum health per point of vitality at a class's health_per_vitality of 1.0.
 ## A placeholder, like every combat number until enemies exist.
 const HEALTH_PER_VITALITY_POINT: float = 10.0
+## Pixels from which a hero collects a drop, before gear (Hero's pickup radius).
+const BASE_PICKUP_RADIUS: float = 28.0
 ## Worn equipment cannot push these past their caps.
 const MAX_CRIT_CHANCE: float = 0.75
 const MAX_COOLDOWN_REDUCTION: float = 0.4
