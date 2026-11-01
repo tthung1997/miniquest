@@ -34,6 +34,8 @@ func show_result(result: RunResult) -> void:
 		"Kills    %d" % result.kills,
 		"Experience    +%d" % result.experience,
 	]
+	if result.elite_killed:
+		lines.append("Elite    defeated")
 	if result.is_win():
 		lines.append("Gold    +%d" % result.gold)
 		var items: String = "Items    +%d" % result.items.size()

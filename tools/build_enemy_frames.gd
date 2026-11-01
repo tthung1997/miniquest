@@ -17,6 +17,10 @@ const WALK_FPS: float = 6.0
 const OUTPUT_DIRECTORY: String = "res://resources/enemies"
 const MONSTERS: Dictionary[StringName, String] = {
 	&"bamboo": "res://assets/packs/ninja_adventure/monsters/bamboo.png",
+	&"blue_bat": "res://assets/packs/ninja_adventure/monsters/blue_bat.png",
+	&"spider_red": "res://assets/packs/ninja_adventure/monsters/spider_red.png",
+	&"panda": "res://assets/packs/ninja_adventure/monsters/panda.png",
+	&"bear": "res://assets/packs/ninja_adventure/monsters/bear.png",
 }
 
 

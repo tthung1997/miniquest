@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_data"]
+[ext_resource type="SpriteFrames" path="res://resources/enemies/bear_frames.tres" id="2_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"bear"
+display_name = "Elder Bear"
+frames = ExtResource("2_frames")
+body_scale = 2.4
+is_elite = true
+max_health = 500.0
+speed = 46.0
+contact_damage = 22.0
+contact_interval = 0.8
+experience = 60
+gold_chance = 1.0
+gold_min = 15
+gold_max = 25
+item_chance = 0.0

@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/monsters/spider_red.png" id="1_g38i6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_utn1t"]
+atlas = ExtResource("1_g38i6")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t07dl"]
+atlas = ExtResource("1_g38i6")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1hhdc"]
+atlas = ExtResource("1_g38i6")
+region = Rect2(48, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wxqbk"]
+atlas = ExtResource("1_g38i6")
+region = Rect2(48, 48, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_utn1t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t07dl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1hhdc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wxqbk")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 6.0
+}]

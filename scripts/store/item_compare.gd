@@ -52,6 +52,14 @@ static func _stat_rows(item: EquipmentItem, worn: EquipmentItem) -> Array[Row]:
 	var worn_speed: float = worn.get_move_speed_bonus() * 100.0 if worn != null else 0.0
 	if absf(speed) > EPSILON or absf(worn_speed) > EPSILON:
 		found.append(_number_row("Speed", speed, worn_speed, "%+d%%", true))
+	var effects: Array[Array] = [
+		["Crit", _crit_of(item), _crit_of(worn), "%+d%%"],
+		["Cooldown cut", _cooldown_of(item), _cooldown_of(worn), "%+d%%"],
+		["Pickup", _pickup_of(item), _pickup_of(worn), "%+d px"],
+	]
+	for effect: Array in effects:
+		if absf(effect[1]) > EPSILON or absf(effect[2]) > EPSILON:
+			found.append(_number_row(effect[0], effect[1], effect[2], effect[3], true))
 	var bonuses: Dictionary[StringName, int] = item.get_stat_bonuses()
 	var worn_bonuses: Dictionary[StringName, int] = _bonuses_of(worn)
 	for stat_name: StringName in HeroData.STATS:
@@ -102,6 +110,20 @@ static func _number_row(
 
 static func _stat_label(stat_name: StringName) -> String:
 	return String(stat_name).left(3).to_upper()
+
+
+## `item`'s critical chance, cooldown cut and pickup radius in display units,
+## or zero when there is no item.
+static func _crit_of(item: EquipmentItem) -> float:
+	return item.get_crit_chance() * 100.0 if item != null else 0.0
+
+
+static func _cooldown_of(item: EquipmentItem) -> float:
+	return item.get_cooldown_reduction() * 100.0 if item != null else 0.0
+
+
+static func _pickup_of(item: EquipmentItem) -> float:
+	return item.get_pickup_radius_bonus() if item != null else 0.0
 
 
 ## `item`'s stat points, or none when there is no item.

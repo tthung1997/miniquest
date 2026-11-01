@@ -40,6 +40,17 @@ static func boots() -> Array[BootsItem]:
 	return listed
 
 
+## Every accessory, cheapest first.
+static func accessories() -> Array[AccessoryItem]:
+	var listed: Array[AccessoryItem] = []
+	for accessory_id: StringName in AccessoryData.all_ids():
+		var item: AccessoryItem = AccessoryItem.create(accessory_id)
+		if item != null:
+			listed.append(item)
+	listed.sort_custom(_cheaper_first)
+	return listed
+
+
 ## An Armour item holding only variant `piece_id` of `piece` from `pool`, which
 ## is how a single piece is shown and priced on its own.
 static func armour_piece(pool: StringName, piece: ArmourItem.Piece, piece_id: int) -> ArmourItem:
@@ -58,6 +69,9 @@ static func price_of(item: EquipmentItem) -> int:
 	if item is BootsItem:
 		var pair: BootsData = (item as BootsItem).data()
 		return pair.price if pair != null else 0
+	if item is AccessoryItem:
+		var trinket: AccessoryData = (item as AccessoryItem).data()
+		return trinket.price if trinket != null else 0
 	if item is ArmourItem:
 		return _armour_price(item as ArmourItem)
 	push_error("StoreCatalog: the store does not sell %s." % item)

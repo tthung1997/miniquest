@@ -34,6 +34,10 @@ const DEFAULT_MAX_HEALTH: float = 50.0
 ## How far behind the hero a melee swing still reaches, so an enemy standing on
 ## top of the hero is hit whichever side of their centre it is on.
 const MELEE_REACH_BEHIND: float = 12.0
+## What a critical hit multiplies damage by. A placeholder.
+const CRIT_MULTIPLIER: float = 1.5
+const CRIT_TEXT_COLOR: Color = Color(1.0, 0.85, 0.25)
+const CRIT_TEXT_RISE: float = 30.0
 
 @export_group("Movement")
 ## Base speed, before any boots. A hero dressed by apply() moves at this times
@@ -69,6 +73,11 @@ var _move_multiplier: float = 1.0
 ## What this run's upgrades have added: fractions of running speed and of damage.
 var _run_speed_bonus: float = 0.0
 var _run_damage_bonus: float = 0.0
+## From worn equipment: the chance of a critical hit, the share taken off skill
+## cooldowns, and the pixels added to the pickup radius.
+var _crit_chance: float = 0.0
+var _cooldown_reduction: float = 0.0
+var _gear_pickup_bonus: float = 0.0
 var _attack_cooldown: float = 0.0
 var _aim_point: Vector2 = Vector2.INF
 var _dead: bool = false
@@ -109,6 +118,11 @@ func apply(data: HeroData) -> void:
 	_move_multiplier = data.move_speed_multiplier()
 	_run_speed_bonus = 0.0
 	_run_damage_bonus = 0.0
+	_crit_chance = data.crit_chance()
+	_cooldown_reduction = data.cooldown_reduction()
+	var pickup_bonus: float = data.pickup_radius_bonus()
+	pickup_radius += pickup_bonus - _gear_pickup_bonus
+	_gear_pickup_bonus = pickup_bonus
 	buffs.clear()
 	_doll.wear_armour(armour)
 	_doll.wear_boots(boots)
@@ -162,6 +176,23 @@ func skill_stats() -> Dictionary[StringName, int]:
 ## upgrades.
 func damage_multiplier() -> float:
 	return 1.0 + _run_damage_bonus
+
+
+## Fraction taken off every skill's cooldown by the hero's gear.
+func cooldown_reduction() -> float:
+	return _cooldown_reduction
+
+
+## `damage` as one hit: multiplied when it turns out critical, which the
+## hero's gear makes more likely, with a floating "CRIT!" over `at` in global
+## space. One roll covers the whole of an attack or cast.
+func roll_crit(damage: float, at: Vector2) -> float:
+	if _crit_chance <= 0.0 or randf() >= _crit_chance:
+		return damage
+	_on_skill_effect_spawned(
+		FloatingText.create("CRIT!", CRIT_TEXT_COLOR), at + Vector2(0.0, -CRIT_TEXT_RISE)
+	)
+	return damage * CRIT_MULTIPLIER
 
 
 ## Whether a body of the hero's size fits at `point` in global space.
@@ -340,7 +371,7 @@ func _on_doll_attack_released() -> void:
 
 ## Hurt every enemy within range on the side the hero faces.
 func _strike(data: WeaponData) -> void:
-	var damage: float = _damage_of(weapon)
+	var damage: float = roll_crit(_damage_of(weapon), global_position)
 	var facing: float = 1.0 if _doll.is_facing_right() else -1.0
 	for enemy: Enemy in _sensor.enemies_within(global_position, data.attack_range):
 		if (enemy.global_position.x - global_position.x) * facing >= -MELEE_REACH_BEHIND:
@@ -361,7 +392,7 @@ func _shoot(data: WeaponData) -> void:
 		return
 	var projectile: Projectile = node
 	var origin: Vector2 = _doll.to_global(_doll.get_release_position())
-	projectile.damage = _damage_of(weapon)
+	projectile.damage = roll_crit(_damage_of(weapon), origin)
 	projectile.launch(origin, _aim_direction(origin), data.attack_range, velocity)
 	projectile_released.emit(projectile)
 

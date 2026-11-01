@@ -25,6 +25,11 @@ const STATS: Array[StringName] = [&"strength", &"dexterity", &"intelligence", &"
 ## Maximum health per point of vitality at a class's health_per_vitality of 1.0.
 ## A placeholder, like every combat number until enemies exist.
 const HEALTH_PER_VITALITY_POINT: float = 10.0
+## Pixels from which a hero collects a drop, before gear (Hero's pickup radius).
+const BASE_PICKUP_RADIUS: float = 28.0
+## Worn equipment cannot push these past their caps.
+const MAX_CRIT_CHANCE: float = 0.75
+const MAX_COOLDOWN_REDUCTION: float = 0.4
 const NAME_MAX_LENGTH: int = 12
 ## Gold charged for each skill point taken back by a skill reset. A placeholder
 ## until the economy is tuned: a run is worth roughly 50 to 100 gold.
@@ -71,6 +76,7 @@ const BASE_INVENTORY_SIZE: int = 25
 @export var weapon: WeaponItem
 @export var armour: ArmourItem
 @export var boots: BootsItem
+@export var accessory: AccessoryItem
 ## Items carried but not worn, at most inventory_capacity(). Kept packed: an item
 ## leaving the inventory closes its gap, and a new one goes on the end.
 @export var inventory: Array[EquipmentItem] = []
@@ -114,14 +120,9 @@ static func clean_name(raw_name: String) -> String:
 	return " ".join(words).left(NAME_MAX_LENGTH).strip_edges()
 
 
-## Whether a hero can wear anything in `slot` yet. The other slots open as
-## their items are designed.
-static func supports_slot(slot: EquipmentItem.Slot) -> bool:
-	return (
-		slot == EquipmentItem.Slot.WEAPON
-		or slot == EquipmentItem.Slot.ARMOUR
-		or slot == EquipmentItem.Slot.BOOTS
-	)
+## Whether a hero can wear anything in `slot`. Every slot is open.
+static func supports_slot(_slot: EquipmentItem.Slot) -> bool:
+	return true
 
 
 static func _describe(item: EquipmentItem) -> String:
@@ -382,6 +383,31 @@ func move_speed_multiplier() -> float:
 	return multiplier
 
 
+## Chance that one of the hero's hits is critical, from worn equipment.
+func crit_chance() -> float:
+	var chance: float = 0.0
+	for item: EquipmentItem in _worn():
+		chance += item.get_crit_chance()
+	return clampf(chance, 0.0, MAX_CRIT_CHANCE)
+
+
+## Fraction taken off every skill's cooldown by worn equipment, capped so that
+## stacked gear cannot trivialise cooldowns (DESIGN.md section 11).
+func cooldown_reduction() -> float:
+	var reduction: float = 0.0
+	for item: EquipmentItem in _worn():
+		reduction += item.get_cooldown_reduction()
+	return clampf(reduction, 0.0, MAX_COOLDOWN_REDUCTION)
+
+
+## Pixels worn equipment adds to the hero's pickup radius.
+func pickup_radius_bonus() -> float:
+	var bonus: float = 0.0
+	for item: EquipmentItem in _worn():
+		bonus += item.get_pickup_radius_bonus()
+	return bonus
+
+
 ## Most health the hero can have: vitality, equipment included, weighted by
 ## the class's durability.
 func max_health() -> float:
@@ -523,6 +549,8 @@ func equipped(slot: EquipmentItem.Slot) -> EquipmentItem:
 			return armour
 		EquipmentItem.Slot.BOOTS:
 			return boots
+		EquipmentItem.Slot.ACCESSORY:
+			return accessory
 	return null
 
 
@@ -705,6 +733,12 @@ func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 				return false
 			boots = item
 			return true
+		EquipmentItem.Slot.ACCESSORY:
+			if item != null and item is not AccessoryItem:
+				push_error("HeroData: %s does not fit the Accessory slot." % _describe(item))
+				return false
+			accessory = item
+			return true
 	push_error("HeroData: the %s slot is not supported yet." % EquipmentItem.slot_name(slot))
 	return false
 
@@ -712,7 +746,7 @@ func _set_equipped(slot: EquipmentItem.Slot, item: EquipmentItem) -> bool:
 ## Every item currently worn.
 func _worn() -> Array[EquipmentItem]:
 	var items: Array[EquipmentItem] = []
-	for item: EquipmentItem in [weapon, armour, boots]:
+	for item: EquipmentItem in [weapon, armour, boots, accessory]:
 		if item != null:
 			items.append(item)
 	return items

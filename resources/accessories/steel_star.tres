@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AccessoryData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/accessory_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/shuriken.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"steel_star"
+display_name = "Steel Star"
+icon = ExtResource("2_icon")
+price = 150
+crit_chance = 0.06
+stat_bonuses = Dictionary[StringName, int]({
+&"dexterity": 2
+})

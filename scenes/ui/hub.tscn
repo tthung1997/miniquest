@@ -96,6 +96,21 @@ size_flags_vertical = 4
 mouse_filter = 2
 color = Color(0.804, 0.776, 0.69, 0.35)
 
+[node name="QuestButton" type="Button" parent="Margin/Column/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+tooltip_text = "Start the arena run"
+disabled = true
+text = "START QUEST"
+
+[node name="QuestDivider" type="ColorRect" parent="Margin/Column/TopBar"]
+custom_minimum_size = Vector2(1, 12)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+color = Color(0.804, 0.776, 0.69, 0.35)
+
 [node name="InventoryButton" type="Button" parent="Margin/Column/TopBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)
@@ -298,21 +313,6 @@ placeholder = ExtResource("17_accessory")
 [node name="StatsPanel" parent="Margin/Column/Main/HeroPanel/Interior/Content" instance=ExtResource("7_stats")]
 unique_name_in_owner = true
 layout_mode = 2
-
-[node name="QuestGap" type="Control" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
-custom_minimum_size = Vector2(0, 0)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="QuestButton" type="Button" parent="Margin/Column/Main/HeroPanel/Interior/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(168, 24)
-layout_mode = 2
-size_flags_horizontal = 4
-tooltip_text = "Start the arena run"
-theme_override_font_sizes/font_size = 16
-disabled = true
-text = "START QUEST"
 
 [node name="InventoryPanel" type="PanelContainer" parent="Margin/Column/Main"]
 clip_contents = true

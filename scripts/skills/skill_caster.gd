@@ -198,10 +198,19 @@ func _can_cast(skill: HeldSkill, manual: bool) -> bool:
 	return false
 
 
+## Seconds until `skill` can be cast again: its own cooldown less the hero's
+## gear, never below the floor skills already keep.
+func _cooldown_of(skill: HeldSkill) -> float:
+	var reduced: float = skill.cooldown() * (1.0 - hero.cooldown_reduction())
+	return maxf(reduced, SkillData.COOLDOWN_FLOOR)
+
+
 func _cast(skill: HeldSkill) -> void:
 	var data: SkillData = skill.data
 	var power: float = power_of(skill)
-	skill.cooldown_left = skill.cooldown()
+	if _is_damage(data):
+		power = hero.roll_crit(power, hero.global_position)
+	skill.cooldown_left = _cooldown_of(skill)
 	_play_cast_effect(data)
 	match data.kind:
 		SkillData.Kind.AREA:

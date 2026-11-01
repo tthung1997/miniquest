@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AccessoryData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/accessory_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gem_yellow.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"amber_magnet"
+display_name = "Amber Magnet"
+icon = ExtResource("2_icon")
+price = 400
+pickup_radius = 40.0
+stat_bonuses = Dictionary[StringName, int]({
+&"intelligence": 1
+})

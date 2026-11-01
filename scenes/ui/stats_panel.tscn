@@ -42,56 +42,15 @@ theme_override_constants/h_separation = 16
 theme_override_constants/v_separation = 2
 columns = 2
 
-[node name="Readouts" type="HBoxContainer" parent="."]
+[node name="Divider" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
-theme_override_constants/separation = 4
+mouse_filter = 2
+color = Color(0.804, 0.776, 0.69, 0.25)
 
-[node name="HealthLabel" type="Label" parent="Readouts"]
+[node name="StatsGrid" type="GridContainer" parent="."]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Maximum health"
-mouse_filter = 1
-text = "HP --"
-horizontal_alignment = 1
-
-[node name="DamageLabel" type="Label" parent="Readouts"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Damage per hit with the held weapon"
-mouse_filter = 1
-text = "DMG --"
-horizontal_alignment = 1
-
-[node name="SpeedLabel" type="Label" parent="Readouts"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Attacks per second with the held weapon"
-mouse_filter = 1
-text = "SPD --"
-horizontal_alignment = 1
-
-[node name="RangeLabel" type="Label" parent="Readouts"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Attack range of the held weapon"
-mouse_filter = 1
-text = "RNG --"
-horizontal_alignment = 1
-
-[node name="MoveLabel" type="Label" parent="Readouts"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Move speed, compared with a hero wearing no boots"
-mouse_filter = 1
-text = "MOV --"
-horizontal_alignment = 1
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 2
+columns = 3

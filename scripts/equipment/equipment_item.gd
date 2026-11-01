@@ -46,6 +46,21 @@ func get_move_speed_bonus() -> float:
 	return 0.0
 
 
+## Chance, 0.0 to 1.0, that this item's wearer's hit is critical.
+func get_crit_chance() -> float:
+	return 0.0
+
+
+## Fraction this item takes off every skill's cooldown: 0.1 is 10% shorter.
+func get_cooldown_reduction() -> float:
+	return 0.0
+
+
+## Pixels this item adds to how close a drop must be to be collected.
+func get_pickup_radius_bonus() -> float:
+	return 0.0
+
+
 ## This item's rarity. An id with no file is reported and read as Common, so a
 ## stale save still shows its item.
 func get_rarity() -> RarityData:

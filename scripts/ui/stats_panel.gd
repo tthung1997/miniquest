@@ -1,8 +1,9 @@
 class_name StatsPanel
 extends VBoxContainer
 ## The selected hero's stats and unspent points, shown under the hero in the
-## hub: each stat with buttons to put free points into it, and what the hero's
-## health and held weapon come to.
+## hub: free points with Reset and Apply, each stat with buttons to put free
+## points into it, and below them everything the hero's stats and gear come to,
+## previewing the change waiting points would make.
 ##
 ## Points are staged: the buttons only change a pending allocation, previewed
 ## in the numbers, until apply() commits it through HeroData.spend_points().
@@ -15,6 +16,26 @@ signal points_applied
 const ARROW: String = "→"
 const ACCENT: StringName = &"AccentLabel"
 const NORMAL: StringName = &""
+## What the summary lists, in order: its key, the short name in the grid and
+## the full name shown on hover.
+const SUMMARY_KEYS: Array[StringName] = [
+	&"health", &"damage", &"speed", &"range", &"crit", &"cooldown", &"move", &"pickup", &"gear"
+]
+const SUMMARY_SHORT: PackedStringArray = [
+	"HP", "DMG", "SPD", "RNG", "CRIT", "CDR", "MOV", "PICK", "GEAR"
+]
+const SUMMARY_TIPS: PackedStringArray = [
+	"Maximum health",
+	"Damage per hit with the held weapon",
+	"Attacks per second with the held weapon",
+	"Attack range of the held weapon",
+	"Chance that a hit is critical",
+	"Share taken off every skill's cooldown",
+	"Move speed, compared with a hero wearing no boots",
+	"How close a drop must be to be collected",
+	"Stat points worn equipment adds",
+]
+const NO_VALUE: String = "--"
 
 ## One StatRow per stat in HeroData.STATS.
 @export var stat_row_scene: PackedScene
@@ -22,22 +43,22 @@ const NORMAL: StringName = &""
 var _hero: HeroData = null
 var _pending: Dictionary[StringName, int] = {}
 var _rows: Dictionary[StringName, StatRow] = {}
+var _summary_values: Dictionary[StringName, Label] = {}
+## What each summary cell reads when nothing is changing, to say "NAME value".
+var _summary_names: Dictionary[StringName, String] = {}
 
 @onready var _free_points_label: Label = %FreePointsLabel
 @onready var _reset_button: Button = %ResetButton
 @onready var _apply_button: Button = %ApplyButton
 @onready var _grid: GridContainer = %StatGrid
-@onready var _health_label: Label = %HealthLabel
-@onready var _damage_label: Label = %DamageLabel
-@onready var _speed_label: Label = %SpeedLabel
-@onready var _range_label: Label = %RangeLabel
-@onready var _move_label: Label = %MoveLabel
+@onready var _summary_grid: GridContainer = %StatsGrid
 
 
 func _ready() -> void:
 	_reset_button.pressed.connect(discard)
 	_apply_button.pressed.connect(apply)
 	_build_rows()
+	_build_summary()
 	_refresh()
 
 
@@ -125,11 +146,8 @@ func _refresh() -> void:
 		_free_points_label.theme_type_variation = NORMAL
 		for row: StatRow in _rows.values():
 			row.show_empty()
-		_show_readout(_health_label, "HP", "--", "--")
-		_show_readout(_damage_label, "DMG", "--", "--")
-		_show_readout(_speed_label, "SPD", "--", "--")
-		_show_readout(_range_label, "RNG", "--", "--")
-		_show_readout(_move_label, "MOV", "--", "--")
+		for key: StringName in _summary_values:
+			_show_summary(key, NO_VALUE)
 		return
 
 	var remaining: int = _remaining_points()
@@ -147,44 +165,79 @@ func _refresh() -> void:
 func _refresh_readouts(
 	current: Dictionary[StringName, int], preview: Dictionary[StringName, int]
 ) -> void:
-	_show_readout(
-		_health_label,
-		"HP",
-		_format(_hero.max_health()),
-		_format(_hero.max_health_with(preview[&"vitality"]))
-	)
-	var movement: String = "%d%%" % roundi(_hero.move_speed_multiplier() * 100.0)
-	_show_readout(_move_label, "MOV", movement, movement)
+	var health: String = _format(_hero.max_health())
+	var health_after: String = _format(_hero.max_health_with(preview[&"vitality"]))
+	_show_summary(&"health", health, health_after)
+	_show_summary(&"crit", "%d%%" % roundi(_hero.crit_chance() * 100.0))
+	_show_summary(&"cooldown", "%d%%" % roundi(_hero.cooldown_reduction() * 100.0))
+	_show_summary(&"move", "%d%%" % roundi(_hero.move_speed_multiplier() * 100.0))
+	_show_summary(&"pickup", "%d" % roundi(HeroData.BASE_PICKUP_RADIUS + _hero.pickup_radius_bonus()))
+	_refresh_gear_points(current)
 
 	var weapon: WeaponData = null
 	if _hero.weapon != null:
 		weapon = _hero.weapon.data()
 	if weapon == null:
-		_show_readout(_damage_label, "DMG", "--", "--")
-		_show_readout(_speed_label, "SPD", "--", "--")
-		_show_readout(_range_label, "RNG", "--", "--")
+		for key: StringName in [&"damage", &"speed", &"range"]:
+			_show_summary(key, NO_VALUE)
 		return
 	var damage: String = _format(_hero.weapon.damage_with(current))
-	_show_readout(_damage_label, "DMG", damage, _format(_hero.weapon.damage_with(preview)))
-	var speed: String = _format(1.0 / weapon.attack_interval)
-	_show_readout(_speed_label, "SPD", speed, speed)
-	var reach: String = _format(weapon.attack_range)
-	_show_readout(_range_label, "RNG", reach, reach)
+	var damage_after: String = _format(_hero.weapon.damage_with(preview))
+	_show_summary(&"damage", damage, damage_after)
+	_show_summary(&"speed", "%s/s" % _format(1.0 / weapon.attack_interval, 2))
+	_show_summary(&"range", _format(weapon.attack_range))
 
 
-## "NAME now", or "NAME now → after" in the accent colour when it will change.
-func _show_readout(label: Label, readout_name: String, now: String, after: String) -> void:
-	if now == after:
-		label.text = "%s %s" % [readout_name, now]
+## The stat points worn equipment adds, in total, with the detail on hover.
+func _refresh_gear_points(total: Dictionary[StringName, int]) -> void:
+	var earned: Dictionary[StringName, int] = _hero.stats()
+	var parts: PackedStringArray = []
+	var points: int = 0
+	for stat_name: StringName in HeroData.STATS:
+		var extra: int = total[stat_name] - earned[stat_name]
+		points += extra
+		if extra != 0:
+			parts.append("%s %+d" % [String(stat_name).left(3).to_upper(), extra])
+	_show_summary(&"gear", "%+d" % points)
+	var detail: String = "  ".join(parts) if not parts.is_empty() else "none"
+	_summary_values[&"gear"].tooltip_text = "%s: %s" % [SUMMARY_TIPS[SUMMARY_KEYS.size() - 1], detail]
+
+
+func _build_summary() -> void:
+	for i: int in SUMMARY_KEYS.size():
+		var cell: Label = Label.new()
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cell.tooltip_text = SUMMARY_TIPS[i]
+		cell.mouse_filter = Control.MOUSE_FILTER_STOP
+		cell.custom_minimum_size = Vector2(0, 12)
+		_summary_grid.add_child(cell)
+		_summary_values[SUMMARY_KEYS[i]] = cell
+		_summary_names[SUMMARY_KEYS[i]] = SUMMARY_SHORT[i]
+		_show_summary(SUMMARY_KEYS[i], NO_VALUE)
+
+
+## Show a STATS cell as "NAME now", or "NAME now → after" in the accent colour
+## when `after` is given and differs.
+func _show_summary(key: StringName, now: String, after: String = "") -> void:
+	var label: Label = _summary_values.get(key)
+	if label == null:
+		return
+	var short_name: String = _summary_names[key]
+	if after.is_empty() or now == after:
+		label.text = "%s %s" % [short_name, now]
 		label.theme_type_variation = NORMAL
 	else:
-		label.text = "%s %s %s %s" % [readout_name, now, ARROW, after]
+		label.text = "%s %s %s %s" % [short_name, now, ARROW, after]
 		label.theme_type_variation = ACCENT
 
 
-## One decimal place, dropped when it is zero.
-func _format(value: float) -> String:
-	return String.num(value, 1).trim_suffix(".0")
+## `decimals` places, trailing zeros dropped.
+func _format(value: float, decimals: int = 1) -> String:
+	var text: String = String.num(value, decimals)
+	if text.contains("."):
+		text = text.rstrip("0").trim_suffix(".")
+	return text
 
 
 func _on_increase_requested(stat_name: StringName) -> void:

@@ -1,8 +1,39 @@
 [gd_resource type="Resource" script_class="QuestData" format=3]
 
 [ext_resource type="Script" path="res://scripts/quests/quest_data.gd" id="1_quest"]
+[ext_resource type="Script" path="res://scripts/quests/spawn_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://resources/enemies/bamboo.tres" id="3_bamboo"]
+[ext_resource type="Resource" path="res://resources/enemies/blue_bat.tres" id="4_bat"]
+[ext_resource type="Resource" path="res://resources/enemies/spider_red.tres" id="5_spider"]
+[ext_resource type="Resource" path="res://resources/enemies/panda.tres" id="6_panda"]
+[ext_resource type="Resource" path="res://resources/enemies/bear.tres" id="7_bear"]
+
+[sub_resource type="Resource" id="Resource_bamboo"]
+script = ExtResource("2_entry")
+enemy = ExtResource("3_bamboo")
+weight = 10.0
+
+[sub_resource type="Resource" id="Resource_bat"]
+script = ExtResource("2_entry")
+enemy = ExtResource("4_bat")
+weight = 5.0
+from_progress = 0.1
+
+[sub_resource type="Resource" id="Resource_spider"]
+script = ExtResource("2_entry")
+enemy = ExtResource("5_spider")
+weight = 4.0
+from_progress = 0.25
+
+[sub_resource type="Resource" id="Resource_panda"]
+script = ExtResource("2_entry")
+enemy = ExtResource("6_panda")
+weight = 2.0
+from_progress = 0.4
 
 [resource]
 script = ExtResource("1_quest")
 id = &"meadow_run"
 display_name = "Meadow"
+spawn_entries = Array[ExtResource("2_entry")]([SubResource("Resource_bamboo"), SubResource("Resource_bat"), SubResource("Resource_spider"), SubResource("Resource_panda")])
+elite = ExtResource("7_bear")

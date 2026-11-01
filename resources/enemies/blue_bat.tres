@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_data"]
+[ext_resource type="SpriteFrames" path="res://resources/enemies/blue_bat_frames.tres" id="2_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"blue_bat"
+display_name = "Blue Bat"
+frames = ExtResource("2_frames")
+body_scale = 0.85
+max_health = 6.0
+speed = 72.0
+contact_damage = 3.0
+experience = 1
+gold_chance = 0.2
