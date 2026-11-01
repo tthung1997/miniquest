@@ -4,10 +4,6 @@
 [ext_resource type="Theme" path="res://resources/ui/wood_theme.tres" id="2_theme"]
 [ext_resource type="PackedScene" path="res://scenes/ui/stat_row.tscn" id="3_row"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_views"]
-
-[sub_resource type="ButtonGroup" id="ButtonGroup_tabs"]
-
 [node name="StatsPanel" type="VBoxContainer"]
 theme = ExtResource("2_theme")
 theme_override_constants/separation = 2
@@ -18,36 +14,12 @@ stat_row_scene = ExtResource("3_row")
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="PointsTab" type="Button" parent="Header"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
-layout_mode = 2
-focus_mode = 0
-tooltip_text = "Spend free points"
-theme_type_variation = &"QuietButton"
-toggle_mode = true
-button_pressed = true
-button_group = SubResource("ButtonGroup_tabs")
-text = "POINTS"
-
-[node name="StatsTab" type="Button" parent="Header"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 18)
-layout_mode = 2
-focus_mode = 0
-tooltip_text = "Everything the hero's stats and gear come to"
-theme_type_variation = &"QuietButton"
-toggle_mode = true
-button_group = SubResource("ButtonGroup_tabs")
-text = "STATS"
-
 [node name="FreePointsLabel" type="Label" parent="Header"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"AccentLabel"
-text = "Free: --"
-horizontal_alignment = 1
+text = "Free points: --"
 
 [node name="ResetButton" type="Button" parent="Header"]
 unique_name_in_owner = true
@@ -63,27 +35,20 @@ layout_mode = 2
 tooltip_text = "Spend the waiting points for good"
 text = "APPLY"
 
-[node name="Views" type="TabContainer" parent="."]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_views")
-tabs_visible = false
-use_hidden_tabs_for_min_size = true
-
-[node name="PointsView" type="VBoxContainer" parent="Views"]
-layout_mode = 2
-
-[node name="StatGrid" type="GridContainer" parent="Views/PointsView"]
+[node name="StatGrid" type="GridContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 16
 theme_override_constants/v_separation = 2
 columns = 2
 
-[node name="StatsView" type="VBoxContainer" parent="Views"]
+[node name="Divider" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
+mouse_filter = 2
+color = Color(0.804, 0.776, 0.69, 0.25)
 
-[node name="StatsGrid" type="GridContainer" parent="Views/StatsView"]
+[node name="StatsGrid" type="GridContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 4

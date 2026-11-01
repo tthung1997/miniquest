@@ -653,9 +653,9 @@ Only the arena exists at launch, so this matters from quest type 2 onward.
 ## 8. Hub
 
 **The hero stands on the left in a warm glow, between their four equipment
-slots, with their name and level above and their stats and Start Quest below;
-their inventory fills the right.** Inventory, Advance and Skills sit in
-the top bar. Inventory and Skills are two views of the same right-hand panel,
+slots, with their name and level above and their stats below; their inventory
+fills the right.** Start Quest, Inventory and Skills sit in the top bar, with
+Start Quest first. Inventory and Skills are two views of the same right-hand panel,
 and the panel keeps one size whichever is up (a view that runs long scrolls
 rather than resizing the screen). Skills is marked with an exclamation mark
 while the hero has points to spend. The gold count opens the store, which leads
@@ -675,16 +675,14 @@ The hero is rendered with full visible equipment at integer scale (2×). 3× wou
 look better but leaves no room for the stats beneath on 360 lines. This is
 where the player admires their character, so it's worth the screen space.
 
-- **Stats are always visible, not behind a button.** Under the hero, a strip with
-  two tabs, POINTS and STATS, over a row that always shows the free points left
-  and Reset and Apply. POINTS has each stat with −/+ buttons. STATS lists
-  everything the hero comes to in a grid of three columns: HP, DMG, SPD and RNG
+- **Stats are always visible, not behind a button.** Under the hero: the free
+  points left with Reset and Apply, each stat with −/+ buttons, then a three-column
+  grid of everything the hero comes to: HP, DMG, SPD and RNG
   (the held weapon's damage, attack speed and range), CRIT, CDR (cooldown cut),
   MOV (move speed), PICK (pickup radius) and GEAR (the stat points worn equipment
   adds, itemised on hover), each with its full name on hover. Equipping a
   different weapon and staging points both update those numbers at once, and a
-  change that is still pending shows in the accent colour (`HP 50 → 60`), with the
-  STATS tab turning the same colour while points wait.
+  change that is still pending shows in the accent colour (`HP 50 → 60`).
 - **Points are staged, then applied.** −/+ only change a pending allocation;
   **Apply** spends it for good (there is no respec, section 5.4) and **Reset**
   drops it. Leaving the hub with points still pending asks to apply or discard

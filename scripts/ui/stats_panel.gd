@@ -1,9 +1,9 @@
 class_name StatsPanel
 extends VBoxContainer
 ## The selected hero's stats and unspent points, shown under the hero in the
-## hub, on two tabs. POINTS has each stat with buttons to put free points into
-## it. STATS lists everything the hero's stats and gear come to, previewing the
-## change waiting points would make, and the stat points the gear adds.
+## hub: free points with Reset and Apply, each stat with buttons to put free
+## points into it, and below them everything the hero's stats and gear come to,
+## previewing the change waiting points would make.
 ##
 ## Points are staged: the buttons only change a pending allocation, previewed
 ## in the numbers, until apply() commits it through HeroData.spend_points().
@@ -16,9 +16,7 @@ signal points_applied
 const ARROW: String = "→"
 const ACCENT: StringName = &"AccentLabel"
 const NORMAL: StringName = &""
-## The STATS tab turns this colour while waiting points would change its numbers.
-const PENDING_TAB_COLOR: Color = Color(1.0, 0.678, 0.333)
-## What the STATS tab lists, in order: its key, the short name on the tab and
+## What the summary lists, in order: its key, the short name in the grid and
 ## the full name shown on hover.
 const SUMMARY_KEYS: Array[StringName] = [
 	&"health", &"damage", &"speed", &"range", &"crit", &"cooldown", &"move", &"pickup", &"gear"
@@ -46,12 +44,9 @@ var _hero: HeroData = null
 var _pending: Dictionary[StringName, int] = {}
 var _rows: Dictionary[StringName, StatRow] = {}
 var _summary_values: Dictionary[StringName, Label] = {}
-## What each STATS cell reads when nothing is changing, to say "NAME value".
+## What each summary cell reads when nothing is changing, to say "NAME value".
 var _summary_names: Dictionary[StringName, String] = {}
 
-@onready var _points_tab: Button = %PointsTab
-@onready var _stats_tab: Button = %StatsTab
-@onready var _views: TabContainer = %Views
 @onready var _free_points_label: Label = %FreePointsLabel
 @onready var _reset_button: Button = %ResetButton
 @onready var _apply_button: Button = %ApplyButton
@@ -62,8 +57,6 @@ var _summary_names: Dictionary[StringName, String] = {}
 func _ready() -> void:
 	_reset_button.pressed.connect(discard)
 	_apply_button.pressed.connect(apply)
-	_points_tab.toggled.connect(_on_tab_toggled.bind(0))
-	_stats_tab.toggled.connect(_on_tab_toggled.bind(1))
 	_build_rows()
 	_build_summary()
 	_refresh()
@@ -149,27 +142,22 @@ func _refresh() -> void:
 	_reset_button.disabled = not has_pending()
 	_apply_button.disabled = not has_pending()
 	if _hero == null:
-		_free_points_label.text = "Free: --"
+		_free_points_label.text = "Free points: --"
 		_free_points_label.theme_type_variation = NORMAL
 		for row: StatRow in _rows.values():
 			row.show_empty()
 		for key: StringName in _summary_values:
 			_show_summary(key, NO_VALUE)
-		_stats_tab.remove_theme_color_override(&"font_color")
 		return
 
 	var remaining: int = _remaining_points()
-	_free_points_label.text = "Free: %d" % remaining
+	_free_points_label.text = "Free points: %d" % remaining
 	_free_points_label.theme_type_variation = ACCENT if remaining > 0 else NORMAL
 	var current: Dictionary[StringName, int] = _hero.stats()
 	for stat_name: StringName in _rows:
 		var pending: int = _pending.get(stat_name, 0)
 		_rows[stat_name].show_values(current[stat_name], pending, pending > 0, remaining > 0)
 	_refresh_readouts(_hero.total_stats(), _preview_stats())
-	if has_pending():
-		_stats_tab.add_theme_color_override(&"font_color", PENDING_TAB_COLOR)
-	else:
-		_stats_tab.remove_theme_color_override(&"font_color")
 
 
 ## `current` and `preview` count the stats gear adds; the rows above show only
@@ -242,11 +230,6 @@ func _show_summary(key: StringName, now: String, after: String = "") -> void:
 	else:
 		label.text = "%s %s %s %s" % [short_name, now, ARROW, after]
 		label.theme_type_variation = ACCENT
-
-
-func _on_tab_toggled(pressed: bool, index: int) -> void:
-	if pressed:
-		_views.current_tab = index
 
 
 ## `decimals` places, trailing zeros dropped.
