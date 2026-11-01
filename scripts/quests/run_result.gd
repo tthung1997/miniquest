@@ -32,6 +32,8 @@ var gold_forfeited: int = 0
 var items_forfeited: int = 0
 ## Items that will not fit in the hero's inventory when banked.
 var items_without_room: int = 0
+## The quest's elite was killed during the run.
+var elite_killed: bool = false
 
 
 func is_win() -> bool:

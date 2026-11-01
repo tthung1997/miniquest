@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/elite_bar.gd" id="1_bar"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+
+[node name="EliteBar" type="Control"]
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -120.0
+offset_top = 60.0
+offset_right = 120.0
+offset_bottom = 90.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_bar")
+
+[node name="NameLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 18.0
+horizontal_alignment = 1
+
+[node name="Back" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = 28.0
+mouse_filter = 2
+color = Color(0.12, 0.05, 0.05, 0.85)
+
+[node name="Fill" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = 28.0
+mouse_filter = 2
+color = Color(0.85, 0.2, 0.18, 1)

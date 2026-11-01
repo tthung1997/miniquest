@@ -39,6 +39,23 @@ extends Resource
 @export_range(0.1, 50.0, 0.1) var damage_scale_start: float = 1.0
 @export_range(0.1, 50.0, 0.1) var damage_scale_end: float = 2.0
 
+@export_group("Roster")
+## Who a run spawns, and when each enemy joins the mix.
+@export var spawn_entries: Array[SpawnEntry] = []
+
+@export_group("Elite")
+## The enemy that arrives near the end of the run (DESIGN.md section 6.3). The
+## run is won at `duration` whether or not it is dead.
+@export var elite: EnemyData
+## Seconds into the run at which the elite spawns.
+@export_range(0.0, 1800.0, 1.0, "suffix:s") var elite_spawn_time: float = 150.0
+## Multipliers on the elite's own health and contact damage. The ramp's scales
+## are not applied to it.
+@export_range(0.1, 50.0, 0.1) var elite_health_scale: float = 1.0
+@export_range(0.1, 50.0, 0.1) var elite_damage_scale: float = 1.0
+## Items the elite leaves when killed, on top of the cap on kill drops.
+@export_range(0, 10) var elite_item_count: int = 1
+
 @export_group("In-run levels")
 ## Experience to leave in-run level L is round(base * L ^ exponent). Each level
 ## gained earns one upgrade pick (DESIGN.md section 6.4). Placeholders.
@@ -90,6 +107,28 @@ func health_scale_at(progress: float) -> float:
 
 func damage_scale_at(progress: float) -> float:
 	return lerpf(damage_scale_start, damage_scale_end, progress)
+
+
+## The enemy to spawn next at ramp `progress`, picked by weight from those
+## available then. Null, with an error, when none is.
+func roll_enemy(progress: float, rng: RandomNumberGenerator) -> EnemyData:
+	var total: float = 0.0
+	for entry: SpawnEntry in spawn_entries:
+		if entry != null and entry.is_available_at(progress):
+			total += entry.weight
+	if total <= 0.0:
+		push_error("QuestData '%s': no enemy is available at progress %.2f." % [id, progress])
+		return null
+	var pick: float = rng.randf() * total
+	var chosen: EnemyData = null
+	for entry: SpawnEntry in spawn_entries:
+		if entry == null or not entry.is_available_at(progress):
+			continue
+		chosen = entry.enemy
+		pick -= entry.weight
+		if pick < 0.0:
+			break
+	return chosen
 
 
 ## Experience an in-run level takes to leave, for `level` from 1.

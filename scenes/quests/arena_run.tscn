@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://dj41ukjd6bc1x" path="res://scenes/hero.tscn" id="2_hero"]
 [ext_resource type="PackedScene" path="res://scenes/arena/meadow.tscn" id="3_meadow"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/enemy.tscn" id="4_enemy"]
-[ext_resource type="Resource" path="res://resources/enemies/bamboo.tres" id="5_bamboo"]
 [ext_resource type="Script" path="res://scripts/quests/run_director.gd" id="6_director"]
 [ext_resource type="Resource" path="res://resources/quests/meadow_run.tres" id="7_quest"]
 [ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="8_pause"]
@@ -13,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://scenes/pickups/pickup.tscn" id="11_pickup"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_bar.tscn" id="12_skillbar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_overlay.tscn" id="13_upgrade"]
+[ext_resource type="PackedScene" path="res://scenes/ui/elite_bar.tscn" id="14_elite"]
 
 [node name="ArenaRun" type="Node2D"]
 y_sort_enabled = true
@@ -35,7 +35,6 @@ z_index = 1
 script = ExtResource("6_director")
 quest = ExtResource("7_quest")
 enemy_scene = ExtResource("4_enemy")
-enemy_data = ExtResource("5_bamboo")
 hero = NodePath("../Hero")
 arena = NodePath("../Meadow")
 enemy_parent = NodePath("..")
@@ -59,6 +58,10 @@ offset_right = 630.0
 offset_bottom = 54.0
 
 [node name="SkillBar" parent="HUD/Root" instance=ExtResource("12_skillbar")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="EliteBar" parent="HUD/Root" instance=ExtResource("14_elite")]
 unique_name_in_owner = true
 layout_mode = 1
 

@@ -11,6 +11,11 @@ extends Resource
 ## Built from the monster's pack sheet by tools/build_enemy_frames.gd. Needs a
 ## looping `walk` clip drawn facing right.
 @export var frames: SpriteFrames
+## Sizes the sprite, body and contact area together. 1.0 is a pack monster as is.
+@export_range(0.5, 4.0, 0.05) var body_scale: float = 1.0
+## The end-of-run elite (DESIGN.md section 6.3). Elites get a health bar and a
+## distinct threat marker.
+@export var is_elite: bool = false
 
 @export_group("Combat")
 @export_range(1.0, 10000.0, 1.0) var max_health: float = 10.0

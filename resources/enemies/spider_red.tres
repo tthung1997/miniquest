@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_data"]
+[ext_resource type="SpriteFrames" path="res://resources/enemies/spider_red_frames.tres" id="2_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"spider_red"
+display_name = "Red Spider"
+frames = ExtResource("2_frames")
+max_health = 18.0
+speed = 52.0
+contact_damage = 6.0
+contact_interval = 0.9
+experience = 3
+gold_chance = 0.4
+gold_max = 4

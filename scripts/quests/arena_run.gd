@@ -39,6 +39,7 @@ var _gold: int = 0
 var _items: Array[EquipmentItem] = []
 ## Items this run's kills have left on the ground, against the quest's cap.
 var _item_drops: int = 0
+var _elite_killed: bool = false
 var _hero_data: HeroData = null
 var _ending: bool = false
 var _result: RunResult = null
@@ -64,6 +65,7 @@ var _choosing: bool = false
 @onready var _retreat_dialog: ConfirmDialog = %RetreatDialog
 @onready var _upgrade_overlay: UpgradeOverlay = %UpgradeOverlay
 @onready var _end_panel: RunEndPanel = %EndPanel
+@onready var _elite_bar: EliteBar = %EliteBar
 
 
 func _ready() -> void:
@@ -90,6 +92,7 @@ func _ready() -> void:
 	_skill_bar.show_auto_cast(hero.skills.auto_cast)
 	_director.enemy_killed.connect(_on_enemy_killed)
 	_director.survived.connect(_on_run_survived)
+	_director.elite_spawned.connect(_elite_bar.show_elite)
 	_pause_menu.resume_requested.connect(_on_resume_requested)
 	_pause_menu.retreat_requested.connect(_on_retreat_requested)
 	_retreat_dialog.confirmed.connect(_end.bind(RunResult.Outcome.RETREATED))
@@ -170,6 +173,7 @@ func _end(outcome: RunResult.Outcome) -> void:
 	_result.duration = _director.quest.duration
 	_result.kills = _kills
 	_result.experience = _experience
+	_result.elite_killed = _elite_killed
 	if outcome == RunResult.Outcome.WON:
 		_add_win_bonus(_result)
 	else:
@@ -219,6 +223,9 @@ func _on_enemy_killed(enemy: Enemy) -> void:
 	_kills += 1
 	_experience += enemy.data.experience
 	_drop_loot(enemy)
+	if enemy.data.is_elite:
+		_elite_killed = true
+		_drop_elite_items(enemy)
 	var gained: int = _progress.add_experience(enemy.data.experience)
 	if gained > 0 and not _ending:
 		_pending_picks += gained
@@ -282,6 +289,17 @@ func _drop_loot(enemy: Enemy) -> void:
 		if loot != null:
 			loot.set_item(item)
 			_item_drops += 1
+
+
+## The elite's guaranteed items, on top of the cap on kill drops. Like any drop
+## they only count once picked up and banked.
+func _drop_elite_items(elite: Enemy) -> void:
+	var difficulty: float = _director.quest.start_difficulty(_director.ramp_start)
+	for i: int in _director.quest.elite_item_count:
+		var item: EquipmentItem = Drops.roll_item(_rng, difficulty)
+		var loot: Pickup = _new_pickup(elite.global_position) if item != null else null
+		if loot != null:
+			loot.set_item(item)
 
 
 ## A pickup near `at`, on its way into the world. Adding waits for the end of

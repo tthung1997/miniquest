@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_data"]
+[ext_resource type="SpriteFrames" path="res://resources/enemies/panda_frames.tres" id="2_frames"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"panda"
+display_name = "Panda"
+frames = ExtResource("2_frames")
+body_scale = 1.35
+max_health = 45.0
+speed = 28.0
+contact_damage = 10.0
+contact_interval = 1.2
+experience = 6
+gold_chance = 0.6
+gold_min = 2
+gold_max = 5
+item_chance = 0.04

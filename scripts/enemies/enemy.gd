@@ -36,6 +36,7 @@ var _slow_left: float = 0.0
 var _flash: Tween = null
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
+@onready var _body: CollisionShape2D = $Collision
 @onready var _contact: Area2D = $ContactArea
 
 
@@ -48,6 +49,11 @@ func _ready() -> void:
 	health.died.connect(_on_health_died)
 	_sprite.sprite_frames = data.frames
 	_sprite.play(&"walk")
+	if not is_equal_approx(data.body_scale, 1.0):
+		_sprite.scale *= data.body_scale
+		_sprite.position *= data.body_scale
+		_body.scale = Vector2.ONE * data.body_scale
+		_contact.scale = Vector2.ONE * data.body_scale
 
 
 func _physics_process(delta: float) -> void:
@@ -72,7 +78,8 @@ func _physics_process(delta: float) -> void:
 
 ## Where shots should aim, in global space.
 func center() -> Vector2:
-	return global_position + BODY_CENTER
+	var scale_factor: float = data.body_scale if data != null else 1.0
+	return global_position + BODY_CENTER * scale_factor
 
 
 func is_dead() -> bool:
