@@ -28,7 +28,7 @@ signal gacha_requested
 ## The hero bought or sold something and should be saved.
 signal hero_changed
 
-enum Tab { WEAPONS, BOOTS, ARMOUR, SELL }
+enum Tab { WEAPONS, BOOTS, ARMOUR, ACCESSORIES, SELL }
 
 const COLUMNS: int = 7
 ## Gap between shelf entries, across and down. Tight enough that seven columns
@@ -114,6 +114,7 @@ var _gold_tween: Tween = null
 @onready var _weapons_tab: Button = %WeaponsTab
 @onready var _boots_tab: Button = %BootsTab
 @onready var _armour_tab: Button = %ArmourTab
+@onready var _accessories_tab: Button = %AccessoriesTab
 @onready var _sell_tab: Button = %SellTab
 @onready var _awning: ShopAwning = %Awning
 @onready var _class_row: HBoxContainer = %ClassRow
@@ -142,6 +143,7 @@ func _ready() -> void:
 	_weapons_tab.toggled.connect(_on_tab_toggled.bind(Tab.WEAPONS))
 	_boots_tab.toggled.connect(_on_tab_toggled.bind(Tab.BOOTS))
 	_armour_tab.toggled.connect(_on_tab_toggled.bind(Tab.ARMOUR))
+	_accessories_tab.toggled.connect(_on_tab_toggled.bind(Tab.ACCESSORIES))
 	_sell_tab.toggled.connect(_on_tab_toggled.bind(Tab.SELL))
 	_select_common_button.pressed.connect(_on_select_common_pressed)
 	_clear_button.pressed.connect(_on_clear_pressed)
@@ -267,6 +269,9 @@ func _set_tab_icons() -> void:
 	if not layers.is_empty():
 		_armour_tab.icon = layers[0]
 	_sell_tab.icon = PriceTag.COIN
+	var charm: AccessoryData = AccessoryData.find(&"brass_hourglass")
+	if charm != null:
+		_accessories_tab.icon = charm.icon
 
 
 ## Dress the doll as the hero again and forget what was picked.
@@ -340,6 +345,10 @@ func _build_catalog() -> void:
 				for id: int in ids:
 					var single: ArmourItem = StoreCatalog.armour_piece(_pool, piece, id)
 					_add_entry(grid, single, StoreCatalog.price_of(single))
+		Tab.ACCESSORIES:
+			var grid: ShelfGrid = _add_section("TRINKETS")
+			for trinket: AccessoryItem in StoreCatalog.accessories():
+				_add_entry(grid, trinket, StoreCatalog.price_of(trinket))
 		Tab.SELL:
 			_build_sell_list()
 	_scroll.scroll_vertical = 0
@@ -427,6 +436,8 @@ func _select(item: EquipmentItem) -> void:
 		_boots = item
 		_selected = item
 		_doll.wear_boots(_boots)
+	elif item is AccessoryItem:
+		_selected = item
 	elif item is ArmourItem:
 		_try_armour_piece(item)
 	_refresh_info()
@@ -541,7 +552,7 @@ func _tone_color(tone: ItemCompare.Tone) -> Color:
 
 
 ## How many of `item`'s kind the hero carries or wears. Armour is one-off, so
-## only weapons and boots are counted.
+## only weapons, boots and accessories are counted.
 func _owned_count(item: EquipmentItem) -> int:
 	var count: int = 0
 	var held: Array[EquipmentItem] = _hero.inventory.duplicate()
@@ -552,6 +563,9 @@ func _owned_count(item: EquipmentItem) -> int:
 				count += 1
 		elif item is BootsItem and other is BootsItem:
 			if (other as BootsItem).boots_id == (item as BootsItem).boots_id:
+				count += 1
+		elif item is AccessoryItem and other is AccessoryItem:
+			if (other as AccessoryItem).accessory_id == (item as AccessoryItem).accessory_id:
 				count += 1
 	return count
 
@@ -581,6 +595,8 @@ func _new_purchase() -> EquipmentItem:
 		return WeaponItem.create((_selected as WeaponItem).weapon_id)
 	if _selected is BootsItem:
 		return BootsItem.create((_selected as BootsItem).boots_id)
+	if _selected is AccessoryItem:
+		return AccessoryItem.create((_selected as AccessoryItem).accessory_id)
 	if _selected is ArmourItem:
 		var picked: ArmourItem = _selected
 		var armour: ArmourItem = ArmourItem.new()

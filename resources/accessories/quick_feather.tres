@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AccessoryData" format=3]
+
+[ext_resource type="Script" path="res://scripts/equipment/accessory_data.gd" id="1_data"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/feather.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_data")
+id = &"quick_feather"
+display_name = "Quick Feather"
+icon = ExtResource("2_icon")
+price = 150
+cooldown_reduction = 0.05
+stat_bonuses = Dictionary[StringName, int]({
+&"dexterity": 1
+})

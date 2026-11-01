@@ -9,6 +9,9 @@ extends Node2D
 ## hurting everything near where it stops. The art faces right and is turned to
 ## face the way it flies.
 
+## Seconds between looks for something to home on.
+const HOMING_RETARGET_TIME: float = 0.1
+
 @export_range(10.0, 1000.0, 5.0, "suffix:px/s") var speed: float = 300.0
 ## Played where the projectile stops, such as the wand bolt's burst. The
 ## projectile hides its own art and frees itself once the effect has gone.
@@ -22,6 +25,15 @@ extends Node2D
 ## this radius of where it stops, and nothing else.
 @export_range(0.0, 100.0, 1.0, "suffix:px") var splash_radius: float = 0.0
 
+@export_group("Homing")
+## How fast it can turn towards an enemy ahead of it, in degrees a second. Zero
+## flies straight.
+@export_range(0.0, 720.0, 5.0, "suffix:°/s") var homing_turn_rate: float = 0.0
+## How far ahead it looks for an enemy to steer at.
+@export_range(0.0, 400.0, 5.0, "suffix:px") var homing_range: float = 90.0
+## It only steers at enemies within this angle of where it is heading.
+@export_range(0.0, 180.0, 5.0, "suffix:°") var homing_cone: float = 70.0
+
 ## Hurt dealt to each enemy hit. Set by whoever fires it, from the weapon and
 ## the shooter's stats, before adding it to the tree.
 var damage: float = 0.0
@@ -32,6 +44,8 @@ var _remaining: float = 0.0
 var _carried_speed: float = 0.0
 var _stopped: bool = false
 var _spent: bool = false
+var _homing_target: Enemy = null
+var _retarget_in: float = 0.0
 
 @onready var _hitbox: Area2D = $Hitbox
 
@@ -43,6 +57,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if homing_turn_rate > 0.0:
+		_steer(delta)
+
 	# Range is counted at the projectile's own speed, so a shot fired on the run
 	# still lands attack_range ahead of a hero who keeps running.
 	var step: float = minf(speed * delta, _remaining)
@@ -88,6 +105,51 @@ func _on_hitbox_body_entered(body: Node2D) -> void:
 	if not pierces:
 		_spent = true
 		_stop.call_deferred()
+
+
+## Turn towards the nearest enemy ahead, as far as the turn rate allows.
+func _steer(delta: float) -> void:
+	_retarget_in -= delta
+	if _retarget_in <= 0.0 or not _can_home_on(_homing_target):
+		_retarget_in = HOMING_RETARGET_TIME
+		_homing_target = _find_homing_target()
+	if _homing_target == null:
+		return
+	var wanted: float = _direction.angle_to(_homing_target.center() - global_position)
+	var most: float = deg_to_rad(homing_turn_rate) * delta
+	_direction = _direction.rotated(clampf(wanted, -most, most))
+	rotation = _direction.angle()
+
+
+func _can_home_on(enemy: Enemy) -> bool:
+	return enemy != null and is_instance_valid(enemy) and not enemy.is_dead()
+
+
+## The nearest live enemy within range and cone, or null.
+func _find_homing_target() -> Enemy:
+	var circle: CircleShape2D = CircleShape2D.new()
+	circle.radius = homing_range
+	var query: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
+	query.shape = circle
+	query.transform = Transform2D(0.0, global_position)
+	query.collision_mask = _hitbox.collision_mask
+	var best: Enemy = null
+	var best_distance: float = INF
+	var min_dot: float = cos(deg_to_rad(homing_cone))
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query):
+		var collider: Object = hit["collider"]
+		if collider is not Enemy:
+			continue
+		var enemy: Enemy = collider
+		if enemy.is_dead():
+			continue
+		var to_enemy: Vector2 = enemy.center() - global_position
+		if to_enemy.normalized().dot(_direction) < min_dot:
+			continue
+		if to_enemy.length() < best_distance:
+			best = enemy
+			best_distance = to_enemy.length()
+	return best
 
 
 ## Hurt every enemy within splash_radius of here.

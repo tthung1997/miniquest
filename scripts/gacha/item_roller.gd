@@ -5,11 +5,13 @@ extends RefCounted
 ## Only rolls: nothing here touches a hero. The caller supplies the random
 ## number generator, so a test can seed it.
 
-## Relative chance that a rolled item is a weapon, armour or boots. A placeholder.
+## Relative chance that a rolled item is a weapon, armour, boots or an
+## accessory. A placeholder.
 const SLOT_WEIGHTS: Dictionary[EquipmentItem.Slot, float] = {
 	EquipmentItem.Slot.WEAPON: 1.0,
 	EquipmentItem.Slot.ARMOUR: 1.0,
 	EquipmentItem.Slot.BOOTS: 1.0,
+	EquipmentItem.Slot.ACCESSORY: 1.0,
 }
 ## The art pools rolled armour comes from, each equally likely. Any hero can
 ## wear any of it (a class never restricts anything); its stats lean towards
@@ -18,8 +20,9 @@ const SLOT_WEIGHTS: Dictionary[EquipmentItem.Slot, float] = {
 const ARMOUR_POOLS: Array[StringName] = [&"mage", &"ranger", &"warrior"]
 
 
-## A new item of `rarity`: a random weapon, random armour (see roll_armour) or a
-## random pair of boots. Null, with an error, when nothing could be rolled.
+## A new item of `rarity`: a random weapon, random armour (see roll_armour), a
+## random pair of boots or a random accessory. Null, with an error, when
+## nothing could be rolled.
 static func roll(rarity: RarityData, rng: RandomNumberGenerator) -> EquipmentItem:
 	if rarity == null:
 		push_error("ItemRoller: cannot roll an item without a rarity.")
@@ -27,11 +30,13 @@ static func roll(rarity: RarityData, rng: RandomNumberGenerator) -> EquipmentIte
 	var item: EquipmentItem = null
 	match _roll_slot(rng):
 		EquipmentItem.Slot.WEAPON:
-			item = _roll_weapon(rng)
+			item = roll_weapon(rng)
 		EquipmentItem.Slot.ARMOUR:
 			item = roll_armour(rng)
 		EquipmentItem.Slot.BOOTS:
 			item = BootsItem.roll(rng)
+		EquipmentItem.Slot.ACCESSORY:
+			item = AccessoryItem.roll(rng)
 	if item != null:
 		item.rarity = rarity.id
 	return item
@@ -56,7 +61,9 @@ static func _roll_slot(rng: RandomNumberGenerator) -> EquipmentItem.Slot:
 	return last
 
 
-static func _roll_weapon(rng: RandomNumberGenerator) -> WeaponItem:
+## New Common weapon of a random template. Null, with an error, when there are
+## none.
+static func roll_weapon(rng: RandomNumberGenerator) -> WeaponItem:
 	var ids: Array[StringName] = WeaponData.all_ids()
 	if ids.is_empty():
 		push_error("ItemRoller: there are no weapons to roll from.")

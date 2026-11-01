@@ -366,6 +366,18 @@ toggle_mode = true
 button_group = SubResource("TabGroup")
 text = "ARMOUR"
 
+[node name="AccessoriesTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Accessories: crit, cooldowns and pickup radius"
+theme_type_variation = &"QuietButton"
+theme_override_constants/icon_max_width = 14
+toggle_mode = true
+button_group = SubResource("TabGroup")
+text = "TRINKETS"
+
 [node name="SellTab" type="Button" parent="Margin/Column/Main/ShopPanel/Interior/Content/TabRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 22)

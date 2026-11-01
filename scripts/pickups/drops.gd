@@ -5,8 +5,15 @@ extends RefCounted
 ## Only rolls: nothing here touches the world. The caller supplies the random
 ## number generator, so a test can seed it.
 
-## Share of rolled items that are boots rather than armour. A placeholder.
-const BOOTS_SHARE: float = 0.3
+## Relative chance that a dropped item is each kind. Weapons, boots and
+## accessories can drop from any enemy whatever the hero's class (they are not
+## class art), and armour comes from a random class's pool. Placeholders.
+const KIND_WEIGHTS: Dictionary[EquipmentItem.Slot, float] = {
+	EquipmentItem.Slot.ARMOUR: 35.0,
+	EquipmentItem.Slot.WEAPON: 25.0,
+	EquipmentItem.Slot.BOOTS: 20.0,
+	EquipmentItem.Slot.ACCESSORY: 20.0,
+}
 
 ## Test overrides, honoured in debug builds only. Pass them after `--` on the
 ## command line, as in `godot --path . -- --rarity=epic --item-chance=1`, or
@@ -35,16 +42,21 @@ static func item_dropped(data: EnemyData, rng: RandomNumberGenerator) -> bool:
 	return rng.randf() < chance
 
 
-## A new item: boots BOOTS_SHARE of the time, otherwise armour rolled from the
-## art of a random class (see ItemRoller.roll_armour), at a rarity weighted by
-## each rarity's drop weight at `difficulty` (see QuestData.start_difficulty).
+## A new item of a kind picked by KIND_WEIGHTS, at a rarity weighted by each
+## rarity's drop weight at `difficulty` (see QuestData.start_difficulty). Armour
+## is rolled from the art of a random class (see ItemRoller.roll_armour).
 ## Null, with an error, when nothing could be rolled.
 static func roll_item(rng: RandomNumberGenerator, difficulty: float = 0.0) -> EquipmentItem:
 	var item: EquipmentItem = null
-	if rng.randf() < BOOTS_SHARE:
-		item = BootsItem.roll(rng)
-	if item == null:
-		item = ItemRoller.roll_armour(rng)
+	match _roll_kind(rng):
+		EquipmentItem.Slot.WEAPON:
+			item = ItemRoller.roll_weapon(rng)
+		EquipmentItem.Slot.BOOTS:
+			item = BootsItem.roll(rng)
+		EquipmentItem.Slot.ACCESSORY:
+			item = AccessoryItem.roll(rng)
+		_:
+			item = ItemRoller.roll_armour(rng)
 	if item == null:
 		return null
 	var rarity: RarityData = _roll_rarity(rng, difficulty)
@@ -65,6 +77,21 @@ static func win_bonus_items(
 		if item != null:
 			items.append(item)
 	return items
+
+
+## The kind of the next dropped item, by weight.
+static func _roll_kind(rng: RandomNumberGenerator) -> EquipmentItem.Slot:
+	var total: float = 0.0
+	for weight: float in KIND_WEIGHTS.values():
+		total += weight
+	var pick: float = rng.randf() * total
+	var last: EquipmentItem.Slot = EquipmentItem.Slot.ARMOUR
+	for slot: EquipmentItem.Slot in KIND_WEIGHTS:
+		last = slot
+		pick -= KIND_WEIGHTS[slot]
+		if pick < 0.0:
+			return slot
+	return last
 
 
 ## The rarity of a new item: the forced one when a debug build has it set,

@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_bar.tscn" id="12_skillbar"]
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_overlay.tscn" id="13_upgrade"]
 [ext_resource type="PackedScene" path="res://scenes/ui/elite_bar.tscn" id="14_elite"]
+[ext_resource type="PackedScene" path="res://scenes/ui/threat_indicators.tscn" id="15_threat"]
 
 [node name="ArenaRun" type="Node2D"]
 y_sort_enabled = true
@@ -49,6 +50,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="ThreatIndicators" parent="HUD/Root" node_paths=PackedStringArray("director") instance=ExtResource("15_threat")]
+layout_mode = 1
+director = NodePath("../../../RunDirector")
 
 [node name="Readout" type="Label" parent="HUD/Root"]
 layout_mode = 0

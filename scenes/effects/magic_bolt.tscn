@@ -12,6 +12,8 @@ script = ExtResource("1_projectile")
 speed = 240.0
 end_effect = ExtResource("3_burst")
 splash_radius = 24.0
+homing_turn_rate = 180.0
+homing_range = 90.0
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_frames")
