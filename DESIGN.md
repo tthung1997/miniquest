@@ -3,7 +3,9 @@
 Status: agreed in session on 2026-07-27. Art direction (sections 5.6 and 9)
 revised on 2026-09-28 to match the hero assets already drawn. Run structure,
 difficulty and rewards (sections 3, 4, 6.3, 6.5, 6.6) revised on 2026-10-10:
-fixed-length runs with a win, a level-shifted ramp, and banked rewards.
+fixed-length runs with a win, a level-shifted ramp, and banked rewards. The
+arena's roster, elite, threat indicators, accessories, crits and drops (sections
+5.6, 6.2 to 6.5) completed on 2026-11-01.
 
 ## 1. Concept
 
@@ -218,8 +220,8 @@ scales with the run's damage upgrades; healing and buffs do not.
 
 Statuses the skills add to the hero are timed (`HeroBuffs`), and recasting one
 refreshes rather than stacks it. Vanish makes enemies stop hurting the hero but
-not stop chasing. Shadow Strike blinks behind its target but has no critical
-hit, because the game has no crit system yet. Skill cast ranges, area radii,
+not stop chasing. Shadow Strike blinks behind its target but has no guaranteed
+critical hit, though its damage can crit like any other (section 5.6). Skill cast ranges, area radii,
 projectile counts and the buff durations are placeholders in the tool.
 
 **Every skill has cast art.** The sheets are pixel-art effects drawn by
@@ -277,6 +279,18 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   down, and the crossbow is
   held level.
   Whether an Accessory is drawn is undecided (section 11).
+- **Accessories are fixed templates with one main effect.** There are 9, each one
+  `AccessoryData` in `resources/accessories/`: three cut every skill's cooldown
+  (Quick Feather 5%, Brass Hourglass 8%, Amethyst Charm 12%), three add critical
+  hit chance (Steel Star 6%, Lucky Die 8%, Ruby Pendant 12%) and three widen the
+  pickup radius (Coin Purse +24 px, Amber Magnet +40, Forager's Satchel +56), each
+  with a point or two of a stat. Rarity multiplies the effect and the points like
+  boots. They are shown by their icon alone, taken from the pack's items. A hero
+  wears one. Worn cooldown reduction is capped at 40% and the skill cooldown floor
+  of 0.2 s still holds. A **critical hit** deals 1.5x damage, is rolled once per
+  attack or skill cast (the hero's own damage only, never healing or buffs) and is
+  announced by a floating CRIT!. The hero has no crit chance of their own: it all
+  comes from the accessory. All the numbers are placeholders.
 - **Boots are fixed templates, and speed is their main stat.** There are 13
   pairs, each one `BootsData` in `resources/boots/` with its own art, its own
   move-speed bonus (6% to 22% of base speed) and a few points of STR, DEX, INT or
@@ -286,8 +300,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   Worn gear's stat points count towards damage and health but are not part of
   the hero's own stats, so they never show up as spendable or permanent points.
   All the numbers are placeholders.
-- **Boots are dropped like armour.** 30% of the items a run drops are
-  boots, rolled from all 13 pairs whatever the hero's class (boots are not
+- **Boots are dropped like armour.** Boots are one of the four kinds of drop
+  (section 6.5), rolled from all 13 pairs whatever the hero's class (boots are not
   class art). A hero starts with none.
 - **Three base weapons: Sword (STR), Crossbow (DEX), Wand (INT).** A weapon's
   strength is purely its stat scaling, with no class bonus: a Warrior hits
@@ -300,8 +314,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   damage, attack speed and reach and none is strictly better than the others.
   Some add a small secondary scaling (a Katana's DEX, a Flamberge's INT). Every
   variant keeps its type's grip, tip and release point, so the shared slash
-  and bolt effects line up. The extra templates are not yet given to heroes or
-  dropped; see section 11.
+  and bolt effects line up. The extra templates are in the store, gacha packs,
+  merges and run drops.
 - **Every hero starts with all three weapons**, the Sword held and the Crossbow and
   Wand carried, so the first runs are a chance to find the one that suits the
   build. Heroes saved before weapons existed are given the same set on load.
@@ -320,8 +334,10 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   - **Crossbow:** a fast bolt, aimed at the target, that pierces, hitting every
     enemy in a line.
   - **Wand:** a slower bolt that bursts in a small area where it first hits an
-    enemy, or at the end of its range. **Homing is not built yet**: the bolt
-    flies straight at where the target was.
+    enemy, or at the end of its range. It **homes gently**: the bolt turns up to
+    180° a second towards the nearest enemy within 90 px and 70° of where it is
+    heading, so it can curve onto a target that moved (`Projectile.homing_*`, set
+    on the magic bolt scene).
 - **Fixed templates with rarity tiers.** An Iron Sword is always the same item; a
   higher rarity is strictly better. No rolled affixes at launch.
 - **Five rarities: Common, Uncommon, Rare, Epic, Legendary.** Each is a
@@ -330,9 +346,9 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   1.25, 1.5, 1.8, 2.2), a drop weight (60, 25, 10, 4, 1) and how it looks; all
   placeholders. The multiplier scales a weapon's damage and scaling, a pair of
   boots' speed and stat points, and an armour's rolled stat points (points round
-  up, so a 1-point bonus still improves). Every item a run drops, armour or
-  boots, rolls its rarity by weight. Weapons do not drop in runs yet; they come
-  from the store (Common) and gacha packs and merges (any rarity).
+  up, so a 1-point bonus still improves). Every item a run drops rolls its rarity
+  by weight. All four kinds drop in runs (section 6.5); the store sells them at
+  Common and gacha packs and merges give any rarity.
 - **Rarity is shown three ways.** Menus draw a frame in the rarity's colour
   around the item (none for Common, so a full inventory is not a wall of
   borders), and the tooltip names the rarity. Behind the item sits a glow in the
@@ -360,7 +376,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   gacha packs sell a random roll at any rarity. Both pay out into the
   inventory, so both need free cells.
 - **The store is a shop with shelves.** Clicking the gold count in the hub opens it.
-  Weapons (30), Boots (13) and Armour (a class's art at a time) stand on wooden
+  Weapons (30), Boots (13), Armour (a class's art at a time) and Trinkets (the 9
+  accessories) stand on wooden
   shelves under a striped awning, each with a hanging price tag with a coin;
   what the hero cannot afford is dimmed and its price shown in red. Picking
   anything puts it on the hero's doll in place of what they wear, with WALK and
@@ -404,8 +421,8 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   colour; one pull is one big reel, ten are a grid of ten. SKIP stops them all at
   once. An Epic or Legendary makes the marquee blink in its colour. The result is
   decided and paid for the moment the button is pressed; the reels only reveal it.
-  The packs (`resources/packs/`, a `PackData` each) can all give weapons, armour and
-  boots of any rarity, a third each; they differ only in price, odds and
+  The packs (`resources/packs/`, a `PackData` each) can all give weapons, armour,
+  boots and accessories of any rarity, a quarter each; they differ only in price, odds and
   guarantee: Traveller (200 gold, 60/28/9/2.5/0.5% Common to Legendary, a
   Legendary within 100 pulls), Adventurer (400, 25/40/22/10/3%, within 75) and
   Champion (900, no Common, 0/15/45/30/10%, within 50). Pull one at a time, or
@@ -420,7 +437,7 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   for gold.
 - **Merging happens in the Forge tab.** Tick five carried items of the same rarity,
   of any kinds, in the stash; they sit in the five sockets, and Merge turns them
-  into one random item (a weapon, armour or boots, rolled like a pull) a rarity
+  into one random item (a weapon, armour, boots or accessory, rolled like a pull) a rarity
   higher, which stops on a reel of its own. Free; Legendary cannot be merged. It is
   how gear the hero cannot use becomes something better.
 - **Starting prices** (a won run pays about 100 gold, so 100 is about one run):
@@ -457,6 +474,11 @@ attack button.
   only verb at the worst possible moment.
 - Still one tiled map — no streaming, no procedural terrain.
 - Off-screen threat indicators to recover the visibility a static screen would give.
+  **Built** as `ThreatIndicators` in the HUD: a triangle on the screen's edge
+  towards enemies out of view. Enemies in the same direction (16 slices) share one
+  arrow that grows with their number and brightens as the nearest closes in; ones
+  more than 700 px off-screen are ignored. The elite always has its own larger red
+  arrow.
 
 The first arena is a **meadow**: a grass field 48×27 tiles of 32px
 (1536×864, about 2.4 screens each way) with scattered dirt patches and
@@ -474,20 +496,34 @@ and every clone.
 ### 6.3 Run structure
 
 - **Fixed length: 3:00 for every hero.** Survive to the finish line and the run is
-  won; a final elite spawns at the end of the curve (enemy to be chosen). Dying
+  won; a final elite arrives near the end of the curve. Dying
   ends the run early. Opening the pause menu offers **Retreat**, which asks to
   confirm and then ends the run exactly like a death, so there is always a way
   out and never a reason to stall. Whichever way it ends, a results panel shows
   how it went before the hero returns to the hub.
 - **A weak hero is expected to die before the finish.** The score for a lost run
   is how long it lasted; a won run needs no score.
+- **The final elite** is the Elder Bear (`resources/enemies/bear.tres`): a large
+  Bear that chases and hits hard (500 health, 22 contact damage). It spawns at 2:30
+  (`QuestData.elite_spawn_time`), announced by a warning and a health bar at the top
+  of the screen, and is not scaled by the ramp. It does not decide the win: the run
+  is won at 3:00 whether or not it is dead. Killing it earns its experience and gold
+  and drops **one extra item** (`elite_item_count`), on top of the cap on kill drops
+  and the win bonus. Like any drop it counts only once picked up in a won run. It
+  does not count towards the quest's cap on enemies alive.
+- **The roster** is the quest's list of `SpawnEntry` (enemy, weight, and the ramp
+  progress from which it joins), picked by weight among those available:
+  Bamboo (the baseline), Blue Bat (from 10%: fast and fragile), Red Spider (from
+  25%: quicker and tougher) and Panda (from 40%: large, slow and tanky). All are
+  from the Ninja Adventure monsters, built by `tools/build_enemy_frames.gd`. An
+  `EnemyData`'s `body_scale` sizes sprite, body and contact area together.
 - **Two progression tracks:**
   - *In-run levels* — earned during the run, grant upgrade picks, reset at the end.
   - *Permanent* exp, gold and items — banked when the run ends (section 6.5).
 
 ### 6.4 Upgrade offers
 
-Presented as a choice of options on in-run level up (and from pickups).
+Presented as a choice of options on in-run level up.
 
 - The pool is **the hero's unlocked skills** plus **generic upgrades** (move speed,
   heal, damage, pickup radius).
@@ -515,8 +551,8 @@ An offer is one of:
   speed), *Sharpened* (+10% damage), *Second Helping* (heal 30%) and *Magnet*
   (+16 px pickup radius), as `GenericUpgrade` files in `resources/upgrades/`.
 
-Three distinct options are drawn evenly from that pool. Upgrades from pickups,
-which the design mentions, are not built; there are no upgrade pickups to find.
+Three distinct options are drawn evenly from that pool. Level-ups are the only
+source of upgrades: there are no upgrade pickups in the arena.
 
 ### 6.5 Rewards
 
@@ -540,11 +576,15 @@ tuned.
 **Drops.** Each kill can leave gold on the ground (a Bamboo: 35% for 1 to 3) and,
 rarely, an item (2%), though never more than 2 items a run (`max_item_drops` on
 the quest), however lucky the rolls. With the win bonus that is at most 3 items
-in a won run, for every hero. Items are armour, rolled from the art pool of a
-random class (mage, ranger or warrior, equally; any hero can wear it, and what
-does not suit the build is for selling or forging), or boots (30% of them, section
-5.6), each at a rarity rolled by weight;
-weapons do not drop yet, though they have rarity now. The hero collects a drop by
+in a won run, for every hero, and 4 when the Elder Bear is also killed. An item
+is one of four kinds by weight (`Drops.KIND_WEIGHTS`): armour 35%, weapons 25%,
+boots 20% and accessories 20%, each at a rarity rolled by weight. Armour is
+rolled from the art pool of a random class (mage, ranger or warrior, equally;
+any hero can wear it, and what does not suit the build is for selling or
+forging); weapons, boots and accessories come from every template whatever the
+hero's class, so a drop is often something the build cannot use well, which is
+what the store's Sell tab and the forge are for. All the weights are placeholders.
+The hero collects a drop by
 getting within its pickup radius (28 px). A won run's pickups and bonus are
 banked, and any item that does not fit the inventory is lost, which the
 results panel warns of. A death or retreat shows what was forfeited.
@@ -737,7 +777,8 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
 - **Enemies, environment, VFX, UI, audio: asset pack.** Enemies need no gear, so
   pack art works fine alongside a custom hero. **Enemies use the pack's monsters
   at 2×**, as the arena's ground and trees do, which puts them around 32px beside
-  the 48px hero. The pack's bosses are the candidates for the final elite.
+  the 48px hero. The Bear and the other three monsters of the meadow's roster
+  (section 6.3) are all pack monsters.
 - Pack: **Ninja Adventure by Pixel-Boy** — CC0 (commercial use allowed,
   attribution appreciated not required), 16×16, 50+ characters, 30+ monsters,
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
@@ -798,10 +839,11 @@ working.
 In:
 - Paper-doll hero with its Armour layers (hat, shirt, pants), Boots layer and
   Weapon layer wired.
-- Arena run: movement, auto-attack, auto-target, one enemy type ramping, damage,
-  death, retreat, a fixed-length win, run-end summary.
+- Arena run: movement, auto-attack, auto-target, a roster of four enemies and a
+  final elite ramping, damage, critical hits, death, retreat, off-screen threat
+  indicators, a fixed-length win, run-end summary.
 - In-run level ups and the choose-an-upgrade overlay.
-- Item and gold drops with pickup.
+- Item and gold drops with pickup, in all four equipment kinds.
 - Gacha packs, the store and selling (section 5.7).
 - Hub with hero, equipment and start-quest.
 - Save with three hero slots.
@@ -819,17 +861,18 @@ Out until later:
   the Warrior route carries STR and VIT growth, the Mage route INT and VIT. Same
   name, different character. Possibly a feature, possibly confusing — the
   alternative is for an advancement to normalise growth rather than add to it.
-- Enemy roster and the final shape of the difficulty ramp (it starts linear), and
-  the START_PER_LEVEL and START_CAP values in section 4. The roster comes from
-  the Ninja Adventure monsters (section 9.3).
+- The final shape of the difficulty ramp (it starts linear), and the
+  START_PER_LEVEL and START_CAP values in section 4. Whether four enemy types are
+  enough variety for the meadow, and whether later quests want their own rosters.
 - The generic in-run upgrade pool is four placeholders (section 6.4): speed,
   damage, a heal and pickup radius. Screen clears and the like are not built.
   Run-to-run variety before tier 2 still leans mostly on it.
 - Whether an in-run skill level should be able to pass the max a hero has trained
   the skill to; today the cap is the skill's own (5) for both.
 - Whether `health_per_vitality` alone is enough to make a Mage feel fragile.
-- Cooldown reduction stacks from skill levels, the accessory slot and Arcane
-  Surge against only a 0.2s floor. An obvious place for a build to break the game.
+- Cooldown reduction stacks from skill levels, the accessory slot (capped at 40%)
+  and Arcane Surge against only a 0.2s floor. Still a place for a build to break
+  the game.
 - Whether single-target skills survive contact with a real swarm. The balance
   numbers assume an area skill touches three enemies and a single-target skill
   one; if a swarm is denser, single-target skills are dead.
@@ -844,18 +887,22 @@ Out until later:
   the sell fractions and the five-item merge. Whether packs should be split by
   slot, or offer a rate-up on one item, is open.
 - Whether gold has sinks other than gacha, the store and skill resets.
-- What the final elite at the end of the run is, and whether it is worth a
-  dedicated reward.
+- Whether the Elder Bear is the right elite and whether it deserves more than one
+  item, or a different attack than walking into the hero.
 - Whether the way difficulty shifts loot rarity (section 6.5) rewards high-level
   heroes too much, given that they also start further along the ramp.
 - Whether an Accessory is drawn on the hero, given that visible gear is a pillar.
 - Whether a player can re-roll an Armour item's look, and at what cost. The store's
   armour tab already lets a player pick pieces, so this and the store's
   assembled sets should be decided together.
-- Whether the 27 extra weapons should also drop in runs or be run rewards (they are
-  in the store, packs and merges now), and whether weapons of one type should be
-  restricted by hero level.
+- Whether weapons of one type should be restricted by hero level now that every
+  template can drop in runs, or whether a drop should lean to the hero's build.
 
-**None of the balance numbers are anchored.** Enemy health and damage do not
-exist, so `design/skills.json` is internally consistent and validated against
-nothing. It will need revisiting the moment the arena is playable.
+**None of the balance numbers are anchored.** `tools/smoke_arena.gd` plays the
+arena headless with a crude bot (it advances class, splits free points between STR
+and VIT, spends skill points, closes in on enemies and backs away from them) and
+gives a baseline with no gear: a level 1 hero dies at about 1:40, level 5 at
+2:00, level 10 at 2:20, level 20 at 2:45 (sometimes killing the elite) and level
+30 mostly at about 2:30, sometimes winning. That matches the intent that levelling
+helps without trivialising the run, but a bot says nothing about how it feels to
+play, or how gear changes it, so every number here still wants real play.

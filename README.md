@@ -74,6 +74,20 @@ re-run it:
 & $env:GODOT --headless --path . --script res://tools/build_arena_map.gd
 ```
 
+Pack monsters are built into `SpriteFrames` by `tools/build_enemy_frames.gd`
+(add a sheet to its list, import, then run it).
+
+To see how a run plays without sitting through it, `tools/smoke_arena.gd` plays one
+headless and fast, then prints what happened. It is a rough guide for tuning and
+says nothing about how the game feels:
+
+```powershell
+& $env:GODOT --headless --path . --script res://tools/smoke_arena.gd -- --level=10 --kite --scale=10
+```
+
+Options after `--`: `--level=N`, `--scale=N` (time scale), `--god` (cannot die),
+`--kite` (a bot plays the hero), `--skill=1..3` (the level-up card it picks).
+
 ## Project settings worth knowing
 
 - **Base resolution** 640×360, windowed at 1280×720, `canvas_items` stretch with
