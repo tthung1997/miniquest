@@ -59,7 +59,7 @@ var _choosing: bool = false
 ## Kept above the y-sorted hero and trees, so shots are never hidden.
 @onready var _projectiles: Node2D = $Projectiles
 @onready var _director: RunDirector = $RunDirector
-@onready var _readout: Label = $HUD/Root/Readout
+@onready var _hud: RunHud = %RunHud
 @onready var _skill_bar: SkillBar = %SkillBar
 @onready var _pause_menu: PauseMenu = %PauseMenu
 @onready var _retreat_dialog: ConfirmDialog = %RetreatDialog
@@ -86,6 +86,7 @@ func _ready() -> void:
 	hero.effect_spawned.connect(_on_hero_effect_spawned)
 	hero.pickup_reached.connect(_on_hero_pickup_reached)
 	hero.died.connect(_on_hero_died)
+	hero.health_changed.connect(_hud.show_health)
 	hero.skills.skills_changed.connect(_on_skills_changed)
 	hero.skills.auto_cast_changed.connect(_skill_bar.show_auto_cast)
 	_skill_bar.auto_cast_toggle_requested.connect(_on_auto_cast_toggle_requested)
@@ -93,6 +94,7 @@ func _ready() -> void:
 	_director.enemy_killed.connect(_on_enemy_killed)
 	_director.survived.connect(_on_run_survived)
 	_director.elite_spawned.connect(_elite_bar.show_elite)
+	_director.second_passed.connect(_hud.show_time)
 	_pause_menu.resume_requested.connect(_on_resume_requested)
 	_pause_menu.retreat_requested.connect(_on_retreat_requested)
 	_retreat_dialog.confirmed.connect(_end.bind(RunResult.Outcome.RETREATED))
@@ -100,10 +102,15 @@ func _ready() -> void:
 	_upgrade_overlay.offer_chosen.connect(_on_offer_chosen)
 	_end_panel.continue_pressed.connect(_on_continue_pressed)
 
+	_hud.configure(_director.quest.duration, _director.quest.elite_spawn_time)
+	_hud.show_health(hero.health.current, hero.health.maximum)
+	_hud.show_gold(_gold)
+	_hud.show_items(_items.size())
+	_hud.show_kills(_kills)
+	_show_progress()
 	# A saved hero is shown right after this scene is added, which starts the
 	# run at their level; this only covers the scene being run on its own.
 	_start_standalone_run.call_deferred()
-	_refresh()
 
 
 func _exit_tree() -> void:
@@ -124,11 +131,6 @@ func show_hero(data: HeroData) -> void:
 		loadout.append(HeldSkill.new(start, _permanent_levels[start.id]))
 	hero.skills.set_loadout(loadout)
 	_start_run(data.level)
-	_refresh()
-
-
-func _process(_delta: float) -> void:
-	_refresh()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -227,6 +229,8 @@ func _on_enemy_killed(enemy: Enemy) -> void:
 		_elite_killed = true
 		_drop_elite_items(enemy)
 	var gained: int = _progress.add_experience(enemy.data.experience)
+	_hud.show_kills(_kills)
+	_show_progress()
 	if gained > 0 and not _ending:
 		_pending_picks += gained
 		_offer_upgrades.call_deferred()
@@ -329,8 +333,10 @@ func _on_hero_pickup_reached(pickup: Pickup) -> void:
 		return
 	if pickup.kind == Pickup.Kind.GOLD:
 		_gold += pickup.gold
+		_hud.show_gold(_gold)
 	elif pickup.item != null:
 		_items.append(pickup.item)
+		_hud.show_items(_items.size())
 	pickup.collect()
 
 
@@ -367,21 +373,6 @@ func _on_auto_cast_toggle_requested() -> void:
 	hero.skills.set_auto_cast(not hero.skills.auto_cast)
 
 
-func _refresh() -> void:
-	var level: Vector2i = _progress.progress() if _progress != null else Vector2i.ZERO
-	_readout.text = (
-		"HP %d/%d    Lv %d (%d/%d)    kills %d    exp +%d    gold %d    items %d\n"
-		+ "time %s / %s    Esc to pause    1-4 cast skills    Tab auto-cast"
-	) % [
-		ceili(hero.health.current),
-		roundi(hero.health.maximum),
-		_progress.level if _progress != null else 1,
-		level.x,
-		level.y,
-		_kills,
-		_experience,
-		_gold,
-		_items.size(),
-		RunResult.clock(_director.elapsed),
-		RunResult.clock(_director.quest.duration),
-	]
+func _show_progress() -> void:
+	_hud.show_progress(_progress.level, _progress.progress())
+

@@ -1,0 +1,232 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/run_hud.gd" id="1_hud"]
+[ext_resource type="Theme" uid="uid://dfkxfcug6tuv3" path="res://resources/ui/wood_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/items/gold_coin.png" id="3_coin"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/bag_icon.png" id="4_bag"]
+
+[sub_resource type="StyleBoxFlat" id="BarBack"]
+bg_color = Color(0.12, 0.05, 0.05, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.07, 0.03, 0.02, 1)
+
+[sub_resource type="StyleBoxFlat" id="HealthFill"]
+bg_color = Color(0.85, 0.2, 0.18, 1)
+
+[sub_resource type="StyleBoxFlat" id="ExpFill"]
+bg_color = Color(0.45, 0.75, 0.3, 1)
+
+[sub_resource type="StyleBoxFlat" id="ClockFill"]
+bg_color = Color(1, 0.678, 0.333, 1)
+
+[node name="RunHud" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hud")
+
+[node name="Vitals" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 6.0
+offset_right = 156.0
+offset_bottom = 46.0
+mouse_filter = 2
+theme_type_variation = &"Chip"
+
+[node name="Column" type="VBoxContainer" parent="Vitals"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="HealthBar" type="ProgressBar" parent="Vitals/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 13)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBack")
+theme_override_styles/fill = SubResource("HealthFill")
+step = 0.01
+value = 100.0
+show_percentage = false
+
+[node name="HealthLabel" type="Label" parent="Vitals/Column/HealthBar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.07, 0.03, 0.02, 1)
+theme_override_constants/outline_size = 3
+text = "-- / --"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExpRow" type="HBoxContainer" parent="Vitals/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="LevelLabel" type="Label" parent="Vitals/Column/ExpRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 0)
+layout_mode = 2
+theme_type_variation = &"AccentLabel"
+text = "Lv 1"
+
+[node name="ExpBar" type="ProgressBar" parent="Vitals/Column/ExpRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 11)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBack")
+theme_override_styles/fill = SubResource("ExpFill")
+step = 0.01
+show_percentage = false
+
+[node name="ExpLabel" type="Label" parent="Vitals/Column/ExpRow/ExpBar"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.07, 0.03, 0.02, 1)
+theme_override_constants/outline_size = 3
+text = "0 / 0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightColumn" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 70.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="Clock" type="PanelContainer" parent="RightColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Chip"
+
+[node name="Column" type="VBoxContainer" parent="RightColumn/Clock"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 3
+
+[node name="ClockLabel" type="Label" parent="RightColumn/Clock/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0:00 / 0:00"
+horizontal_alignment = 1
+
+[node name="ClockBar" type="ProgressBar" parent="RightColumn/Clock/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 7)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("BarBack")
+theme_override_styles/fill = SubResource("ClockFill")
+step = 0.01
+show_percentage = false
+
+[node name="EliteMarker" type="ColorRect" parent="RightColumn/Clock/Column/ClockBar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 0.8
+anchor_right = 0.8
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_top = -2.0
+offset_right = 1.0
+offset_bottom = 2.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0.25, 0.2, 1)
+
+[node name="Counters" type="PanelContainer" parent="RightColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Chip"
+
+[node name="Row" type="HBoxContainer" parent="RightColumn/Counters"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="GoldIcon" type="TextureRect" parent="RightColumn/Counters/Row"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("3_coin")
+expand_mode = 1
+
+[node name="GoldLabel" type="Label" parent="RightColumn/Counters/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="ItemsIcon" type="TextureRect" parent="RightColumn/Counters/Row"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+texture = ExtResource("4_bag")
+expand_mode = 1
+
+[node name="ItemsLabel" type="Label" parent="RightColumn/Counters/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+text = "0"
+
+[node name="KillsLabel" type="Label" parent="RightColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "KILLS 0"
+horizontal_alignment = 2
+
+[node name="Hint" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -16.0
+offset_right = 200.0
+offset_bottom = -6.0
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_outline_color = Color(0.07, 0.03, 0.02, 1)
+theme_override_constants/outline_size = 3
+text = "ESC PAUSE   1-4 SKILLS   TAB AUTO"
+vertical_alignment = 2

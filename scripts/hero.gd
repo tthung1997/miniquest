@@ -24,6 +24,9 @@ signal effect_spawned(effect: Node2D, at: Vector2)
 ## The hero's pickup radius reached `pickup`. The listener decides what that
 ## means and calls its collect().
 signal pickup_reached(pickup: Pickup)
+## The hero's health changed, or was reset to a fresh amount by apply(). Follows
+## whichever Health the hero holds now, so a health bar never has to rewire.
+signal health_changed(current: float, maximum: float)
 ## The hero's health reached zero. What that means for the run is up to whoever
 ## owns the hero.
 signal died
@@ -320,6 +323,8 @@ func _set_health(max_health: float) -> void:
 	_dead = false
 	health = Health.new(max_health)
 	health.died.connect(_on_health_died)
+	health.changed.connect(health_changed.emit)
+	health_changed.emit(health.current, health.maximum)
 
 
 func _on_health_died() -> void:
