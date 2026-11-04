@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_overlay.tscn" id="13_upgrade"]
 [ext_resource type="PackedScene" path="res://scenes/ui/elite_bar.tscn" id="14_elite"]
 [ext_resource type="PackedScene" path="res://scenes/ui/threat_indicators.tscn" id="15_threat"]
+[ext_resource type="PackedScene" path="res://scenes/ui/run_hud.tscn" id="16_hud"]
 
 [node name="ArenaRun" type="Node2D"]
 y_sort_enabled = true
@@ -55,12 +56,9 @@ mouse_filter = 2
 layout_mode = 1
 director = NodePath("../../../RunDirector")
 
-[node name="Readout" type="Label" parent="HUD/Root"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 8.0
-offset_right = 630.0
-offset_bottom = 54.0
+[node name="RunHud" parent="HUD/Root" instance=ExtResource("16_hud")]
+unique_name_in_owner = true
+layout_mode = 1
 
 [node name="SkillBar" parent="HUD/Root" instance=ExtResource("12_skillbar")]
 unique_name_in_owner = true

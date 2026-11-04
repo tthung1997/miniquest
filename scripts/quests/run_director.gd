@@ -13,6 +13,9 @@ extends Node
 signal enemy_killed(enemy: Enemy)
 ## The quest's elite has arrived.
 signal elite_spawned(elite: Enemy)
+## The run's clock crossed into a new whole second; `elapsed` is the run's time
+## so far, in seconds. Also sent with 0 when the run starts.
+signal second_passed(elapsed: float)
 ## The run's full duration passed with the hero alive. Spawning has stopped.
 signal survived
 
@@ -39,6 +42,7 @@ var enemies: Array[Enemy] = []
 var _running: bool = false
 var _spawn_cooldown: float = 0.0
 var _elite_spawned: bool = false
+var _last_second: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 
@@ -52,11 +56,13 @@ func start(hero_level: int) -> void:
 		return
 	_rng.randomize()
 	elapsed = 0.0
+	_last_second = 0
 	ramp_start = quest.start_for(hero_level)
 	_spawn_cooldown = 0.0
 	enemies.clear()
 	_elite_spawned = false
 	_running = true
+	second_passed.emit(0.0)
 
 
 ## Stop spawning and counting, as when the hero dies. Enemies already out stay.
@@ -82,6 +88,9 @@ func _process(delta: float) -> void:
 		return
 
 	elapsed = minf(elapsed + delta, quest.duration)
+	if floori(elapsed) > _last_second:
+		_last_second = floori(elapsed)
+		second_passed.emit(elapsed)
 	var progress: float = quest.progress_at(ramp_time())
 	_spawn_cooldown = maxf(_spawn_cooldown - delta, 0.0)
 	if is_zero_approx(_spawn_cooldown) and _regular_alive() < quest.max_alive_at(progress):
