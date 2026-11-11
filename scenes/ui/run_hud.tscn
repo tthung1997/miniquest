@@ -112,36 +112,31 @@ text = "0 / 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RightColumn" type="VBoxContainer" parent="."]
+[node name="Clock" type="PanelContainer" parent="."]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -150.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
 offset_top = 6.0
-offset_right = -6.0
-offset_bottom = 70.0
-grow_horizontal = 0
-mouse_filter = 2
-theme_override_constants/separation = 3
-
-[node name="Clock" type="PanelContainer" parent="RightColumn"]
-layout_mode = 2
+offset_right = 75.0
+offset_bottom = 36.0
+grow_horizontal = 2
 mouse_filter = 2
 theme_type_variation = &"Chip"
 
-[node name="Column" type="VBoxContainer" parent="RightColumn/Clock"]
+[node name="Column" type="VBoxContainer" parent="Clock"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 3
 
-[node name="ClockLabel" type="Label" parent="RightColumn/Clock/Column"]
+[node name="ClockLabel" type="Label" parent="Clock/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0:00 / 0:00"
 horizontal_alignment = 1
 
-[node name="ClockBar" type="ProgressBar" parent="RightColumn/Clock/Column"]
+[node name="ClockBar" type="ProgressBar" parent="Clock/Column"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 7)
 layout_mode = 2
@@ -151,7 +146,7 @@ theme_override_styles/fill = SubResource("ClockFill")
 step = 0.01
 show_percentage = false
 
-[node name="EliteMarker" type="ColorRect" parent="RightColumn/Clock/Column/ClockBar"]
+[node name="EliteMarker" type="ColorRect" parent="Clock/Column/ClockBar"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -167,6 +162,19 @@ grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.25, 0.2, 1)
+
+[node name="RightColumn" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 50.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_constants/separation = 3
 
 [node name="Counters" type="PanelContainer" parent="RightColumn"]
 layout_mode = 2
