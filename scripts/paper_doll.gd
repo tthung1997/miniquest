@@ -19,10 +19,20 @@ extends Node2D
 ## The held weapon's attack reached its release frame: the moment its effect
 ## appears and any projectile should leave.
 signal attack_released
+## The doll has fallen and lain still for a moment after die(): whoever waits
+## on the death can move on.
+signal death_finished
 
 const IDLE_CLIP: StringName = &"idle"
 const WALK_CLIP: StringName = &"walk"
 const ATTACK_CLIP: StringName = &"attack"
+## Hurt and death are effects on the whole doll, not body frames, so every layer
+## goes through them together without being redrawn (DESIGN.md section 9.2).
+const HURT_TINT: Color = Color(1.0, 0.3, 0.3)
+const HURT_TIME: float = 0.2
+## Seconds spent toppling over, and then lying still before death_finished.
+const FALL_TIME: float = 0.45
+const FALL_HOLD: float = 0.4
 ## How much of the rarity's glow brightness the aura behind the hero shows. The
 ## aura is additive, so it needs to be softer than the glow behind an icon.
 const AURA_SHARE: float = 0.65
@@ -42,6 +52,9 @@ var _released: bool = false
 var _weapon_base_offset: Vector2 = Vector2.ZERO
 var _glow_rarity: RarityData = null
 var _glow_seconds: float = 0.0
+var _dying: bool = false
+var _hurt_tween: Tween = null
+var _death_tween: Tween = null
 
 @onready var _aura: Sprite2D = $Aura
 @onready var _body: AnimatedSprite2D = $Body
@@ -142,6 +155,46 @@ func is_attacking() -> bool:
 	return _attacking
 
 
+## Flash the whole doll red, as a hit lands. Ignored once it is dying.
+func hurt() -> void:
+	if _dying:
+		return
+	_kill_tweens()
+	modulate = HURT_TINT
+	_hurt_tween = create_tween()
+	_hurt_tween.tween_property(self, "modulate", Color.WHITE, HURT_TIME)
+
+
+## Topple the doll backwards, away from the way it faces, then hold there and
+## emit death_finished. It stays down until revive().
+func die() -> void:
+	if _dying:
+		return
+	_dying = true
+	_end_attack()
+	play(IDLE_CLIP)
+	_kill_tweens()
+	modulate = Color.WHITE
+	var fallen: float = -PI / 2.0 if _facing_right else PI / 2.0
+	_death_tween = create_tween()
+	_death_tween.tween_property(self, "rotation", fallen, FALL_TIME) \
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_death_tween.tween_interval(FALL_HOLD)
+	_death_tween.tween_callback(death_finished.emit)
+
+
+func is_dying() -> bool:
+	return _dying
+
+
+## Stand the doll back up after die(), or cut a hurt flash short.
+func revive() -> void:
+	_kill_tweens()
+	_dying = false
+	rotation = 0.0
+	modulate = Color.WHITE
+
+
 ## Where the held weapon's attack effect or projectile appears, in this doll's
 ## space, for the current facing and body frame.
 func get_release_position() -> Vector2:
@@ -177,6 +230,13 @@ func _collect_layers() -> void:
 			layer.stop()
 			layer.flip_h = not _facing_right
 			_layers.append(layer)
+
+
+func _kill_tweens() -> void:
+	if _hurt_tween != null:
+		_hurt_tween.kill()
+	if _death_tween != null:
+		_death_tween.kill()
 
 
 func _apply_armour() -> void:

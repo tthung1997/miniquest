@@ -19,8 +19,6 @@ extends Node2D
 ## paused, so whatever listens can swap scenes.
 signal finished(result: RunResult)
 
-## Seconds between the hero falling and the results panel, so the death is seen.
-const DEATH_DELAY: float = 0.75
 ## Weapon given to a hero when this scene is run on its own.
 const STANDALONE_WEAPON: StringName = &"sword"
 const RETREAT_WARNING: String = (
@@ -211,7 +209,7 @@ func _on_hero_died() -> void:
 		return
 	_ending = true
 	_director.stop()
-	await get_tree().create_timer(DEATH_DELAY).timeout
+	await hero.death_finished
 	if is_inside_tree():
 		_end(RunResult.Outcome.DIED)
 

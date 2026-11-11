@@ -736,7 +736,9 @@ exists in this form and reads well, and because the cost is contained:
 - **The body's animation set stays small: idle (1 frame) and walk (4 frames).**
   Hurt, death and attacks are effects and shaders, not new body frames. Every body
   frame added must be redrawn for every generated garment, so this is the budget
-  to protect.
+  to protect. A hit flashes the whole doll red; death topples it backwards away
+  from its facing, so every layer falls together, and it holds there until the
+  results panel opens.
 - **Each weapon has its own attack, drawn on the weapon layer alone.** The
   weapon plays a short attack clip on its own clock while the body keeps idling
   or walking, so the hero attacks mid-stride: the sword winds up, swings and

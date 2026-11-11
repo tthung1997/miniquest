@@ -30,6 +30,8 @@ signal health_changed(current: float, maximum: float)
 ## The hero's health reached zero. What that means for the run is up to whoever
 ## owns the hero.
 signal died
+## The hero has finished falling after dying: the moment to show what it meant.
+signal death_finished
 
 ## Health of a hero that has not been dressed from a saved HeroData, such as one
 ## placed in a scene run on its own.
@@ -102,6 +104,7 @@ func _ready() -> void:
 	_doll.wear_boots(boots)
 	_doll.wield(weapon)
 	_doll.attack_released.connect(_on_doll_attack_released)
+	_doll.death_finished.connect(death_finished.emit)
 	_update_sensor_range()
 	_pickup_circle.radius = pickup_radius
 	_pickup_shape.shape = _pickup_circle
@@ -127,6 +130,7 @@ func apply(data: HeroData) -> void:
 	pickup_radius += pickup_bonus - _gear_pickup_bonus
 	_gear_pickup_bonus = pickup_bonus
 	buffs.clear()
+	_doll.revive()
 	_doll.wear_armour(armour)
 	_doll.wear_boots(boots)
 	_doll.wield(weapon)
@@ -148,6 +152,8 @@ func take_damage(amount: float, attacker: Enemy = null) -> void:
 		return
 	var reduction: float = buffs.magnitude(HeroBuffs.BULWARK) / 100.0
 	health.take_damage(amount * (1.0 - reduction))
+	if not _dead:
+		_doll.hurt()
 
 
 ## Recover up to `amount` health.
@@ -331,6 +337,7 @@ func _on_health_died() -> void:
 	_dead = true
 	# A fallen hero collects nothing.
 	_pickup_area.set_deferred(&"monitoring", false)
+	_doll.die()
 	died.emit()
 
 
