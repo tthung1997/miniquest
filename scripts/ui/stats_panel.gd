@@ -144,6 +144,7 @@ func _refresh() -> void:
 	if _hero == null:
 		_free_points_label.text = "Free points: --"
 		_free_points_label.theme_type_variation = NORMAL
+		AttentionPulse.set_active(_free_points_label, false)
 		for row: StatRow in _rows.values():
 			row.show_empty()
 		for key: StringName in _summary_values:
@@ -153,6 +154,7 @@ func _refresh() -> void:
 	var remaining: int = _remaining_points()
 	_free_points_label.text = "Free points: %d" % remaining
 	_free_points_label.theme_type_variation = ACCENT if remaining > 0 else NORMAL
+	AttentionPulse.set_active(_free_points_label, remaining > 0)
 	var current: Dictionary[StringName, int] = _hero.stats()
 	for stat_name: StringName in _rows:
 		var pending: int = _pending.get(stat_name, 0)

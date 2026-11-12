@@ -42,7 +42,10 @@ func show_hero(hero: HeroData) -> void:
 		hero_class.display_name if hero_class != null else String(hero.class_id)
 	)
 	_name_label.text = hero.hero_name
-	_info_tag.show_text("Lv %d  %s" % [hero.level, class_name_text], hero_class)
+	var has_points: bool = hero.unspent_points > 0 or hero.unspent_skill_points > 0
+	var info: String = "Lv %d  %s" % [hero.level, class_name_text]
+	_info_tag.show_text(info + "  !" if has_points else info, hero_class)
+	AttentionPulse.set_active(_info_tag, has_points)
 	_doll.wear_armour(hero.armour)
 	_doll.wear_boots(hero.boots)
 	_doll.wield(hero.weapon)
@@ -52,12 +55,14 @@ func show_hero(hero: HeroData) -> void:
 func show_empty() -> void:
 	_name_label.text = "Empty slot"
 	_info_tag.show_text("Slot %d" % (slot + 1))
+	AttentionPulse.set_active(_info_tag, false)
 	_show_state(false, false, true)
 
 
 func show_unreadable() -> void:
 	_name_label.text = "Unreadable"
 	_info_tag.show_text("Save can't be read")
+	AttentionPulse.set_active(_info_tag, false)
 	_show_state(false, true, false)
 
 
