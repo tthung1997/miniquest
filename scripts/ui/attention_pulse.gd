@@ -24,8 +24,7 @@ static func set_active(target: CanvasItem, active: bool) -> void:
 		if not target.tree_entered.is_connected(_on_tree_entered.bind(target)):
 			target.tree_entered.connect(_on_tree_entered.bind(target), CONNECT_ONE_SHOT)
 		return
-	var running: Tween = target.get_meta(_TWEEN_META, null)
-	if running != null and running.is_valid():
+	if is_active(target):
 		return
 	var tween: Tween = target.create_tween().set_loops()
 	tween.tween_property(target, "modulate", BRIGHT, HALF_SECONDS) \
@@ -36,16 +35,17 @@ static func set_active(target: CanvasItem, active: bool) -> void:
 
 
 static func is_active(target: CanvasItem) -> bool:
-	if target == null:
+	if target == null or not target.has_meta(_TWEEN_META):
 		return false
-	var running: Tween = target.get_meta(_TWEEN_META, null)
+	var running: Tween = target.get_meta(_TWEEN_META)
 	return running != null and running.is_valid()
 
 
 static func _stop(target: CanvasItem) -> void:
-	var running: Tween = target.get_meta(_TWEEN_META, null)
-	if running != null:
-		running.kill()
+	if target.has_meta(_TWEEN_META):
+		var running: Tween = target.get_meta(_TWEEN_META)
+		if running != null:
+			running.kill()
 		target.remove_meta(_TWEEN_META)
 	target.modulate = Color.WHITE
 
