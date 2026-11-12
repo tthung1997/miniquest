@@ -215,12 +215,14 @@ func _refresh_advance_cue() -> void:
 	)
 
 
-## Marked with an exclamation mark when there are skill points to spend.
+## Marked with an exclamation mark and a glow when there are skill points to
+## spend, until the skill tree is open.
 func _refresh_skills_button() -> void:
 	var points: int = _hero.unspent_skill_points if _hero != null else 0
 	_skills_button.disabled = _hero == null
 	_inventory_button.disabled = _hero == null
 	_skills_button.text = "SKILLS!" if points > 0 else "SKILLS"
+	AttentionPulse.set_active(_skills_button, points > 0 and not _skills_view.visible)
 
 
 func _refresh_items() -> void:
