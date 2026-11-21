@@ -122,8 +122,10 @@ Run the title-to-hero-selection smoke test with
 `godot_console --headless --path . --script res://tools/smoke_title.gd`
 (or use your configured console executable).
 
-The title backdrop is original Miniquest artwork drawn in LibreSprite. Edit
-`assets/sprites/ui/title_backdrop.ase` and re-export the 320×180 PNG beside it.
+The title, hero selection and hub backdrops are original Miniquest artwork
+drawn in LibreSprite. Edit the matching `.ase` files in `assets/sprites/ui/`
+and re-export the PNGs at their existing sizes (320×180 for full-screen
+backdrops, 152×152 for `hub_alcove`).
 
 ## Conventions
 
