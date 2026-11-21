@@ -6,9 +6,11 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hub.tscn" id="4_hub"]
 [ext_resource type="PackedScene" path="res://scenes/ui/store.tscn" id="5_store"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gacha.tscn" id="6_gacha"]
+[ext_resource type="PackedScene" path="res://scenes/ui/title_screen.tscn" id="7_title"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
+title_screen_scene = ExtResource("7_title")
 character_select_scene = ExtResource("2_select")
 hub_scene = ExtResource("4_hub")
 store_scene = ExtResource("5_store")
