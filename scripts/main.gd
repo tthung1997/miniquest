@@ -6,6 +6,7 @@ extends Node
 ## Screens report choices through signals; this swaps the next screen in.
 ## The scenes are exported so they are wired in the editor.
 
+@export var title_screen_scene: PackedScene
 @export var character_select_scene: PackedScene
 @export var hub_scene: PackedScene
 @export var store_scene: PackedScene
@@ -19,15 +20,26 @@ var _hero: HeroData = null
 
 func _ready() -> void:
 	if (
-		character_select_scene == null
+		title_screen_scene == null
+		or character_select_scene == null
 		or hub_scene == null
 		or store_scene == null
 		or gacha_scene == null
 		or arena_run_scene == null
 	):
-		push_error("Main: CharacterSelect, Hub, Store, Gacha and ArenaRun scenes must be wired.")
+		push_error("Main: TitleScreen, CharacterSelect, Hub, Store, Gacha and ArenaRun are required.")
 		return
-	_show_character_select()
+	_show_title_screen()
+
+
+func _show_title_screen() -> void:
+	var screen: Node = title_screen_scene.instantiate()
+	if screen is not TitleScreen:
+		push_error("Main: title_screen_scene must have a TitleScreen root.")
+		screen.free()
+		return
+	screen.start_pressed.connect(_show_character_select)
+	_swap_to(screen)
 
 
 func _show_character_select() -> void:

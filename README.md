@@ -10,7 +10,7 @@ A 2D game built with **Godot 4.7** and **GDScript**.
 1. Install [Godot 4.7](https://godotengine.org/download) — the **standard**
    build, not .NET. This project uses GDScript.
 2. Open Godot, click **Import**, and select `project.godot` in this folder.
-3. Press **F5** to run.
+3. Press **F5** to run, then choose **Start** to open the hero slots.
 
 Command-line tooling finds the engine as `godot_console`, `godot` or `godot4` on
 your `PATH`, or via the `GODOT` environment variable if you would rather point at
@@ -117,6 +117,15 @@ for errors.
 
 After adding art, audio or fonts, run the engine with `--headless --path .
 --import` to generate their `.import` sidecars, and commit those.
+
+Run the title-to-hero-selection smoke test with
+`godot_console --headless --path . --script res://tools/smoke_title.gd`
+(or use your configured console executable).
+
+The title, hero selection and hub backdrops are original Miniquest artwork
+drawn in LibreSprite. Edit the matching `.ase` files in `assets/sprites/ui/`
+and re-export the PNGs at their existing sizes (320×180 for full-screen
+backdrops, 152×152 for `hub_alcove`).
 
 ## Conventions
 
