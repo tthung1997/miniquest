@@ -13,17 +13,8 @@
 [ext_resource type="Script" path="res://scripts/ui/gacha_poster.gd" id="11_poster"]
 [ext_resource type="Script" path="res://scripts/ui/coin_burst.gd" id="12_burst"]
 [ext_resource type="PackedScene" path="res://scenes/ui/confirm_dialog.tscn" id="13_confirm"]
-
-[sub_resource type="Gradient" id="StageGlow"]
-colors = PackedColorArray(0.659, 0.471, 0.29, 1, 0.439, 0.278, 0.176, 1)
-
-[sub_resource type="GradientTexture2D" id="StageGlowTexture"]
-gradient = SubResource("StageGlow")
-width = 128
-height = 128
-fill = 1
-fill_from = Vector2(0.5, 0.58)
-fill_to = Vector2(0.5, -0.02)
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/hub_backdrop.png" id="14_timber"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/store_fitting_room.png" id="15_fitting_room"]
 
 [sub_resource type="ButtonGroup" id="TabGroup"]
 
@@ -38,7 +29,8 @@ theme = ExtResource("2_theme")
 script = ExtResource("1_store")
 item_cell_scene = ExtResource("4_cell")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -46,7 +38,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.408, 0.392, 0.337, 1)
+texture = ExtResource("14_timber")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -172,13 +166,6 @@ layout_mode = 2
 mouse_filter = 2
 theme_type_variation = &"InteriorPanel"
 
-[node name="Backdrop" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior"]
-texture_filter = 2
-layout_mode = 2
-mouse_filter = 2
-texture = SubResource("StageGlowTexture")
-expand_mode = 1
-
 [node name="Content" type="VBoxContainer" parent="Margin/Column/Main/PreviewPanel/Interior"]
 layout_mode = 2
 mouse_filter = 2
@@ -189,6 +176,19 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 136)
 layout_mode = 2
 mouse_filter = 2
+
+[node name="Backdrop" type="TextureRect" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("15_fitting_room")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="DollAnchor" type="Node2D" parent="Margin/Column/Main/PreviewPanel/Interior/Content/Stage"]
 unique_name_in_owner = true

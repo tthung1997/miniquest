@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/ui/odds_bar.gd" id="8_odds"]
 [ext_resource type="Script" path="res://scripts/ui/pity_meter.gd" id="9_pity"]
 [ext_resource type="Script" path="res://scripts/ui/reel.gd" id="10_reel"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/gacha_backdrop.png" id="11_backdrop"]
 
 [sub_resource type="ButtonGroup" id="TabGroup"]
 
@@ -24,7 +25,8 @@ theme = ExtResource("2_theme")
 script = ExtResource("1_gacha")
 item_cell_scene = ExtResource("3_cell")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
+texture_filter = 1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +34,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.29, 0.2, 0.17, 1)
+texture = ExtResource("11_backdrop")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -171,6 +175,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_type_variation = &"InteriorPanel"
+
+[node name="Backdrop" type="TextureRect" parent="Margin/Column/PacksView/Cabinet"]
+texture_filter = 1
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("11_backdrop")
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Marquee" type="Control" parent="Margin/Column/PacksView/Cabinet"]
 unique_name_in_owner = true
