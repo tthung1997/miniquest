@@ -15,8 +15,6 @@ collision_mask = 1
 script = ExtResource("1_enemy")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -16)
-scale = Vector2(2, 2)
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 position = Vector2(0, -12)

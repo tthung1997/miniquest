@@ -514,9 +514,9 @@ and every clone.
 - **The roster** is the quest's list of `SpawnEntry` (enemy, weight, and the ramp
   progress from which it joins), picked by weight among those available:
   Bamboo (the baseline), Blue Bat (from 10%: fast and fragile), Red Spider (from
-  25%: quicker and tougher) and Panda (from 40%: large, slow and tanky). All are
-  from the Ninja Adventure monsters, built by `tools/build_enemy_frames.gd`. An
-  `EnemyData`'s `body_scale` sizes sprite, body and contact area together.
+  25%: quicker and tougher) and Panda (from 40%: large, slow and tanky).
+  `tools/build_enemy_frames.gd` builds their native-pixel animations.
+  `body_scale` controls the body and contact area without scaling the artwork.
 - **Two progression tracks:**
   - *In-run levels* — earned during the run, grant upgrade picks, reset at the end.
   - *Permanent* exp, gold and items — banked when the run ends (section 6.5).
@@ -769,9 +769,8 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   discipline problem, not a difficulty one, and it is what actually breaks
   projects.
 - Empty slots need defaults (bare arms, plain tunic).
-- **Scale is matched on the pack side.** The hero is bigger than 16×16 pack art,
-  so enemies and environment are shown at an integer scale — 16×16 art at 2× puts
-  enemies around 32px beside the 48px hero — or come from a pack drawn larger.
+- **The hero sets the pixel density.** Briarwood terrain and monsters are drawn
+  at 1×, with each monster's size drawn directly into its frame.
 
 ### 9.3 Art sourcing
 
@@ -779,19 +778,22 @@ layer's `SpriteFrames` from its sheets. Equipping an item swaps a layer's
   16×16 characters are flat single sprites with no layers; LPC's layered wardrobe
   is built for a different body and frame layout. This was accepted as a
   deliberate commitment.
-- **Enemies, environment, VFX, UI, audio: asset pack.** Enemies need no gear, so
-  pack art works fine alongside a custom hero. **Enemies use the pack's monsters
-  at 2×**, as the arena's ground and trees do, which puts them around 32px beside
-  the 48px hero. The Bear and the other three monsters of the meadow's roster
-  (section 6.3) are all pack monsters.
+- **Briarwood is the visual treatment for Meadow.** Its 32px tiles use muted
+  moss and packed earth behind the hero, with a winding trail and a ruined gate
+  along the northern edge. The gate and ground detail are decorative; the
+  existing arena bounds and quest roster are unchanged.
+- **The Meadow roster is custom.** Layered LibreSprite files and right-facing
+  walk strips live in `assets/sprites/enemies/`. Each strip has four square
+  frames registered to bottom center: 32px for Bamboo, Blue Bat, and Red Spider,
+  44px for Panda, and 76px for Elder Bear. The terrain atlases live in
+  `assets/sprites/arena/briarwood/`.
 - Pack: **Ninja Adventure by Pixel-Boy** — CC0 (commercial use allowed,
   attribution appreciated not required), 16×16, 50+ characters, 30+ monsters,
   9 bosses, 60+ items, 30+ visual effects, UI, 2 fonts, 100+ SFX, 37 music
   tracks, plus an official Godot 4 example project. **Confirmed.** Only the
-  files in use are copied into `assets/packs/ninja_adventure/` (currently the
-  Wood UI theme pieces, the back arrow, `NormalFont.ttf`, four hub item icons,
-  and the floor, nature and floor-detail tilesets for the arena, and the Bamboo
-  monster sheet, with the licence).
+  selected files are copied into `assets/packs/ninja_adventure/` with the
+  licence. The Wood UI, `NormalFont.ttf`, and hub item icons still use them;
+  the previous arena and monster art is no longer referenced.
   UI follows the pack's own palette: orange frames around a warm brown interior, dark olive
   wells, light text, on a warm olive-grey background. The rest of the pack
   stays outside the repo until something uses it.

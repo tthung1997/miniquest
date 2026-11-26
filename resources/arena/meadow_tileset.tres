@@ -1,42 +1,26 @@
 [gd_resource type="TileSet" format=3 uid="uid://dnc5ku04xysn6"]
 
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_floor.png" id="1_hhn6c"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_nature.png" id="2_d2taq"]
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/tilesets/tileset_floor_detail.png" id="3_35yh5"]
+[ext_resource type="Texture2D" path="res://assets/sprites/arena/briarwood/ground.png" id="1_hhn6c"]
+[ext_resource type="Texture2D" path="res://assets/sprites/arena/briarwood/canopy.png" id="2_d2taq"]
+[ext_resource type="Texture2D" path="res://assets/sprites/arena/briarwood/decor.png" id="3_35yh5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2a7xd"]
 texture = ExtResource("1_hhn6c")
-11:12/0 = 0
-12:12/0 = 0
-13:12/0 = 0
-14:12/0 = 0
-15:12/0 = 0
-11:7/0 = 0
-12:7/0 = 0
-13:7/0 = 0
-11:8/0 = 0
-12:8/0 = 0
-13:8/0 = 0
-11:9/0 = 0
-12:9/0 = 0
-13:9/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6thbi"]
-texture = ExtResource("2_d2taq")
-2:0/size_in_atlas = Vector2i(2, 2)
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
 2:0/0 = 0
-2:0/0/texture_origin = Vector2i(0, 12)
-6:0/size_in_atlas = Vector2i(2, 2)
-6:0/0 = 0
-6:0/0/texture_origin = Vector2i(0, 12)
-0:2/size_in_atlas = Vector2i(4, 3)
-0:2/0 = 0
-0:2/0/texture_origin = Vector2i(0, 20)
-0:11/0 = 0
-1:11/0 = 0
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wo3o6"]
-texture = ExtResource("3_35yh5")
+3:0/0 = 0
+4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+8:1/0 = 0
 0:2/0 = 0
 1:2/0 = 0
 2:2/0 = 0
@@ -45,8 +29,36 @@ texture = ExtResource("3_35yh5")
 5:2/0 = 0
 6:2/0 = 0
 7:2/0 = 0
+8:2/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6thbi"]
+texture = ExtResource("2_d2taq")
+texture_region_size = Vector2i(32, 32)
+0:0/size_in_atlas = Vector2i(2, 2)
+0:0/0 = 0
+0:0/0/texture_origin = Vector2i(0, 22)
+2:0/size_in_atlas = Vector2i(2, 2)
+2:0/0 = 0
+2:0/0/texture_origin = Vector2i(0, 21)
+0:2/size_in_atlas = Vector2i(4, 3)
+0:2/0 = 0
+0:2/0/texture_origin = Vector2i(0, 33)
+0:5/size_in_atlas = Vector2i(3, 2)
+0:5/0 = 0
+0:5/0/texture_origin = Vector2i(0, 24)
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_wo3o6"]
+texture = ExtResource("3_35yh5")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
 
 [resource]
+tile_size = Vector2i(32, 32)
 sources/0 = SubResource("TileSetAtlasSource_2a7xd")
 sources/1 = SubResource("TileSetAtlasSource_6thbi")
 sources/2 = SubResource("TileSetAtlasSource_wo3o6")

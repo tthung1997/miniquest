@@ -8,10 +8,10 @@ extends Resource
 
 @export var id: StringName = &""
 @export var display_name: String = ""
-## Built from the monster's pack sheet by tools/build_enemy_frames.gd. Needs a
-## looping `walk` clip drawn facing right.
+## Built by tools/build_enemy_frames.gd. The right-facing `walk` clip is drawn
+## at native scale with the ground point at the bottom center.
 @export var frames: SpriteFrames
-## Sizes the sprite, body and contact area together. 1.0 is a pack monster as is.
+## Sizes the body and contact area without scaling the art.
 @export_range(0.5, 4.0, 0.05) var body_scale: float = 1.0
 ## The end-of-run elite (DESIGN.md section 6.3). Elites get a health bar and a
 ## distinct threat marker.
