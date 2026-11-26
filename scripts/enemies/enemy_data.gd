@@ -25,6 +25,14 @@ extends Resource
 ## Seconds between one enemy's hits while it keeps touching the hero.
 @export_range(0.1, 5.0, 0.05, "suffix:s") var contact_interval: float = 1.0
 
+@export_group("Charge")
+## Speed during a charge; zero leaves the enemy with its regular chase.
+@export_range(0.0, 400.0, 1.0, "suffix:px/s") var charge_speed: float = 0.0
+@export_range(0.1, 5.0, 0.05, "suffix:s") var charge_windup: float = 0.5
+@export_range(0.1, 5.0, 0.05, "suffix:s") var charge_duration: float = 0.6
+## Chase time before the first windup and between charges.
+@export_range(0.1, 10.0, 0.05, "suffix:s") var charge_cooldown: float = 2.0
+
 @export_group("Rewards")
 ## Experience the hero earns for killing one.
 @export_range(0, 1000) var experience: int = 1

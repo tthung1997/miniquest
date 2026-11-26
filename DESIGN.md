@@ -504,7 +504,10 @@ and every clone.
 - **A weak hero is expected to die before the finish.** The score for a lost run
   is how long it lasted; a won run needs no score.
 - **The final elite** is the Elder Bear (`resources/enemies/bear.tres`): a large
-  Bear that chases and hits hard (500 health, 22 contact damage). It spawns at 2:30
+  Bear that chases and hits hard (500 health, 22 contact damage). It pauses and
+  turns orange before charging toward the hero, then commits to that direction
+  so a sidestep can avoid it. The charge uses its normal contact damage.
+  It spawns at 2:30
   (`QuestData.elite_spawn_time`), announced by a warning and a health bar at the top
   of the screen, and is not scaled by the ramp. It does not decide the win: the run
   is won at 3:00 whether or not it is dead. Killing it earns its experience and gold

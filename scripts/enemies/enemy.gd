@@ -1,6 +1,6 @@
 class_name Enemy
 extends CharacterBody2D
-## An enemy that walks straight at its target and hurts it on contact.
+## An enemy that chases its target and hurts it on contact.
 ##
 ## What kind of enemy it is comes entirely from its EnemyData, so one scene
 ## serves every enemy. The art is drawn facing right and mirrored to face left.
@@ -11,6 +11,8 @@ extends CharacterBody2D
 ## Its health ran out. Emitted once, before the body fades away.
 signal died(enemy: Enemy)
 
+enum ChargePhase { CHASE, WINDUP, DASH }
+
 ## From the feet to the middle of the body.
 const BODY_CENTER: Vector2 = Vector2(0.0, -12.0)
 ## Closer than this to the target it stops, rather than shuddering on top of it.
@@ -18,6 +20,7 @@ const STOP_DISTANCE: float = 2.0
 const HIT_FLASH: Color = Color(3.0, 3.0, 3.0)
 const HIT_FLASH_TIME: float = 0.08
 const FADE_TIME: float = 0.25
+const WINDUP_TINT: Color = Color(1.0, 0.55, 0.3)
 
 @export var data: EnemyData
 
@@ -34,6 +37,9 @@ var _contact_cooldown: float = 0.0
 var _slow_amount: float = 0.0
 var _slow_left: float = 0.0
 var _flash: Tween = null
+var _charge_phase: ChargePhase = ChargePhase.CHASE
+var _charge_time_left: float = 0.0
+var _charge_direction: Vector2 = Vector2.ZERO
 
 @onready var _sprite: AnimatedSprite2D = $Sprite
 @onready var _body: CollisionShape2D = $Collision
@@ -60,6 +66,7 @@ func _ready() -> void:
 	_sprite.sprite_frames = data.frames
 	_sprite.position.y = -first_frame.get_height() * 0.5
 	_sprite.play(&"walk")
+	_charge_time_left = data.charge_cooldown
 	if not is_equal_approx(data.body_scale, 1.0):
 		_body.scale = Vector2.ONE * data.body_scale
 		_contact.scale = Vector2.ONE * data.body_scale
@@ -71,17 +78,20 @@ func _physics_process(delta: float) -> void:
 	if is_zero_approx(_slow_left):
 		_slow_amount = 0.0
 	if target == null or not is_instance_valid(target):
+		if _charge_phase != ChargePhase.CHASE:
+			_finish_charge()
 		velocity = Vector2.ZERO
 		return
 
 	var to_target: Vector2 = target.global_position - global_position
-	if to_target.length() > STOP_DISTANCE:
-		velocity = to_target.normalized() * data.speed * (1.0 - _slow_amount)
-	else:
-		velocity = Vector2.ZERO
+	var direction: Vector2 = Vector2.ZERO
+	if to_target.length_squared() > STOP_DISTANCE * STOP_DISTANCE:
+		direction = to_target.normalized()
+	velocity = _chase_or_charge(direction, delta) * (1.0 - _slow_amount)
 	move_and_slide()
-	if absf(velocity.x) > 0.1:
-		_sprite.flip_h = velocity.x < 0.0
+	var facing_x: float = to_target.x if _charge_phase == ChargePhase.WINDUP else velocity.x
+	if absf(facing_x) > 0.1:
+		_sprite.flip_h = facing_x < 0.0
 	_hit_touching_target()
 
 
@@ -110,6 +120,54 @@ func slow(amount: float, seconds: float) -> void:
 	_slow_left = maxf(seconds, _slow_left)
 
 
+func _chase_or_charge(direction: Vector2, delta: float) -> Vector2:
+	if data.charge_speed <= 0.0:
+		return direction * data.speed
+
+	_charge_time_left = maxf(_charge_time_left - delta, 0.0)
+	match _charge_phase:
+		ChargePhase.CHASE:
+			if _charge_time_left == 0.0 and _can_charge(direction):
+				_charge_phase = ChargePhase.WINDUP
+				_charge_time_left = data.charge_windup
+				_sprite.pause()
+				_sprite.self_modulate = WINDUP_TINT
+				return Vector2.ZERO
+		ChargePhase.WINDUP:
+			if not _can_charge(direction):
+				_finish_charge()
+			elif _charge_time_left > 0.0:
+				return Vector2.ZERO
+			else:
+				_clear_windup()
+				# Aim at launch, then commit so a sidestep can dodge the rush.
+				_charge_direction = direction
+				_charge_phase = ChargePhase.DASH
+				_charge_time_left = data.charge_duration
+				return _charge_direction * data.charge_speed
+		ChargePhase.DASH:
+			if _charge_time_left > 0.0:
+				return _charge_direction * data.charge_speed
+			_finish_charge()
+	return direction * data.speed
+
+
+func _can_charge(direction: Vector2) -> bool:
+	return direction != Vector2.ZERO and target.is_targetable() and not target.is_dead()
+
+
+func _finish_charge() -> void:
+	if _charge_phase == ChargePhase.WINDUP:
+		_clear_windup()
+	_charge_phase = ChargePhase.CHASE
+	_charge_time_left = data.charge_cooldown
+
+
+func _clear_windup() -> void:
+	_sprite.self_modulate = Color.WHITE
+	_sprite.play(&"walk")
+
+
 func _hit_touching_target() -> void:
 	if _contact_cooldown > 0.0:
 		return
@@ -135,6 +193,8 @@ func _flash_white() -> void:
 func _on_health_died() -> void:
 	set_physics_process(false)
 	velocity = Vector2.ZERO
+	if _charge_phase != ChargePhase.CHASE:
+		_finish_charge()
 	# Out of reach of every shot and scan from here on, while it fades.
 	set_deferred(&"collision_layer", 0)
 	_contact.set_deferred(&"monitoring", false)
