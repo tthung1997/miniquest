@@ -1,26 +1,23 @@
-## One-shot tool: builds a SpriteFrames for each pack monster listed in MONSTERS.
+## Builds a SpriteFrames for each Meadow monster.
 ## Run with:
 ##   & $env:GODOT --headless --path . --script res://tools/build_enemy_frames.gd
 ## Run `--headless --path . --import` first so the sheets are imported. Safe to
 ## re-run; it overwrites resources/enemies/<id>_frames.tres.
 ##
-## The pack's monster sheets are a grid of 16x16 frames: one column per facing
-## (down, up, left, right) and one row per walk frame. Enemies are side-on, so
-## only the right-facing column is used; the enemy mirrors it to face left.
+## Each sheet is a horizontal strip of four square, right-facing frames, drawn
+## at native scale with the ground point at the bottom center.
 extends SceneTree
 
-const FRAME_SIZE: int = 16
-const RIGHT_COLUMN: int = 3
 const FRAME_COUNT: int = 4
 const WALK_CLIP: StringName = &"walk"
 const WALK_FPS: float = 6.0
 const OUTPUT_DIRECTORY: String = "res://resources/enemies"
-const MONSTERS: Dictionary[StringName, String] = {
-	&"bamboo": "res://assets/packs/ninja_adventure/monsters/bamboo.png",
-	&"blue_bat": "res://assets/packs/ninja_adventure/monsters/blue_bat.png",
-	&"spider_red": "res://assets/packs/ninja_adventure/monsters/spider_red.png",
-	&"panda": "res://assets/packs/ninja_adventure/monsters/panda.png",
-	&"bear": "res://assets/packs/ninja_adventure/monsters/bear.png",
+const MONSTERS: Dictionary[StringName, int] = {
+	&"bamboo": 32,
+	&"blue_bat": 32,
+	&"spider_red": 32,
+	&"panda": 44,
+	&"bear": 76,
 }
 
 
@@ -32,26 +29,26 @@ func _init() -> void:
 	quit(1 if failed else 0)
 
 
-func _build(id: StringName, sheet_path: String) -> bool:
+func _build(id: StringName, frame_size: int) -> bool:
+	var sheet_path: String = "res://assets/sprites/enemies/%s_walk.png" % id
 	var sheet: Texture2D = load(sheet_path) as Texture2D
 	if sheet == null:
 		printerr("build_enemy_frames: cannot load %s (run --import first?)" % sheet_path)
 		return false
-	var needed: Vector2i = Vector2i((RIGHT_COLUMN + 1) * FRAME_SIZE, FRAME_COUNT * FRAME_SIZE)
-	if sheet.get_width() < needed.x or sheet.get_height() < needed.y:
-		printerr("build_enemy_frames: %s is smaller than %s" % [sheet_path, needed])
+	var needed: Vector2i = Vector2i(FRAME_COUNT * frame_size, frame_size)
+	if Vector2i(sheet.get_size()) != needed:
+		printerr("build_enemy_frames: %s has invalid dimensions, expected %s" % [sheet_path, needed])
 		return false
 
 	var frames: SpriteFrames = SpriteFrames.new()
 	frames.rename_animation(&"default", WALK_CLIP)
 	frames.set_animation_speed(WALK_CLIP, WALK_FPS)
 	frames.set_animation_loop(WALK_CLIP, true)
-	for row: int in FRAME_COUNT:
+	for index: int in FRAME_COUNT:
 		var frame: AtlasTexture = AtlasTexture.new()
 		frame.atlas = sheet
-		frame.region = Rect2(
-			RIGHT_COLUMN * FRAME_SIZE, row * FRAME_SIZE, FRAME_SIZE, FRAME_SIZE
-		)
+		frame.region = Rect2(index * frame_size, 0, frame_size, frame_size)
+		frame.filter_clip = true
 		frames.add_frame(WALK_CLIP, frame)
 
 	var path: String = OUTPUT_DIRECTORY.path_join("%s_frames.tres" % id)

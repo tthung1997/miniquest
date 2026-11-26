@@ -1,22 +1,26 @@
 [gd_resource type="SpriteFrames" format=3]
 
-[ext_resource type="Texture2D" path="res://assets/packs/ninja_adventure/monsters/blue_bat.png" id="1_u4l5f"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/blue_bat_walk.png" id="1_u4l5f"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lwohl"]
 atlas = ExtResource("1_u4l5f")
-region = Rect2(48, 0, 16, 16)
+region = Rect2(0, 0, 32, 32)
+filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fac6y"]
 atlas = ExtResource("1_u4l5f")
-region = Rect2(48, 16, 16, 16)
+region = Rect2(32, 0, 32, 32)
+filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qrak3"]
 atlas = ExtResource("1_u4l5f")
-region = Rect2(48, 32, 16, 16)
+region = Rect2(64, 0, 32, 32)
+filter_clip = true
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tu300"]
 atlas = ExtResource("1_u4l5f")
-region = Rect2(48, 48, 16, 16)
+region = Rect2(96, 0, 32, 32)
+filter_clip = true
 
 [resource]
 animations = [{

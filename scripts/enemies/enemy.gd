@@ -45,13 +45,22 @@ func _ready() -> void:
 		push_error("Enemy '%s' has no EnemyData." % name)
 		set_physics_process(false)
 		return
+	if (data.frames == null or not data.frames.has_animation(&"walk")
+			or data.frames.get_frame_count(&"walk") == 0):
+		push_error("Enemy '%s' has no walk animation." % name)
+		set_physics_process(false)
+		return
+	var first_frame: Texture2D = data.frames.get_frame_texture(&"walk", 0)
+	if first_frame == null:
+		push_error("Enemy '%s' has no walk texture." % name)
+		set_physics_process(false)
+		return
 	health = Health.new(data.max_health * health_scale)
 	health.died.connect(_on_health_died)
 	_sprite.sprite_frames = data.frames
+	_sprite.position.y = -first_frame.get_height() * 0.5
 	_sprite.play(&"walk")
 	if not is_equal_approx(data.body_scale, 1.0):
-		_sprite.scale *= data.body_scale
-		_sprite.position *= data.body_scale
 		_body.scale = Vector2.ONE * data.body_scale
 		_contact.scale = Vector2.ONE * data.body_scale
 
