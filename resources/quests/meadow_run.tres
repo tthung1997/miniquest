@@ -35,5 +35,6 @@ from_progress = 0.4
 script = ExtResource("1_quest")
 id = &"meadow_run"
 display_name = "Meadow"
+spawn_interval_start = 1.2
 spawn_entries = Array[ExtResource("2_entry")]([SubResource("Resource_bamboo"), SubResource("Resource_bat"), SubResource("Resource_spider"), SubResource("Resource_panda")])
 elite = ExtResource("7_bear")

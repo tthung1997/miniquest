@@ -59,7 +59,7 @@ are placeholders, to be tuned by play. They live in the quest's `QuestData`
 one file per quest.
 
 The ramp is a few values that rise linearly from the start of the ramp (0:00) to
-its end (START_CAP + 3:00 = 5:00): the seconds between spawns (1.5 s to 0.3 s),
+its end (START_CAP + 3:00 = 5:00): the seconds between spawns (1.2 s to 0.3 s),
 the most enemies alive at once (8 to 50), and the multipliers on every enemy's
 health (1× to 4×) and contact damage (1× to 2×). A `RunDirector` runs the
 clock and spawns enemies to match. These are placeholders too.
@@ -323,16 +323,18 @@ Four slots, each with a distinct job so no two ever compete for the same stat:
   draw, which a side-on hero with one visible arm cannot show; a crossbow is
   held and loosed one-handed. Bows in older saves load as crossbows.
 - **Each weapon hits in its own shape**, so they differ by more than numbers.
-  The hero turns to the nearest enemy in range first, then:
-  - **Sword:** a broad greatsword whose slash hits every enemy on the facing side
-    within its range. That pays for having to close in. (The slash art is
-    a tall arc; the hit area is a half circle of `attack_range` rather than the
-    arc's exact shape.) Swords carry a **melee premium**: their damage and
+  - **Sword:** slashes appear in front and behind, hitting every enemy within
+    `attack_range` without turning the hero. All surviving targets are shoved
+    away; the elite resists the shove and keeps its charge. While moving, the
+    hero lunges before swinging if the nearest enemy ahead is up to 40 px beyond
+    swing range (96 px total for the starter Sword). Nearby pursuers don't block
+    that lunge, and releasing or steering away cancels it. Damage still uses
+    the normal swing range when the attack lands.
+    Swords carry a **melee premium**: their damage and
     scaling run about 1.3x what they were, and their range 8px longer (still
     inside the slash art), since the wielder must close in and eat contact hits
     that crossbows and wands avoid.
-  - **Crossbow:** a fast bolt, aimed at the target, that pierces, hitting every
-    enemy in a line.
+  - **Crossbow:** a fast bolt that pierces, hitting every enemy in a line.
   - **Wand:** a slower bolt that bursts in a small area where it first hits an
     enemy, or at the end of its range. It **homes gently**: the bolt turns up to
     180° a second towards the nearest enemy within 90 px and 70° of where it is
@@ -459,10 +461,11 @@ upgrade overlay, damage, run-end summary, ramp timer); the reverse is not true.
 ### 6.1 Control
 
 **Move only.** Four-direction movement, already bound as `move_left/right/up/down`.
-Auto-attack fires at the nearest enemy whenever one is within the weapon's
-`attack_range`, once per `attack_interval`; with no enemy in range the hero does
-not attack. Skills fire on cooldown per their auto/manual toggle. No aiming, no
-attack button.
+Auto-attack triggers whenever an enemy is within the weapon's `attack_range`,
+once per `attack_interval`. Crossbows and wands turn to aim at the nearest enemy;
+swords slash on both sides without turning and can lunge a short distance toward
+an enemy in the direction of movement. Skills fire on cooldown per their
+auto/manual toggle. No manual aiming or attack button.
 
 ### 6.2 Arena
 

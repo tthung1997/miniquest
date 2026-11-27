@@ -342,17 +342,23 @@ func _check_release() -> void:
 	_released = true
 
 	if weapon.attack_effect != null:
-		var effect: Node = weapon.attack_effect.instantiate()
-		if effect is Node2D:
-			var effect_2d: Node2D = effect
-			effect_2d.position = get_release_position()
-			if not _facing_right:
-				effect_2d.scale.x = -1.0
-			add_child(effect_2d)
-		else:
-			push_error("PaperDoll: attack effect of '%s' is not a Node2D." % weapon.id)
-			effect.free()
+		var at: Vector2 = get_release_position()
+		_add_attack_effect(weapon, at, _facing_right)
+		if weapon.attack_style == WeaponData.AttackStyle.MELEE:
+			_add_attack_effect(weapon, Vector2(-at.x, at.y), not _facing_right)
 	attack_released.emit()
+
+
+func _add_attack_effect(weapon: WeaponData, at: Vector2, facing_right: bool) -> void:
+	var effect: Node = weapon.attack_effect.instantiate()
+	if effect is not Node2D:
+		push_error("PaperDoll: attack effect of '%s' is not a Node2D." % weapon.id)
+		effect.free()
+		return
+	effect.position = at
+	if not facing_right:
+		effect.scale.x = -1.0
+	add_child(effect)
 
 
 ## Hand the weapon layer back to the body's clock, whether the attack ran out
