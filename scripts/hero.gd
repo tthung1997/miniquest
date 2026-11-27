@@ -9,9 +9,9 @@ extends CharacterBody2D
 ## default. Drawing is the PaperDoll's job; this node only moves it.
 ##
 ## There is no attack button. Whenever the held weapon's interval is up and an
-## enemy stands within its range, the hero turns to the nearest one and
-## attacks. A melee weapon then hurts every enemy ahead of the hero within
-## range; a ranged one releases a projectile aimed at the target.
+## enemy stands within its range, a melee weapon hits and shoves all enemies in
+## range without changing facing; a ranged weapon turns to aim at the nearest
+## one. While moving, melee can lunge to reach an enemy just ahead.
 
 signal facing_changed(facing_right: bool)
 ## An attack let go of `projectile`, already launched but not yet in the tree.
@@ -36,13 +36,14 @@ signal death_finished
 ## Health of a hero that has not been dressed from a saved HeroData, such as one
 ## placed in a scene run on its own.
 const DEFAULT_MAX_HEALTH: float = 50.0
-## How far behind the hero a melee swing still reaches, so an enemy standing on
-## top of the hero is hit whichever side of their centre it is on.
-const MELEE_REACH_BEHIND: float = 12.0
 ## What a critical hit multiplies damage by. A placeholder.
 const CRIT_MULTIPLIER: float = 1.5
 const CRIT_TEXT_COLOR: Color = Color(1.0, 0.85, 0.25)
 const CRIT_TEXT_RISE: float = 30.0
+## Dot product for the lunge's cone: about 37 degrees to either side of input.
+const LUNGE_ALIGNMENT: float = 0.8
+## Swing starts this far inside its edge so movement during windup can still connect.
+const LUNGE_RANGE_BUFFER: float = 8.0
 
 @export_group("Movement")
 ## Base speed, before any boots. A hero dressed by apply() moves at this times
@@ -55,6 +56,12 @@ const CRIT_TEXT_RISE: float = 30.0
 ## Vertical travel as a fraction of horizontal, so diagonal movement reads with
 ## the shallow perspective these side-view sprites imply. 1.0 is uniform.
 @export_range(0.3, 1.0, 0.05) var vertical_ratio: float = 0.6
+
+@export_group("Melee")
+## How far past normal swing range a moving hero can look for a lunge target.
+@export_range(0.0, 48.0, 1.0, "suffix:px") var lunge_extra_range: float = 40.0
+@export_range(100.0, 600.0, 10.0, "suffix:px/s") var lunge_speed: float = 280.0
+@export_range(0.0, 32.0, 1.0, "suffix:px") var melee_knockback: float = 10.0
 
 @export_group("Pickup")
 ## How close a drop must be for the hero to collect it.
@@ -85,6 +92,9 @@ var _cooldown_reduction: float = 0.0
 var _gear_pickup_bonus: float = 0.0
 var _attack_cooldown: float = 0.0
 var _aim_point: Vector2 = Vector2.INF
+var _lunge_target: Enemy = null
+var _lunge_direction: Vector2 = Vector2.ZERO
+var _lunge_remaining: float = 0.0
 var _dead: bool = false
 var _pickup_circle: CircleShape2D = CircleShape2D.new()
 
@@ -117,6 +127,7 @@ func _ready() -> void:
 ## are what the held weapon's damage is worked out from, and their boots set
 ## how fast they run. Whatever a previous run gave them is forgotten.
 func apply(data: HeroData) -> void:
+	_cancel_lunge()
 	_stats = data
 	armour = data.armour
 	boots = data.boots
@@ -211,6 +222,7 @@ func can_stand_at(point: Vector2) -> bool:
 
 ## Put the hero at `point` in global space, as a blink does.
 func teleport_to(point: Vector2) -> void:
+	_cancel_lunge()
 	global_position = point
 
 
@@ -229,6 +241,7 @@ func apply_upgrade(upgrade: GenericUpgrade) -> void:
 
 ## Hold `item`, or nothing when null.
 func wield(item: WeaponItem) -> void:
+	_cancel_lunge()
 	weapon = item
 	_doll.wield(weapon)
 	_attack_cooldown = 0.0
@@ -254,10 +267,16 @@ func _physics_process(delta: float) -> void:
 		return
 
 	buffs.tick(delta)
+	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
 	var input: Vector2 = Input.get_vector(
 		&"move_left", &"move_right", &"move_up", &"move_down"
 	)
 	input.y *= vertical_ratio
+	var move_direction: Vector2 = input.normalized()
+	if _lunge_remaining > 0.0 and _advance_lunge(move_direction, delta):
+		_update_facing(input.x)
+		_doll.play(PaperDoll.WALK_CLIP)
+		return
 
 	var speed_multiplier: float = (
 		_move_multiplier
@@ -275,18 +294,87 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	_update_facing(input.x)
 	_update_animation()
-	_auto_attack(delta)
+	_auto_attack(move_direction)
 
 
-## Attack the nearest enemy in range once the weapon is ready again.
-func _auto_attack(delta: float) -> void:
-	_attack_cooldown = maxf(_attack_cooldown - delta, 0.0)
+func _auto_attack(move_direction: Vector2) -> void:
 	var data: WeaponData = weapon.data() if weapon != null else null
 	if data == null or _attack_cooldown > 0.0:
 		return
-	var enemy: Enemy = _sensor.nearest_enemy(global_position, data.attack_range)
-	if enemy != null and attack(enemy.center()):
+	if data.attack_style == WeaponData.AttackStyle.MELEE and _try_lunge(data, move_direction):
 		_attack_cooldown = data.attack_interval / _attack_speed_multiplier()
+		return
+	var enemy: Enemy = _sensor.nearest_enemy(global_position, data.attack_range)
+	if enemy == null:
+		return
+	var aim_at: Vector2 = Vector2.INF
+	if data.attack_style == WeaponData.AttackStyle.PROJECTILE:
+		aim_at = enemy.center()
+	if attack(aim_at):
+		_attack_cooldown = data.attack_interval / _attack_speed_multiplier()
+
+
+## Select the nearest enemy ahead, even when a pursuer is closer behind us.
+func _try_lunge(data: WeaponData, move_direction: Vector2) -> bool:
+	if move_direction.is_zero_approx() or lunge_extra_range <= 0.0:
+		return false
+	var reach: float = data.attack_range + lunge_extra_range
+	var nearest: Enemy = null
+	var nearest_distance: float = reach
+	for enemy: Enemy in _sensor.enemies_within(global_position, reach):
+		var offset: Vector2 = enemy.global_position - global_position
+		var distance: float = offset.length()
+		if distance <= nearest_distance and offset.dot(move_direction) > distance * LUNGE_ALIGNMENT:
+			nearest = enemy
+			nearest_distance = distance
+	if nearest == null or nearest_distance <= data.attack_range:
+		return false
+	var direction: Vector2 = global_position.direction_to(nearest.global_position)
+	var travel: float = nearest_distance - _lunge_stop_range(data.attack_range)
+	if test_move(global_transform, direction * travel):
+		return false
+	_lunge_target = nearest
+	_lunge_direction = direction
+	_lunge_remaining = travel
+	return true
+
+
+## Commit to one direction, but give movement control back if the player turns or lets go.
+func _advance_lunge(move_direction: Vector2, delta: float) -> bool:
+	if (move_direction.dot(_lunge_direction) < LUNGE_ALIGNMENT
+			or not is_instance_valid(_lunge_target) or _lunge_target.is_dead()):
+		_cancel_lunge()
+		return false
+	var reach: float = weapon.data().attack_range
+	var distance_to_target: float = global_position.distance_to(_lunge_target.global_position)
+	var travel: float = minf(_lunge_remaining, distance_to_target - _lunge_stop_range(reach))
+	if travel <= 0.0:
+		_finish_lunge(reach)
+		return false
+	var step: float = minf(travel, lunge_speed * delta)
+	velocity = _lunge_direction * (step / delta)
+	if move_and_slide() or is_equal_approx(step, travel):
+		_finish_lunge(reach)
+	else:
+		_lunge_remaining -= step
+	return true
+
+
+func _lunge_stop_range(reach: float) -> float:
+	return reach - minf(LUNGE_RANGE_BUFFER, reach * 0.5)
+
+
+func _finish_lunge(reach: float) -> void:
+	_cancel_lunge()
+	if _sensor.nearest_enemy(global_position, reach) != null:
+		attack()
+
+
+func _cancel_lunge() -> void:
+	if _lunge_remaining > 0.0:
+		velocity = Vector2.ZERO
+	_lunge_remaining = 0.0
+	_lunge_target = null
 
 
 ## Blood Frenzy swings faster the more health is missing.
@@ -297,7 +385,10 @@ func _attack_speed_multiplier() -> float:
 
 func _update_sensor_range() -> void:
 	var data: WeaponData = weapon.data() if weapon != null else null
-	_sensor.set_radius(data.attack_range if data != null else 0.0)
+	var reach: float = data.attack_range if data != null else 0.0
+	if data != null and data.attack_style == WeaponData.AttackStyle.MELEE:
+		reach += lunge_extra_range
+	_sensor.set_radius(reach)
 
 
 ## Face the hero along `direction_x`, ignoring zero so vertical-only movement
@@ -335,6 +426,7 @@ func _set_health(max_health: float) -> void:
 
 func _on_health_died() -> void:
 	_dead = true
+	_cancel_lunge()
 	# A fallen hero collects nothing.
 	_pickup_area.set_deferred(&"monitoring", false)
 	_doll.die()
@@ -381,13 +473,15 @@ func _on_doll_attack_released() -> void:
 			_shoot(data)
 
 
-## Hurt every enemy within range on the side the hero faces.
+## Hurt every enemy within range, regardless of which way the hero faces.
 func _strike(data: WeaponData) -> void:
 	var damage: float = roll_crit(_damage_of(weapon), global_position)
-	var facing: float = 1.0 if _doll.is_facing_right() else -1.0
+	var facing: Vector2 = Vector2.RIGHT if is_facing_right() else Vector2.LEFT
 	for enemy: Enemy in _sensor.enemies_within(global_position, data.attack_range):
-		if (enemy.global_position.x - global_position.x) * facing >= -MELEE_REACH_BEHIND:
-			enemy.take_damage(damage)
+		var away: Vector2 = global_position.direction_to(enemy.global_position)
+		enemy.take_damage(damage)
+		if is_instance_valid(enemy):
+			enemy.knock_back(facing if away.is_zero_approx() else away, melee_knockback)
 
 
 func _shoot(data: WeaponData) -> void:

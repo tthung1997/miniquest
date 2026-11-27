@@ -21,6 +21,8 @@ const HIT_FLASH: Color = Color(3.0, 3.0, 3.0)
 const HIT_FLASH_TIME: float = 0.08
 const FADE_TIME: float = 0.25
 const WINDUP_TINT: Color = Color(1.0, 0.55, 0.3)
+const KNOCKBACK_TIME: float = 0.1
+const ELITE_KNOCKBACK_SCALE: float = 0.35
 
 @export var data: EnemyData
 
@@ -36,6 +38,8 @@ var health: Health = null
 var _contact_cooldown: float = 0.0
 var _slow_amount: float = 0.0
 var _slow_left: float = 0.0
+var _knockback_velocity: Vector2 = Vector2.ZERO
+var _knockback_left: float = 0.0
 var _flash: Tween = null
 var _charge_phase: ChargePhase = ChargePhase.CHASE
 var _charge_time_left: float = 0.0
@@ -77,22 +81,36 @@ func _physics_process(delta: float) -> void:
 	_slow_left = maxf(_slow_left - delta, 0.0)
 	if is_zero_approx(_slow_left):
 		_slow_amount = 0.0
-	if target == null or not is_instance_valid(target):
+	var has_target: bool = is_instance_valid(target)
+	var to_target: Vector2 = Vector2.ZERO
+	if has_target:
+		to_target = target.global_position - global_position
+		var direction: Vector2 = Vector2.ZERO
+		if to_target.length_squared() > STOP_DISTANCE * STOP_DISTANCE:
+			direction = to_target.normalized()
+		velocity = _chase_or_charge(direction, delta) * (1.0 - _slow_amount)
+	else:
 		if _charge_phase != ChargePhase.CHASE:
 			_finish_charge()
 		velocity = Vector2.ZERO
+
+	var recoiling: bool = _knockback_left > 0.0
+	if recoiling:
+		var push: Vector2 = _knockback_velocity * minf(_knockback_left / delta, 1.0)
+		_knockback_left = maxf(_knockback_left - delta, 0.0)
+		# Shoves don't stop the charge or change its committed direction.
+		velocity = push if _charge_phase == ChargePhase.CHASE else velocity + push
+	elif not has_target:
 		return
 
-	var to_target: Vector2 = target.global_position - global_position
-	var direction: Vector2 = Vector2.ZERO
-	if to_target.length_squared() > STOP_DISTANCE * STOP_DISTANCE:
-		direction = to_target.normalized()
-	velocity = _chase_or_charge(direction, delta) * (1.0 - _slow_amount)
 	move_and_slide()
-	var facing_x: float = to_target.x if _charge_phase == ChargePhase.WINDUP else velocity.x
+	var facing_x: float = velocity.x
+	if recoiling or _charge_phase == ChargePhase.WINDUP:
+		facing_x = to_target.x
 	if absf(facing_x) > 0.1:
 		_sprite.flip_h = facing_x < 0.0
-	_hit_touching_target()
+	if has_target:
+		_hit_touching_target()
 
 
 ## Where shots should aim, in global space.
@@ -111,6 +129,15 @@ func take_damage(amount: float) -> void:
 	health.take_damage(amount)
 	if not health.is_dead():
 		_flash_white()
+
+
+## Briefly recoil along the unit vector `direction`, respecting arena collisions.
+func knock_back(direction: Vector2, distance: float) -> void:
+	if is_dead() or distance <= 0.0:
+		return
+	var distance_scale: float = ELITE_KNOCKBACK_SCALE if data.is_elite else 1.0
+	_knockback_velocity = direction * (distance * distance_scale / KNOCKBACK_TIME)
+	_knockback_left = KNOCKBACK_TIME
 
 
 ## Move at `1 - amount` of normal speed for `seconds`. A stronger or longer
